@@ -7,6 +7,7 @@ module.exports = {
     "eslint:recommended",
     "@vue/eslint-config-typescript/recommended",
     "@vue/eslint-config-prettier",
+    "plugin:vue/vue3-recommended",
   ],
   env: {
     browser: true,
@@ -22,7 +23,26 @@ module.exports = {
     "vue/max-attributes-per-line": 0,
     "vue/singleline-html-element-content-newline": 0,
     "vue/require-default-prop": 0,
-    "vue/html-self-closing": 0,
+    "vue/html-self-closing": [
+      "warn",
+      {
+        html: {
+          void: "always",
+          normal: "never",
+          component: "always",
+        },
+        svg: "always",
+        math: "always",
+      },
+    ],
+    "vue/component-name-in-template-casing": [
+      "error",
+      "kebab-case",
+      {
+        registeredComponentsOnly: false,
+        ignores: [],
+      },
+    ],
     "no-debugger": "warn",
     "vue/html-closing-bracket-newline": 0,
     "vue/html-indent": 0,
