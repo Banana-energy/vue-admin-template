@@ -149,6 +149,41 @@ function _postJSON(config: RequestConfig) {
   );
 }
 
+// post formData
+function _postFormData<T = Record<string, never>>(
+  config: RequestConfig
+): ResponsePromise<T>;
+
+function _postFormData(config: RequestConfig) {
+  return to(
+    service.request({
+      method: "post",
+      headers: {
+        "content-type": "multipart/form-data",
+      },
+      ...config,
+    })
+  );
+}
+
+// post form
+function _postForm<T = Record<string, never>>(
+  config: RequestConfig
+): ResponsePromise<T>;
+function _postForm(config: RequestConfig) {
+  return to(
+    service.request({
+      method: "post",
+      headers: {
+        "content-type": "application/x-www-form-urlencoded",
+      },
+      ...config,
+    })
+  );
+}
+
+export const postForm = _postForm;
+export const postFormData = _postFormData;
 export const get = _get;
 export const postJSON = _postJSON;
 export const putJSON = _putJSON;
