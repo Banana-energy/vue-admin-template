@@ -1,4 +1,3 @@
-/* eslint-env node */
 require("@rushstack/eslint-patch/modern-module-resolution");
 
 module.exports = {
@@ -10,6 +9,9 @@ module.exports = {
     "@vue/eslint-config-prettier",
   ],
   env: {
+    browser: true,
+    es2021: true,
+    node: true,
     "vue/setup-compiler-macros": true,
   },
   rules: {

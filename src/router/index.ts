@@ -23,8 +23,18 @@ type ExpandRouteRecordRaw = RouteRecordRaw & {
 export const constantRoutes: ExpandRouteRecordRaw[] = [
   {
     path: "/login",
+    name: "Login",
     hidden: true,
-    component: () => import("@/views/login/index.vue"),
+    component: () => import("@/views/login/login-index.vue"),
+  },
+  {
+    path: "/:pathMatch(.*)*",
+    name: "NotFound",
+    component: () => import("@/views/login/login-index.vue"),
+    meta: {
+      title: "登录",
+      showMenu: false,
+    },
   },
 ];
 
