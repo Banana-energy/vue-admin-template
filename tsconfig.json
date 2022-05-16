@@ -4,6 +4,7 @@
     "paths": {
       "@/*": ["./src/*"]
     },
+    "types": ["element-plus/global"],
     "target": "esnext",
     "useDefineForClassFields": true,
     "module": "esnext",
