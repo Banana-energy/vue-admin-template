@@ -6,6 +6,7 @@ import "@vue/runtime-core";
 declare module "@vue/runtime-core" {
   export interface GlobalComponents {
     ElConfigProvider: typeof import("element-plus/es")["ElConfigProvider"];
+    Pagination: typeof import("./src/components/Pagination/index.vue")["default"];
     RouterLink: typeof import("vue-router")["RouterLink"];
     RouterView: typeof import("vue-router")["RouterView"];
   }
