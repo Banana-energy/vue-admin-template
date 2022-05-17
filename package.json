@@ -16,6 +16,7 @@
     "js-cookie": "^3.0.1",
     "kiwi-intl": "^1.2.5",
     "nprogress": "^0.2.0",
+    "path-to-regexp": "^6.2.1",
     "pinia": "^2.0.14",
     "qs": "^6.10.3",
     "vue": "^3.2.25",
