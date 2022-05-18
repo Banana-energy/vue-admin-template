@@ -1,13 +1,14 @@
 <template>
-  <el-config-provider :locale="zhCn">
+  <el-config-provider :locale="language">
     {{ i18n.get("test") }}
     <router-view />
   </el-config-provider>
 </template>
 
 <script setup lang="ts">
-import zhCn from "element-plus/lib/locale/lang/zh-cn";
-import i18n from "./lang";
+import { i18n, getMessage } from "./lang";
+
+const language = getMessage();
 </script>
 
 <style></style>
