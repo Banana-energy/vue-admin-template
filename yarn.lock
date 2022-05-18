@@ -2325,10 +2325,10 @@ kind-of@^6.0.3:
   resolved "https://registry.npmmirror.com/kind-of/-/kind-of-6.0.3.tgz#07c05034a6c349fa06e24fa35aa76db4580ce4dd"
   integrity sha512-dcS1ul+9tmeD95T+x28/ehLgd9mENa3LsvDTtzm3vyBEO7RPptvAD+t44WVXaUjTBRcrpFeFlC8WCruUR456hw==
 
-kiwi-intl@^1.2.5:
-  version "1.2.5"
-  resolved "https://registry.npmmirror.com/kiwi-intl/-/kiwi-intl-1.2.5.tgz#8ae0fe9e118ea75a613cccdd15377da53e427723"
-  integrity sha512-whO97vWFWQdC3HyAjr2JVota2gxdbOqBW0i51Iv2LWEmkWpq9gnWtEcXSqPwALHqYCV4WpT1HeyWFHZv60eu3A==
+kiwi-intl@^1.2.6:
+  version "1.2.6"
+  resolved "https://registry.npmmirror.com/kiwi-intl/-/kiwi-intl-1.2.6.tgz#79adbeb934f66b9f4e422766313cda2a8a3b31dc"
+  integrity sha512-o/v6NfNst/sN3dKhm0n+z4K892Qimo6F+RotYIm6TSFk6viTIK81LjFai2g9n2FnD1Rq0yQ+K5R5Ai3m8zFTiA==
   dependencies:
     intl-messageformat "^2.2.0"
     lodash.get "^4.4.2"

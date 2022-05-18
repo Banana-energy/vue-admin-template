@@ -32,4 +32,14 @@ const toggleClick = () => {
 };
 </script>
 
-<style scoped></style>
+<style scoped>
+.hamburger {
+  display: inline-block;
+  vertical-align: middle;
+  width: 20px;
+  height: 20px;
+}
+.hamburger.is-active {
+  transform: rotate(180deg);
+}
+</style>
