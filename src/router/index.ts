@@ -5,22 +5,68 @@ import { useUserStore } from "@/store/modules/user";
 
 const DEFAULT_DOCUMENT_TITLE = "美迈后台管理平台";
 
+// layout
+import Layout from "@/layout/index.vue";
+
 export const constantRoutes: RouteRecordRaw[] = [
   {
     path: "/login",
     name: "Login",
-    component: () => import("@/views/login/login-index.vue"),
-    meta: {
-      hidden: true,
-    },
+    component: () => import("@/views/login/index.vue"),
+    meta: { hidden: true },
   },
+
+  {
+    path: "/",
+    redirect: "/dashboard",
+    meta: { hidden: true },
+  },
+
+  {
+    path: "/dashboard",
+    name: "Dashboard",
+    component: Layout,
+    meta: { title: "Dashboard", icon: "HomeFilled" },
+    children: [
+      {
+        path: "/dashboard",
+        name: "Dashboard",
+        component: () => import("@/views/dashboard/index.vue"),
+        meta: { title: "Dashboard" },
+      },
+    ],
+  },
+
+  {
+    path: "/example",
+    component: Layout,
+    redirect: "/example/table",
+    name: "Example",
+    meta: { title: "Example", icon: "Menu" },
+    children: [
+      {
+        path: "/example/table",
+        name: "Table",
+        component: () => import("@/views/table/index.vue"),
+        meta: { title: "Table", icon: "Menu" },
+      },
+      {
+        path: "/example/tree",
+        name: "Tree",
+        component: () => import("@/views/tree/index.vue"),
+        meta: { title: "Tree", icon: "Menu" },
+      },
+    ],
+  },
+
   {
     path: "/:pathMatch(.*)*",
     name: "NotFound",
-    component: () => import("@/views/login/login-index.vue"),
+    component: () => import("@/views/login/index.vue"),
     meta: {
       title: "登录",
       showMenu: false,
+      hidden: true,
     },
   },
 ];

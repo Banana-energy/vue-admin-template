@@ -1,7 +1,7 @@
 <template>
   <div style="padding: 0 15px" @click="toggleClick">
     <svg
-      :class="{ 'is-active': isActive }"
+      :class="{ 'is-active': !isCollapse }"
       class="hamburger"
       viewBox="0 0 1024 1024"
       xmlns="http://www.w3.org/2000/svg"
@@ -15,21 +15,30 @@
   </div>
 </template>
 
-<script lang="ts" setup>
-defineProps({
-  isActive: {
-    type: Boolean,
-    default: false,
-  },
+<script setup lang="ts">
+import { toRefs } from "vue";
+
+interface Props {
+  isCollapse: boolean;
+}
+// 取到传过来的值
+// 采用ts专有声明，有默认值
+const props = withDefaults(defineProps<Props>(), {
+  isCollapse: false,
 });
+// 采用ts专有声明，无默认值
+// defineProps<{
+//   isCollapse: boolean;
+// }>();
 
-const emits = defineEmits<{
-  (e: "toggleClick"): void;
-}>();
+const emit = defineEmits(["toggleCollapse"]);
 
+// 切换
 const toggleClick = () => {
-  emits("toggleClick");
+  emit("toggleCollapse");
 };
+
+toRefs(props);
 </script>
 
 <style scoped>
