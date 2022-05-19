@@ -1,6 +1,5 @@
 <template>
   <el-config-provider :locale="zhCn">
-    {{ i18n.get("test") }}
     <router-view />
   </el-config-provider>
 </template>
