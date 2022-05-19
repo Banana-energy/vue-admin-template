@@ -1,16 +1,14 @@
 <template>
   <div :class="classObj" class="app-wrapper">
-    <!-- <div v-if="device==='mobile'&&sidebar.opened" class="drawer-bg" @click="handleClickOutside" /> -->
     <sidebar class="sidebar-container" />
     <div class="main-container">
-      <!-- <div :class="{ 'fixed-header': fixedHeader }"> -->
-      <div>
-        <navbar />
-      </div>
+      <navbar />
       <section class="app-main">
-        <transition name="fade-transform" mode="out-in">
-          <router-view :key="key" />
-        </transition>
+        <router-view v-slot="{ Component }">
+          <transition name="fade-transform" mode="out-in">
+            <component :is="Component" />
+          </transition>
+        </router-view>
       </section>
     </div>
   </div>
