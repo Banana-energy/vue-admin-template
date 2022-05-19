@@ -3,13 +3,15 @@
     <sidebar class="sidebar-container" />
     <div class="main-container">
       <navbar />
-      <section class="app-main">
-        <router-view v-slot="{ Component }">
-          <transition name="fade-transform" mode="out-in">
-            <component :is="Component" />
-          </transition>
-        </router-view>
-      </section>
+      <el-scrollbar :max-height="mainHeight">
+        <section class="app-main">
+          <router-view :key="key" v-slot="{ Component }">
+            <transition name="fade-transform" mode="out-in">
+              <component :is="Component" />
+            </transition>
+          </router-view>
+        </section>
+      </el-scrollbar>
     </div>
   </div>
 </template>
@@ -17,7 +19,7 @@
 import Navbar from "./components/Navbar.vue";
 import Sidebar from "./components/SideBar/index.vue";
 
-import { computed } from "vue";
+import { computed, onBeforeUnmount, ref } from "vue";
 import { useRoute } from "vue-router";
 import { useSettingStore } from "@/store/modules/setting";
 import { storeToRefs } from "pinia";
@@ -42,6 +44,26 @@ const classObj = computed((): IClassObj => {
     withoutAnimation: false,
   };
 });
+
+const useElScroll = () => {
+  const mainHeight = ref(document.documentElement.offsetHeight - 50);
+
+  const getMainHeight = () => {
+    mainHeight.value = document.documentElement.offsetHeight - 50;
+  };
+
+  window.addEventListener("resize", getMainHeight);
+
+  onBeforeUnmount(() => {
+    window.removeEventListener("resize", getMainHeight);
+  });
+
+  return {
+    mainHeight,
+  };
+};
+
+const { mainHeight } = useElScroll();
 </script>
 
 <style scoped lang="scss">
@@ -53,43 +75,12 @@ const classObj = computed((): IClassObj => {
   position: relative;
   height: 100%;
   width: 100%;
-
-  // &.mobile.openSidebar {
-  //   position: fixed;
-  //   top: 0;
-  // }
 }
-
-// .drawer-bg {
-//   background: #000;
-//   opacity: 0.3;
-//   width: 100%;
-//   top: 0;
-//   height: 100%;
-//   position: absolute;
-//   z-index: 999;
-// }
-
-// .fixed-header {
-//   position: fixed;
-//   top: 0;
-//   right: 0;
-//   z-index: 9;
-//   width: calc(100% - #{$sideBarWidth});
-//   transition: width 0.28s;
-// }
-
-// .hideSidebar .fixed-header {
-//   width: calc(100% - 54px);
-// }
-
-// .mobile .fixed-header {
-//   width: 100%;
-// }
 
 .app-main {
   /*50 = navbar  */
   min-height: calc(100vh - 50px);
+  padding: 16px;
   width: 100%;
   position: relative;
   overflow: hidden;
@@ -98,11 +89,8 @@ const classObj = computed((): IClassObj => {
 .fixed-header + .app-main {
   padding-top: 50px;
 }
-</style>
 
-<style lang="scss">
-// fix css style bug in open el-dialog
-.el-popup-parent--hidden {
+:deep .el-popup-parent--hidden {
   .fixed-header {
     padding-right: 15px;
   }
