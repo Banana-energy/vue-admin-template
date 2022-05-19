@@ -27,17 +27,15 @@
 import SidebarItem from "./SidebarItem.vue";
 import Logo from "./Logo.vue";
 import variables from "@/styles/variables.module.scss";
-
 import { computed } from "vue";
 import { useRouter, useRoute, RouteRecordRaw } from "vue-router";
-import { settingStore } from "../../../store/modules/setting";
+import { useSettingStore } from "../../../store/modules/setting";
+import { storeToRefs } from "pinia";
 
 const router = useRouter();
 const route = useRoute();
 
-const mySettingStore = settingStore();
-
-const isCollapse = computed((): boolean => mySettingStore.isCollapse);
+const { isCollapse } = storeToRefs(useSettingStore());
 
 const activeMenu = computed((): string => {
   const { path } = route;

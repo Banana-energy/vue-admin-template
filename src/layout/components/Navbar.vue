@@ -9,16 +9,15 @@
 </template>
 <script setup lang="ts">
 import Hamburger from "@/components/Hamburger/index.vue";
+import { useSettingStore } from "@/store/modules/setting";
+import { storeToRefs } from "pinia";
 
-import { computed } from "vue";
-import { settingStore } from "@/store/modules/setting";
+const store = useSettingStore();
 
-const mySettingStore = settingStore();
-
-const isCollapse = computed((): boolean => mySettingStore.isCollapse);
+const { isCollapse } = storeToRefs(store);
 
 const toggleCollapse = (): void => {
-  mySettingStore.setCollapse();
+  store.setCollapse();
 };
 </script>
 <style scoped lang="scss"></style>

@@ -21,9 +21,10 @@ import Sidebar from "./components/SideBar/index.vue";
 
 import { computed } from "vue";
 import { useRoute } from "vue-router";
-import { settingStore } from "@/store/modules/setting";
+import { useSettingStore } from "@/store/modules/setting";
+import { storeToRefs } from "pinia";
 
-const mySettingStore = settingStore();
+const { isCollapse } = storeToRefs(useSettingStore());
 const route = useRoute();
 
 interface IClassObj {
@@ -35,8 +36,6 @@ interface IClassObj {
 const key = computed((): string => {
   return route.path;
 });
-
-const isCollapse = computed((): boolean => mySettingStore.isCollapse);
 
 const classObj = computed((): IClassObj => {
   return {

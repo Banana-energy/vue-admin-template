@@ -4,7 +4,7 @@ interface ISetting {
   isCollapse: boolean;
 }
 
-export const settingStore = defineStore("setting", {
+export const useSettingStore = defineStore("setting", {
   state: (): ISetting => ({
     isCollapse: false,
   }),

@@ -1,5 +1,5 @@
 <template>
-  <div style="padding: 0 15px" @click="toggleClick">
+  <div class="cursor-pointer" style="padding: 0 15px" @click="toggleClick">
     <svg
       :class="{ 'is-active': !isCollapse }"
       class="hamburger"
@@ -16,20 +16,12 @@
 </template>
 
 <script setup lang="ts">
-import { toRefs } from "vue";
-
-interface Props {
-  isCollapse: boolean;
-}
-// 取到传过来的值
-// 采用ts专有声明，有默认值
-const props = withDefaults(defineProps<Props>(), {
-  isCollapse: false,
+defineProps({
+  isCollapse: {
+    type: Boolean,
+    default: false,
+  },
 });
-// 采用ts专有声明，无默认值
-// defineProps<{
-//   isCollapse: boolean;
-// }>();
 
 const emit = defineEmits(["toggleCollapse"]);
 
@@ -37,8 +29,6 @@ const emit = defineEmits(["toggleCollapse"]);
 const toggleClick = () => {
   emit("toggleCollapse");
 };
-
-toRefs(props);
 </script>
 
 <style scoped>
