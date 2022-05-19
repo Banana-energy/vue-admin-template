@@ -29,7 +29,7 @@ service.interceptors.request.use(
   (config) => {
     start();
     const token = sessionStorage.getItem("Token");
-    if (token && config.headers && !(config as RequestConfig).notNeedToken) {
+    if (token && config.headers && !config.notNeedToken) {
       config.headers.satoken = token;
     }
     // 处理 get 请求的 data 参数
@@ -56,7 +56,7 @@ service.interceptors.response.use(
   (response: AxiosResponse<ResponseData>) => {
     done();
     const { data, config } = response;
-    if ((config as RequestConfig).dataNotIncludeCode) {
+    if (config.dataNotIncludeCode) {
       return data;
     }
     const { code } = data;
@@ -86,16 +86,6 @@ service.interceptors.response.use(
 //            ↓ 请求上层封装 ↓
 // -------------------------------------------------
 
-// 扩展 axios 请求配置
-type RequestConfig = AxiosRequestConfig & {
-  // 请求地址，不带 baseURL
-  url: string;
-  // 反回值是否没有 code 属性
-  dataNotIncludeCode?: boolean;
-  // 不要携带 token
-  notNeedToken?: boolean;
-};
-
 type Response<T = Record<string, never>> = {
   code: number;
   msg: string;
@@ -105,10 +95,10 @@ type Response<T = Record<string, never>> = {
 type ResponsePromise<T> = Promise<[Error, undefined] | [null, Response<T>]>;
 
 function _get<T = Record<string, never>>(
-  config: RequestConfig
+  config: AxiosRequestConfig
 ): ResponsePromise<T>;
 
-function _get(config: RequestConfig) {
+function _get(config: AxiosRequestConfig) {
   return to(
     service.request({
       method: "get",
@@ -118,10 +108,10 @@ function _get(config: RequestConfig) {
 }
 
 function _putJSON<T = Record<string, never>>(
-  config: RequestConfig
+  config: AxiosRequestConfig
 ): ResponsePromise<T>;
 
-function _putJSON(config: RequestConfig) {
+function _putJSON(config: AxiosRequestConfig) {
   return to(
     service.request({
       method: "put",
@@ -134,10 +124,10 @@ function _putJSON(config: RequestConfig) {
 }
 
 function _postJSON<T = Record<string, never>>(
-  config: RequestConfig
+  config: AxiosRequestConfig
 ): ResponsePromise<T>;
 
-function _postJSON(config: RequestConfig) {
+function _postJSON(config: AxiosRequestConfig) {
   return to(
     service.request({
       method: "post",
@@ -151,10 +141,10 @@ function _postJSON(config: RequestConfig) {
 
 // post formData
 function _postFormData<T = Record<string, never>>(
-  config: RequestConfig
+  config: AxiosRequestConfig
 ): ResponsePromise<T>;
 
-function _postFormData(config: RequestConfig) {
+function _postFormData(config: AxiosRequestConfig) {
   return to(
     service.request({
       method: "post",
@@ -168,9 +158,9 @@ function _postFormData(config: RequestConfig) {
 
 // post form
 function _postForm<T = Record<string, never>>(
-  config: RequestConfig
+  config: AxiosRequestConfig
 ): ResponsePromise<T>;
-function _postForm(config: RequestConfig) {
+function _postForm(config: AxiosRequestConfig) {
   return to(
     service.request({
       method: "post",

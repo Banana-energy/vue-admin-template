@@ -8,6 +8,9 @@ import { babel } from "@rollup/plugin-babel";
 
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => ({
+  server: {
+    host: "0.0.0.0",
+  },
   plugins: [
     mode === "production"
       ? ""

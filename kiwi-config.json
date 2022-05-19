@@ -1,10 +1,7 @@
 {
-  "kiwiDir": "./.kiwi",
-  "srcLang": "zh-CN",
-  "distLangs": [
-    "en-US",
-    "zh-TW"
-  ],
+  "kiwiDir": "./src/lang/translations",
+  "srcLang": "zh_CN",
+  "distLangs": ["en_US"],
   "googleApiKey": "",
   "baiduApiKey": {
     "appId": "",
