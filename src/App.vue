@@ -6,9 +6,9 @@
 </template>
 
 <script setup lang="ts">
-import { i18n, getMessage } from "./lang";
+import { i18n, getCurrentMessage } from "./lang";
 
-const language = getMessage();
+const language = getCurrentMessage();
 </script>
 
 <style></style>

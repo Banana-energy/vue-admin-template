@@ -54,7 +54,7 @@ export function getLanguage() {
   return "en_US";
 }
 
-export function getMessage() {
+export function getCurrentMessage() {
   return messages[getLanguage()];
 }
 
