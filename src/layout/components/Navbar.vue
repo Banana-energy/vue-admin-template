@@ -10,7 +10,6 @@
 <script setup lang="ts">
 import Hamburger from "@/components/Hamburger/index.vue";
 import { useSettingStore } from "@/store/modules/setting";
-import { storeToRefs } from "pinia";
 
 const store = useSettingStore();
 

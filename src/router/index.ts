@@ -111,7 +111,7 @@ router.beforeEach(async (to) => {
       }
     }
   } else {
-    const meta = to.meta;
+    const { meta } = to;
     if (meta.requiresAuth) {
       return `/login?redirect=${to.fullPath}`;
     }

@@ -1,5 +1,3 @@
-import { defineStore } from "pinia";
-
 interface ISetting {
   isCollapse: boolean;
 }
@@ -9,7 +7,7 @@ export const useSettingStore = defineStore("setting", {
     isCollapse: false,
   }),
   actions: {
-    async setCollapse() {
+    setCollapse() {
       this.isCollapse = !this.isCollapse;
     },
   },

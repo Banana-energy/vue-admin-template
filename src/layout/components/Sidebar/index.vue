@@ -27,10 +27,8 @@
 import SidebarItem from "./SidebarItem.vue";
 import Logo from "./Logo.vue";
 import variables from "@/styles/variables.module.scss";
-import { computed } from "vue";
-import { useRouter, useRoute, RouteRecordRaw } from "vue-router";
+import { RouteRecordRaw } from "vue-router";
 import { useSettingStore } from "@/store/modules/setting";
-import { storeToRefs } from "pinia";
 
 const router = useRouter();
 const route = useRoute();
