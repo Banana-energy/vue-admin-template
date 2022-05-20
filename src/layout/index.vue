@@ -18,11 +18,7 @@
 <script lang="ts" setup>
 import Navbar from "./components/Navbar.vue";
 import Sidebar from "./components/SideBar/index.vue";
-
-import { computed, onBeforeUnmount, ref } from "vue";
-import { useRoute } from "vue-router";
 import { useSettingStore } from "@/store/modules/setting";
-import { storeToRefs } from "pinia";
 
 const { isCollapse } = storeToRefs(useSettingStore());
 const route = useRoute();

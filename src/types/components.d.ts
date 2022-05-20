@@ -5,16 +5,15 @@ import "@vue/runtime-core";
 
 declare module "@vue/runtime-core" {
   export interface GlobalComponents {
-    Breadcrumb: typeof import("./src/components/Breadcrumb/index.vue")["default"];
+    Breadcrumb: typeof import("./../components/Breadcrumb/index.vue")["default"];
     ElConfigProvider: typeof import("element-plus/es")["ElConfigProvider"];
     ElIcon: typeof import("element-plus/es")["ElIcon"];
     ElMenu: typeof import("element-plus/es")["ElMenu"];
     ElMenuItem: typeof import("element-plus/es")["ElMenuItem"];
-    ElScroll: typeof import("element-plus/es")["ElScroll"];
     ElScrollbar: typeof import("element-plus/es")["ElScrollbar"];
     ElSubMenu: typeof import("element-plus/es")["ElSubMenu"];
-    Hamburger: typeof import("./src/components/Hamburger/index.vue")["default"];
-    Pagination: typeof import("./src/components/Pagination/index.vue")["default"];
+    Hamburger: typeof import("./../components/Hamburger/index.vue")["default"];
+    Pagination: typeof import("./../components/Pagination/index.vue")["default"];
     RouterLink: typeof import("vue-router")["RouterLink"];
     RouterView: typeof import("vue-router")["RouterView"];
   }

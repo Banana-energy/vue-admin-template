@@ -8,6 +8,7 @@ module.exports = {
     "@vue/eslint-config-typescript/recommended",
     "@vue/eslint-config-prettier",
     "plugin:vue/vue3-recommended",
+    "./.eslintrc-auto-import.json",
   ],
   env: {
     browser: true,
