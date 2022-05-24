@@ -24,7 +24,6 @@ export const constantRoutes: RouteRecordRaw[] = [
 
   {
     path: "/dashboard",
-    name: "Dashboard",
     component: Layout,
     meta: { title: "Dashboard", icon: "HomeFilled" },
     children: [
@@ -83,7 +82,7 @@ router.beforeEach(async (to) => {
   start();
   document.title =
     typeof to.meta.title === "string"
-      ? DEFAULT_DOCUMENT_TITLE + "-" + to.meta.title
+      ? to.meta.title + "-" + DEFAULT_DOCUMENT_TITLE
       : DEFAULT_DOCUMENT_TITLE;
   if (hasAuth()) {
     if (to.name === "Login") {

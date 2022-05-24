@@ -5,10 +5,12 @@
       class="hamburger-container"
       @toggle-collapse="toggleCollapse"
     />
+    <breadcrumb />
   </div>
 </template>
 <script setup lang="ts">
 import Hamburger from "@/components/Hamburger/index.vue";
+import Breadcrumb from "@/components/Breadcrumb/index.vue";
 import { useSettingStore } from "@/store/modules/setting";
 
 const store = useSettingStore();

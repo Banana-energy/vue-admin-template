@@ -14,8 +14,6 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, toRefs } from "vue";
-
 type pageInfo = {
   page: number;
   limit: number;
