@@ -1,9 +1,9 @@
-interface ISetting {
+interface IMenuState {
   isCollapse: boolean;
 }
 
-export const useSettingStore = defineStore("setting", {
-  state: (): ISetting => ({
+export const useMenuState = defineStore("MenuState", {
+  state: (): IMenuState => ({
     isCollapse: false,
   }),
   actions: {

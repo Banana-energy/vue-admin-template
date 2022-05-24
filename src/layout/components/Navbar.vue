@@ -9,9 +9,9 @@
 </template>
 <script setup lang="ts">
 import Hamburger from "@/components/Hamburger/index.vue";
-import { useSettingStore } from "@/store/modules/setting";
+import { useMenuState } from "@/store/modules/menu";
 
-const store = useSettingStore();
+const store = useMenuState();
 
 const { isCollapse } = storeToRefs(store);
 

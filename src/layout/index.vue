@@ -3,6 +3,7 @@
     <sidebar class="sidebar-container" />
     <div class="main-container">
       <navbar />
+      <tabs />
       <el-scrollbar :max-height="mainHeight">
         <section class="app-main">
           <router-view :key="key" v-slot="{ Component }">
@@ -18,9 +19,10 @@
 <script lang="ts" setup>
 import Navbar from "./components/Navbar.vue";
 import Sidebar from "./components/SideBar/index.vue";
-import { useSettingStore } from "@/store/modules/setting";
+import { useMenuState } from "@/store/modules/menu";
+import Tabs from "./components/Tabs/index.vue";
 
-const { isCollapse } = storeToRefs(useSettingStore());
+const { isCollapse } = storeToRefs(useMenuState());
 const route = useRoute();
 
 interface IClassObj {
