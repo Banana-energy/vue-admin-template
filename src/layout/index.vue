@@ -6,9 +6,9 @@
       <tabs />
       <el-scrollbar :max-height="mainHeight">
         <section class="app-main">
-          <router-view :key="key" v-slot="{ Component }">
+          <router-view v-slot="{ Component, route }">
             <transition name="fade-transform" mode="out-in">
-              <component :is="Component" />
+              <component :is="Component" :key="route.path" />
             </transition>
           </router-view>
         </section>
@@ -19,10 +19,10 @@
 <script lang="ts" setup>
 import Navbar from "./components/Navbar.vue";
 import Sidebar from "./components/SideBar/index.vue";
-import { useMenuState } from "@/store/modules/menu";
+import { useMenuStore } from "@/store/modules/menu";
 import Tabs from "./components/Tabs/index.vue";
 
-const { isCollapse } = storeToRefs(useMenuState());
+const { isCollapse } = storeToRefs(useMenuStore());
 const route = useRoute();
 
 interface IClassObj {
@@ -30,10 +30,6 @@ interface IClassObj {
   openSidebar: boolean;
   withoutAnimation: boolean;
 }
-
-const key = computed((): string => {
-  return route.path;
-});
 
 const classObj = computed((): IClassObj => {
   return {
@@ -44,10 +40,11 @@ const classObj = computed((): IClassObj => {
 });
 
 const useElScroll = () => {
-  const mainHeight = ref(document.documentElement.offsetHeight - 50);
+  // 50 = navbar height 40 = tabs height
+  const mainHeight = ref(document.documentElement.offsetHeight - 50 - 40);
 
   const getMainHeight = () => {
-    mainHeight.value = document.documentElement.offsetHeight - 50;
+    mainHeight.value = document.documentElement.offsetHeight - 50 - 40;
   };
 
   window.addEventListener("resize", getMainHeight);
@@ -77,20 +74,10 @@ const { mainHeight } = useElScroll();
 
 .app-main {
   /*50 = navbar  */
-  min-height: calc(100vh - 50px);
+  min-height: calc(100vh - 50px - 40px);
   padding: 16px;
   width: 100%;
   position: relative;
   overflow: hidden;
-}
-
-.fixed-header + .app-main {
-  padding-top: 50px;
-}
-
-:deep .el-popup-parent--hidden {
-  .fixed-header {
-    padding-right: 15px;
-  }
 }
 </style>

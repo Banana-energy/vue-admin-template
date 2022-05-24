@@ -25,9 +25,9 @@
 </template>
 
 <script setup lang="ts">
-import { useTabsState } from "@/store/modules/tabs";
+import { useTabsStore } from "@/store/modules/tabs";
 import { HOME_URL } from "@/config/config";
-const tabStore = useTabsState();
+const tabStore = useTabsStore();
 
 // Close Current
 const closeCurrentTab = () => {

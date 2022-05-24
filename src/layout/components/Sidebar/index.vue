@@ -28,12 +28,12 @@ import SidebarItem from "./SidebarItem.vue";
 import Logo from "./Logo.vue";
 import variables from "@/styles/variables.module.scss";
 import { RouteRecordRaw } from "vue-router";
-import { useMenuState } from "@/store/modules/menu";
+import { useMenuStore } from "@/store/modules/menu";
 
 const router = useRouter();
 const route = useRoute();
 
-const { isCollapse } = storeToRefs(useMenuState());
+const { isCollapse } = storeToRefs(useMenuStore());
 
 const activeMenu = computed((): string => {
   const { path } = route;

@@ -17,21 +17,20 @@
 </template>
 
 <script lang="ts" setup>
-import pathToRegexp from "path-to-regexp";
-import { watch, ref } from "vue";
-import { useRoute, useRouter, RouteLocationMatched } from "vue-router";
+import { compile } from "path-to-regexp";
+import { RouteLocationMatched } from "vue-router";
 
 const levelList = ref<RouteLocationMatched[]>([]);
 const route = useRoute();
 const router = useRouter();
 
-watch(
-  route,
-  () => {
-    getBreadcrumb();
-  },
-  { immediate: true }
-);
+const isDashboard = (route: RouteLocationMatched) => {
+  const name = route.name;
+  if (!name || typeof name === "symbol") {
+    return false;
+  }
+  return name.trim().toLocaleLowerCase() === "Dashboard".toLocaleLowerCase();
+};
 
 const getBreadcrumb = () => {
   let matched = route.matched.filter((item) => item.meta?.title);
@@ -45,17 +44,17 @@ const getBreadcrumb = () => {
   );
 };
 
-const isDashboard = (route: RouteLocationMatched) => {
-  const name = route.name;
-  if (!name || typeof name === "symbol") {
-    return false;
-  }
-  return name.trim().toLocaleLowerCase() === "Dashboard".toLocaleLowerCase();
-};
+watch(
+  route,
+  () => {
+    getBreadcrumb();
+  },
+  { immediate: true }
+);
 
 const pathCompile = (path: string) => {
   const { params } = route;
-  var toPath = pathToRegexp.compile(path);
+  const toPath = compile(path);
   return toPath(params);
 };
 

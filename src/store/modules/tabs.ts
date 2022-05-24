@@ -1,36 +1,39 @@
-import { RouteRecordRaw } from "vue-router";
 import { HOME_URL, TABS_BLACK_LIST } from "@/config/config";
-import router from "@/router/index";
-import { TabPaneProps } from "element-plus";
+import router from "@/router";
+import { TabPanelName, TabPaneProps } from "element-plus";
 
-// layout
-import Layout from "@/layout/index.vue";
-
-interface ITabsState {
-  tabsMenuValue: string;
-  tabsMenuList: RouteRecordRaw[];
+interface MenuOptions {
+  path: string;
+  title?: string;
+  icon?: string;
+  isLink?: string;
+  close?: boolean;
+  children?: MenuOptions[];
 }
 
-export const useTabsState = defineStore("useTabsState", {
-  state: (): ITabsState => ({
+interface TabsState {
+  tabsMenuValue: string;
+  tabsMenuList: MenuOptions[];
+}
+
+export const useTabsStore = defineStore({
+  id: "TabsState",
+  state: (): TabsState => ({
     tabsMenuValue: HOME_URL,
     tabsMenuList: [
-      {
-        path: "/dashboard",
-        component: Layout,
-        meta: { title: "Dashboard", icon: "HomeFilled" },
-      },
+      { title: "首页", path: HOME_URL, icon: "home-filled", close: false },
     ],
   }),
+  getters: {},
   actions: {
     // Add Tabs
-    async addTabs(tabItem: RouteRecordRaw) {
+    async addTabs(tabItem: MenuOptions) {
       // not add tabs black list
       if (TABS_BLACK_LIST.includes(tabItem.path)) return;
-      const tabInfo: RouteRecordRaw = {
+      const tabInfo: MenuOptions = {
+        title: tabItem.title,
         path: tabItem.path,
-        meta: { title: tabItem.meta?.title },
-        component: Layout,
+        close: tabItem.close,
       };
       if (this.tabsMenuList.every((item) => item.path !== tabItem.path)) {
         this.tabsMenuList.push(tabInfo);
@@ -39,7 +42,7 @@ export const useTabsState = defineStore("useTabsState", {
       router.push(tabItem.path);
     },
     // Remove Tabs
-    async removeTabs(tabPath: string) {
+    async removeTabs(tabPath: TabPanelName) {
       let tabsMenuValue = this.tabsMenuValue;
       const tabsMenuList = this.tabsMenuList;
       if (tabsMenuValue === tabPath) {
@@ -57,7 +60,7 @@ export const useTabsState = defineStore("useTabsState", {
     // Change Tabs
     async changeTabs(tabItem: TabPaneProps) {
       this.tabsMenuList.forEach((item) => {
-        if (item.meta?.title === tabItem.label) router.push(item.path);
+        if (item.title === tabItem.label) router.push(item.path);
       });
     },
     // Set TabsMenuValue
@@ -65,7 +68,7 @@ export const useTabsState = defineStore("useTabsState", {
       this.tabsMenuValue = tabsMenuValue;
     },
     // Set TabsMenuList
-    async setTabsMenuList(tabsMenuList: RouteRecordRaw[]) {
+    async setTabsMenuList(tabsMenuList: MenuOptions[]) {
       this.tabsMenuList = tabsMenuList;
     },
     // Close MultipleTab
