@@ -3,7 +3,7 @@ interface Env {
 }
 
 const env: Env = {
-  baseUrl: import.meta.env.DEV ? "/app" : "",
+  baseUrl: import.meta.env.DEV ? "https://mirmiles.usemock.com" : "",
 };
 
 export default env;

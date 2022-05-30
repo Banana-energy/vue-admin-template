@@ -16,6 +16,7 @@
     </div>
   </div>
 </template>
+
 <script lang="ts" setup>
 import Navbar from "./components/Navbar.vue";
 import Sidebar from "./components/SideBar/index.vue";
@@ -23,7 +24,6 @@ import { useMenuStore } from "@/store/modules/menu";
 import Tabs from "./components/Tabs/index.vue";
 
 const { isCollapse } = storeToRefs(useMenuStore());
-const route = useRoute();
 
 interface IClassObj {
   hideSidebar: boolean;

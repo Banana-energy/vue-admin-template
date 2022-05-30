@@ -4,7 +4,7 @@
       v-if="
         item.children && item.children.length > 0 && item.children.length !== 1
       "
-      :index="item.path"
+      :index="item.meta?.activeMenu || item.path"
     >
       <template #title>
         <el-icon>
@@ -18,7 +18,7 @@
         :item="child"
       />
     </el-sub-menu>
-    <el-menu-item v-else :index="item.path">
+    <el-menu-item v-else :index="item.meta?.activeMenu || item.path">
       <el-icon>
         <component :is="item.meta?.icon" />
       </el-icon>

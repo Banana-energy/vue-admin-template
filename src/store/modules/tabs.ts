@@ -21,7 +21,7 @@ export const useTabsStore = defineStore({
   state: (): TabsState => ({
     tabsMenuValue: HOME_URL,
     tabsMenuList: [
-      { title: "首页", path: HOME_URL, icon: "home-filled", close: false },
+      { title: "Dashboard", path: HOME_URL, icon: "home-filled", close: false },
     ],
   }),
   getters: {},

@@ -46,7 +46,7 @@ service.interceptors.request.use(
 );
 
 interface ResponseData {
-  code?: string | null;
+  code?: number | null;
   data?: unknown;
   msg?: string | null;
   traceId?: string | null;
@@ -60,12 +60,12 @@ service.interceptors.response.use(
       return data;
     }
     const { code } = data;
-    if (code !== "200") {
+    if (code !== 200) {
       const msg = data.msg || TIP_MESSAGE.ServerError;
       handleError(msg);
-      if (code === "token.error") {
+      if (code === 401) {
         const userStore = useUserStore();
-        userStore.resetToken();
+        userStore.resetState();
         location.reload();
       }
       return Promise.reject(new Error(msg));

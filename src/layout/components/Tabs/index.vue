@@ -89,7 +89,7 @@ $bg-color: #409eff;
     }
     .el-tabs--card > .el-tabs__header {
       height: 40px;
-      padding: 0 10px;
+      padding: 0;
       box-sizing: border-box;
       margin: 0;
     }

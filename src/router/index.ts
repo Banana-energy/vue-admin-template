@@ -3,10 +3,11 @@ import { start, done } from "@/utils/nprogress";
 import { ElMessage } from "element-plus";
 import { useUserStore } from "@/store/modules/user";
 
-const DEFAULT_DOCUMENT_TITLE = "美迈后台管理平台";
+const DEFAULT_DOCUMENT_TITLE = "Vue-Admin-Template";
 
 // layout
 import Layout from "@/layout/index.vue";
+import { getToken } from "@/utils/auth";
 
 export const constantRoutes: RouteRecordRaw[] = [
   {
@@ -18,20 +19,15 @@ export const constantRoutes: RouteRecordRaw[] = [
 
   {
     path: "/",
-    redirect: "/dashboard",
-    meta: { hidden: true },
-  },
-
-  {
-    path: "/dashboard",
     component: Layout,
-    meta: { title: "Dashboard", icon: "HomeFilled" },
+    meta: { title: "Dashboard", icon: "HomeFilled", activeMenu: "/dashboard" },
+    redirect: "/dashboard",
     children: [
       {
         path: "/dashboard",
         name: "Dashboard",
         component: () => import("@/views/dashboard/index.vue"),
-        meta: { title: "Dashboard" },
+        meta: { requiresAuth: true },
       },
     ],
   },
@@ -76,35 +72,32 @@ const router = createRouter({
   routes: constantRoutes,
 });
 
-const hasAuth = () => false;
-
 router.beforeEach(async (to) => {
   start();
   document.title =
     typeof to.meta.title === "string"
       ? to.meta.title + "-" + DEFAULT_DOCUMENT_TITLE
       : DEFAULT_DOCUMENT_TITLE;
-  if (hasAuth()) {
+  const hasAuth = getToken();
+  if (hasAuth) {
     if (to.name === "Login") {
-      done();
-      return "/index";
+      return "/";
     } else {
       const store = useUserStore();
-      const hasGetUserInfo = store.name;
+      const hasGetUserInfo = store.roles?.length;
       if (hasGetUserInfo) {
         return true;
       } else {
-        try {
-          // get user info
-          await store.getUserInfo();
+        // get user info
+        const roles = await store.getUserInfo();
+        if (roles) {
           return true;
-        } catch (error) {
+        } else {
           // remove token and go to login page to re-login
-          await store.resetToken();
+          store.resetState();
           ElMessage.error({
             message: "Has Error",
           });
-          done();
           return `/login?redirect=${to.fullPath}`;
         }
       }

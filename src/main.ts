@@ -5,6 +5,7 @@ import router from "@/router";
 import App from "./App.vue";
 import * as ElementPlusIconsVue from "@element-plus/icons-vue";
 import "@/styles/index.scss";
+import "element-plus/es/components/message/style/index";
 
 const app = createApp(App);
 for (const [key, component] of Object.entries(ElementPlusIconsVue)) {

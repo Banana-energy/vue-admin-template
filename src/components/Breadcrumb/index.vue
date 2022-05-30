@@ -25,7 +25,7 @@ const route = useRoute();
 const router = useRouter();
 
 const isDashboard = (route: RouteLocationMatched) => {
-  const name = route.name;
+  const name = route?.name;
   if (!name || typeof name === "symbol") {
     return false;
   }
