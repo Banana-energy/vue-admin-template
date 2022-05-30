@@ -23,7 +23,7 @@ type Messages = {
   [key in keyof KiwiLang]: KiwiValues;
 };
 
-const messages: KiwiLang = {
+export const messages: KiwiLang = {
   zh_CN: {
     ...zhLocale,
     ...zhCn,
@@ -51,12 +51,7 @@ export function getLanguage() {
     }
   }
   document.documentElement.lang = "en_US";
-  i18n.setLang && i18n.setLang("en_US");
   return "en_US";
-}
-
-export function getCurrentMessage() {
-  return messages[getLanguage()];
 }
 
 export const i18n = KiwiIntl.init(

@@ -1,13 +1,17 @@
 <template>
-  <el-config-provider :locale="language">
+  <el-config-provider :locale="languages">
     <router-view />
   </el-config-provider>
 </template>
 
 <script setup lang="ts">
-import { getCurrentMessage } from "./lang";
+import { useLanguageStore } from "./store/modules/lang";
+import { messages } from "@/lang";
 
-const language = getCurrentMessage();
+const { language } = storeToRefs(useLanguageStore());
+const languages = computed(() => {
+  return messages[language.value];
+});
 </script>
 
 <style></style>
