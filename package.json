@@ -13,7 +13,7 @@
     "@element-plus/icons-vue": "^1.1.4",
     "await-to-js": "^3.0.0",
     "axios": "^0.27.2",
-    "element-plus": "^2.2.0",
+    "element-plus": "^2.2.2",
     "js-cookie": "^3.0.1",
     "kiwi-intl": "^1.2.6",
     "nprogress": "^0.2.0",
