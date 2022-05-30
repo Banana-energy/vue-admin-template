@@ -5,6 +5,8 @@ import AutoImport from "unplugin-auto-import/vite";
 import Components from "unplugin-vue-components/vite";
 import { ElementPlusResolver } from "unplugin-vue-components/resolvers";
 import { babel } from "@rollup/plugin-babel";
+import Icons from "unplugin-icons/vite";
+import IconsResolver from "unplugin-icons/resolver";
 
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => ({
@@ -30,9 +32,12 @@ export default defineConfig(({ mode }) => ({
     }),
     Components({
       dts: "src/types/components.d.ts",
-      resolvers: [ElementPlusResolver()],
+      resolvers: [ElementPlusResolver(), IconsResolver()],
     }),
     Vue(),
+    Icons({
+      autoInstall: true,
+    }),
   ],
   resolve: {
     alias: {

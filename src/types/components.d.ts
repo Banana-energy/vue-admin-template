@@ -9,8 +9,12 @@ declare module "@vue/runtime-core" {
     ElBreadcrumb: typeof import("element-plus/es")["ElBreadcrumb"];
     ElBreadcrumbItem: typeof import("element-plus/es")["ElBreadcrumbItem"];
     ElButton: typeof import("element-plus/es")["ElButton"];
-    ElCard: typeof import("element-plus/es")["ElCard"];
     ElConfigProvider: typeof import("element-plus/es")["ElConfigProvider"];
+    ElDate: typeof import("element-plus/es")["ElDate"];
+    ElDatePicker: typeof import("element-plus/es")["ElDatePicker"];
+    ElDropdown: typeof import("element-plus/es")["ElDropdown"];
+    ElDropdownItem: typeof import("element-plus/es")["ElDropdownItem"];
+    ElDropdownMenu: typeof import("element-plus/es")["ElDropdownMenu"];
     ElForm: typeof import("element-plus/es")["ElForm"];
     ElFormItem: typeof import("element-plus/es")["ElFormItem"];
     ElIcon: typeof import("element-plus/es")["ElIcon"];
@@ -24,6 +28,10 @@ declare module "@vue/runtime-core" {
     ElTabPane: typeof import("element-plus/es")["ElTabPane"];
     ElTabs: typeof import("element-plus/es")["ElTabs"];
     Hamburger: typeof import("./../components/Hamburger/index.vue")["default"];
+    ICarbonAccessibility: typeof import("~icons/carbon/accessibility")["default"];
+    ICiLanguage: typeof import("~icons/ci/language")["default"];
+    ICilLanguage: typeof import("~icons/cil/language")["default"];
+    LangSelect: typeof import("./../components/LangSelect/index.vue")["default"];
     Pagination: typeof import("./../components/Pagination/index.vue")["default"];
     RouterLink: typeof import("vue-router")["RouterLink"];
     RouterView: typeof import("vue-router")["RouterView"];

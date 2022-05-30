@@ -6,6 +6,33 @@
       @toggle-collapse="toggleCollapse"
     />
     <breadcrumb />
+    <div class="right-menu">
+      <lang-select />
+      <el-dropdown class="avatar-container" trigger="click">
+        <div class="avatar-wrapper">
+          <img
+            src="http://admin.spicyboy.cn/assets/gif/avatar-ea67286d.gif"
+            class="user-avatar"
+          />
+        </div>
+        <template #dropdown>
+          <el-dropdown-menu class="user-dropdown">
+            <router-link to="/">
+              <el-dropdown-item> Home </el-dropdown-item>
+            </router-link>
+            <a
+              target="_blank"
+              href="https://github.com/Banana-energy/vue-admin-template"
+            >
+              <el-dropdown-item>Github</el-dropdown-item>
+            </a>
+            <el-dropdown-item divided>
+              <span style="display: block">Log Out</span>
+            </el-dropdown-item>
+          </el-dropdown-menu>
+        </template>
+      </el-dropdown>
+    </div>
   </div>
 </template>
 <script setup lang="ts">
@@ -44,6 +71,8 @@ const toggleCollapse = (): void => {
   }
   .right-menu {
     float: right;
+    display: flex;
+    align-items: center;
     height: 100%;
     line-height: 50px;
     &:focus {
@@ -73,7 +102,7 @@ const toggleCollapse = (): void => {
           cursor: pointer;
           width: 40px;
           height: 40px;
-          border-radius: 10px;
+          border-radius: 50%;
         }
         .el-icon-caret-bottom {
           cursor: pointer;

@@ -26,7 +26,7 @@ interface Props {
 const props = withDefaults(defineProps<Props>(), {
   isCollapse: false,
 });
-const title = ref<string>("美迈科技后台管理系统");
+const title = ref<string>("Vue-Admin-Template");
 const logo = ref<string>(
   "https://wpimg.wallstcn.com/69a1c46c-eb1c-4b46-8bd4-e9e686ef5251.png"
 );

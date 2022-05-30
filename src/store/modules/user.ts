@@ -13,7 +13,7 @@ const getDefaultState = (): UserState => ({
   roles: [],
 });
 
-export const useUserStore = defineStore("user", {
+export const useUserStore = defineStore("userStore", {
   state: getDefaultState,
   actions: {
     async login(userInfo: IReqLogin) {

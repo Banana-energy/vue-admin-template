@@ -1,0 +1,30 @@
+<template>
+  <el-dropdown @command="handleSetLanguage">
+    <i-cil-language style="color: #000000bf" class="text-xl mr-4" />
+    <template #dropdown>
+      <el-dropdown-menu>
+        <el-dropdown-item :disabled="language === 'zh_CN'" command="zh_CN">
+          中文
+        </el-dropdown-item>
+        <el-dropdown-item :disabled="language === 'en_US'" command="en_US">
+          English
+        </el-dropdown-item>
+      </el-dropdown-menu>
+    </template>
+  </el-dropdown>
+</template>
+
+<script setup lang="ts">
+import { useLanguageStore } from "@/store/modules/lang";
+import { i18n } from "@/lang";
+const store = useLanguageStore();
+const language = computed(() => {
+  return store.language;
+});
+const handleSetLanguage = (lang: string) => {
+  i18n.setLang && i18n.setLang("zh_CN");
+  store.setLanguage(lang);
+};
+</script>
+
+<style scoped></style>

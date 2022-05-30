@@ -51,6 +51,7 @@ export function getLanguage() {
     }
   }
   document.documentElement.lang = "en_US";
+  i18n.setLang && i18n.setLang("en_US");
   return "en_US";
 }
 

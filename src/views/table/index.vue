@@ -3,6 +3,14 @@
     <el-form-item label="Approved by">
       <el-input v-model="formInline.user" placeholder="Approved by" />
     </el-form-item>
+    <el-form-item label="Approved Time">
+      <el-date-picker
+        v-model="formInline.time"
+        type="datetimerange"
+        start-placeholder="Start Date"
+        end-placeholder="End Date"
+      />
+    </el-form-item>
     <el-form-item label="Activity zone">
       <el-select v-model="formInline.region" placeholder="Activity zone">
         <el-option label="Zone one" value="shanghai" />
@@ -18,6 +26,7 @@
 const formInline = reactive({
   user: "",
   region: "",
+  time: "",
 });
 
 const onSubmit = () => {

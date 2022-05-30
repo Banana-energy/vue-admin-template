@@ -16,8 +16,7 @@ interface TabsState {
   tabsMenuList: MenuOptions[];
 }
 
-export const useTabsStore = defineStore({
-  id: "TabsState",
+export const useTabsStore = defineStore("TabsStore", {
   state: (): TabsState => ({
     tabsMenuValue: HOME_URL,
     tabsMenuList: [
