@@ -28,7 +28,7 @@
     </el-menu-item>
   </div>
 </template>
-<script setup lang="ts">
+<script setup lang="ts" name="SidebarItem">
 import { RouteRecordRaw } from "vue-router";
 
 // 取到传过来的值

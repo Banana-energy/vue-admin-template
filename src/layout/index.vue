@@ -17,7 +17,7 @@
   </div>
 </template>
 
-<script lang="ts" setup>
+<script lang="ts" setup name="Layout">
 import Navbar from "./components/Navbar.vue";
 import Sidebar from "./components/SideBar/index.vue";
 import { useMenuStore } from "@/store/modules/menu";

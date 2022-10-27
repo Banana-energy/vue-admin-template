@@ -28,7 +28,7 @@
   </div>
 </template>
 
-<script lang="ts" setup>
+<script lang="ts" setup name="Tabs">
 import { useTabsStore } from "@/store/modules/tabs";
 import { TabsPaneContext, TabPanelName } from "element-plus";
 

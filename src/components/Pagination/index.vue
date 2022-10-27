@@ -13,7 +13,7 @@
   </div>
 </template>
 
-<script lang="ts" setup>
+<script lang="ts" setup name="Pagination">
 type pageInfo = {
   page: number;
   limit: number;

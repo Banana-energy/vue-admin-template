@@ -35,7 +35,7 @@
     </div>
   </div>
 </template>
-<script setup lang="ts">
+<script setup lang="ts" name="Navbar">
 import Hamburger from "@/components/Hamburger/index.vue";
 import { useMenuStore } from "@/store/modules/menu";
 import Breadcrumb from "@/components/Breadcrumb/index.vue";

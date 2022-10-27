@@ -4,6 +4,7 @@ import Vue from "@vitejs/plugin-vue";
 import AutoImport from "unplugin-auto-import/vite";
 import Components from "unplugin-vue-components/vite";
 import { ElementPlusResolver } from "unplugin-vue-components/resolvers";
+import VueSetupExtend from "vite-plugin-vue-setup-extend";
 import { babel } from "@rollup/plugin-babel";
 import Icons from "unplugin-icons/vite";
 import IconsResolver from "unplugin-icons/resolver";
@@ -35,6 +36,7 @@ export default defineConfig(({ mode }) => ({
       resolvers: [ElementPlusResolver(), IconsResolver()],
     }),
     Vue(),
+    VueSetupExtend(),
     Icons({
       autoInstall: true,
     }),

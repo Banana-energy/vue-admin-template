@@ -16,7 +16,7 @@
   </el-breadcrumb>
 </template>
 
-<script lang="ts" setup>
+<script lang="ts" setup name="Breadcrumb">
 import { compile } from "path-to-regexp";
 import { RouteLocationMatched } from "vue-router";
 

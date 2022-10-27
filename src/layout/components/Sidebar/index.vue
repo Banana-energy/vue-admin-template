@@ -23,7 +23,7 @@
     </el-scrollbar>
   </div>
 </template>
-<script setup lang="ts">
+<script setup lang="ts" name="Sidebar">
 import SidebarItem from "./SidebarItem.vue";
 import Logo from "./Logo.vue";
 import variables from "@/styles/variables.module.scss";

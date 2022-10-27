@@ -17,7 +17,7 @@
     </transition>
   </div>
 </template>
-<script setup lang="ts">
+<script setup lang="ts" name="Logo">
 interface Props {
   isCollapse: boolean;
 }

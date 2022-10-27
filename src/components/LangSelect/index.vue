@@ -14,7 +14,7 @@
   </el-dropdown>
 </template>
 
-<script setup lang="ts">
+<script setup lang="ts" name="LangSelect">
 import { useLanguageStore } from "@/store/modules/lang";
 import { i18n } from "@/lang";
 

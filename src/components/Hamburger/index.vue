@@ -15,7 +15,7 @@
   </div>
 </template>
 
-<script setup lang="ts">
+<script setup lang="ts" name="Hamburger">
 defineProps({
   isCollapse: {
     type: Boolean,
