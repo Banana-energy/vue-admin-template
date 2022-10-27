@@ -1,5 +1,8 @@
 <template>
-  <div class="sidebar-logo-container" :class="{ collapse: props.isCollapse }">
+  <div
+    class="sidebar-logo-container"
+    :class="{ 'sidebar-collapse': props.isCollapse }"
+  >
     <transition name="sidebarLogoFade">
       <router-link
         v-if="props.isCollapse"
@@ -76,7 +79,7 @@ const logo = ref<string>(
     }
   }
 
-  &.collapse {
+  &.sidebar-collapse {
     .sidebar-logo {
       margin-right: 0px;
     }

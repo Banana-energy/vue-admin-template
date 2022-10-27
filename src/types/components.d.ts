@@ -17,8 +17,6 @@ declare module "@vue/runtime-core" {
     ElMenuItem: typeof import("element-plus/es")["ElMenuItem"];
     ElScrollbar: typeof import("element-plus/es")["ElScrollbar"];
     ElSubMenu: typeof import("element-plus/es")["ElSubMenu"];
-    ElTabPane: typeof import("element-plus/es")["ElTabPane"];
-    ElTabs: typeof import("element-plus/es")["ElTabs"];
     Hamburger: typeof import("./../components/Hamburger/index.vue")["default"];
     ICilLanguage: typeof import("~icons/cil/language")["default"];
     LangSelect: typeof import("./../components/LangSelect/index.vue")["default"];
