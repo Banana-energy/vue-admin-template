@@ -3,7 +3,6 @@
     <sidebar class="sidebar-container" />
     <div class="main-container">
       <navbar />
-      <tabs />
       <el-scrollbar :max-height="mainHeight">
         <section class="app-main">
           <router-view v-slot="{ Component, route }">
@@ -21,7 +20,6 @@
 import Navbar from "./components/Navbar.vue";
 import Sidebar from "./components/SideBar/index.vue";
 import { useMenuStore } from "@/store/modules/menu";
-import Tabs from "./components/Tabs/index.vue";
 
 const { isCollapse } = storeToRefs(useMenuStore());
 
@@ -74,7 +72,7 @@ const { mainHeight } = useElScroll();
 
 .app-main {
   /*50 = navbar  */
-  min-height: calc(100vh - 50px - 40px);
+  min-height: calc(100vh - 50px);
   padding: 16px;
   width: 100%;
   position: relative;

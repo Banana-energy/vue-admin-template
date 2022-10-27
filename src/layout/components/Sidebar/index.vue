@@ -40,7 +40,7 @@ const activeMenu = computed((): string => {
   return path;
 });
 
-const routes = computed((): RouteRecordRaw[] => {
+const routes = computed((): readonly RouteRecordRaw[] => {
   return router.options.routes;
 });
 </script>
