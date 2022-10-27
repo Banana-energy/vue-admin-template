@@ -31,6 +31,7 @@
 <script lang="ts" setup>
 import { useTabsStore } from "@/store/modules/tabs";
 import { TabsPaneContext, TabPanelName } from "element-plus";
+
 const tabStore = useTabsStore();
 const tabsMenuList = computed(() => tabStore.tabsMenuList);
 const tabsMenuValue = computed({
@@ -75,31 +76,38 @@ $bg-color: #409eff;
   :deep(.tabs-menu) {
     width: 100%;
     position: relative;
+
     .el-dropdown {
       position: absolute;
       right: 13px;
       top: 8px;
     }
+
     .tabs-icon {
       top: 2px;
     }
+
     .el-tabs__nav-wrap {
       position: absolute;
       width: calc(100% - 120px);
     }
+
     .el-tabs--card > .el-tabs__header {
       height: 40px;
       padding: 0;
       box-sizing: border-box;
       margin: 0;
     }
+
     .el-tabs--card > .el-tabs__header .el-tabs__nav {
       border: none;
     }
+
     .el-tabs--card > .el-tabs__header .el-tabs__item {
       color: #ccc;
       border: none;
     }
+
     .el-tabs--card > .el-tabs__header .el-tabs__item.is-active {
       color: $bg-color;
       border-bottom: 2px solid $bg-color;

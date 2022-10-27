@@ -16,7 +16,7 @@ type KiwiValues = {
 } & typeof zhCn;
 
 type Language = {
-  [key: string]: string | Language | string[];
+  [key: string]: string | Language;
 };
 
 type Messages = {

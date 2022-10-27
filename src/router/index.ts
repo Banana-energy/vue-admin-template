@@ -33,6 +33,28 @@ export const constantRoutes: RouteRecordRaw[] = [
   },
 
   {
+    path: "/system",
+    component: Layout,
+    name: "System",
+    redirect: "/system/roles",
+    meta: { title: "System", icon: "Setting" },
+    children: [
+      {
+        path: "/system/roles",
+        name: "Roles",
+        meta: { title: "Roles", icon: "Avatar" },
+        component: () => import("@/views/system/roles.vue"),
+      },
+      {
+        path: "/system/user",
+        name: "User",
+        meta: { title: "User", icon: "UserFilled" },
+        component: () => import("@/views/system/roles.vue"),
+      },
+    ],
+  },
+
+  {
     path: "/example",
     component: Layout,
     redirect: "/example/table",
@@ -98,6 +120,7 @@ router.beforeEach(async (to) => {
           ElMessage.error({
             message: "Has Error",
           });
+          done();
           return `/login?redirect=${to.fullPath}`;
         }
       }
@@ -105,6 +128,7 @@ router.beforeEach(async (to) => {
   } else {
     const { meta } = to;
     if (meta.requiresAuth) {
+      done();
       return `/login?redirect=${to.fullPath}`;
     }
     return true;

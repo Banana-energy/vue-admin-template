@@ -45,6 +45,7 @@
 import { FormInstance, FormRules } from "element-plus";
 import { Avatar, Lock } from "@element-plus/icons-vue";
 import { useUserStore } from "@/store/modules/user";
+
 const route = useRoute();
 const router = useRouter();
 
@@ -119,6 +120,7 @@ const { rules, loading, loginForm, loginFormRef, handleLogin } = useLogin();
   caret-color: #fff;
   box-shadow: none !important;
 }
+
 :deep .el-input__inner {
   color: #fff;
 }

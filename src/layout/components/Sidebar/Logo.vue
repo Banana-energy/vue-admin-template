@@ -21,6 +21,7 @@
 interface Props {
   isCollapse: boolean;
 }
+
 // 取到传过来的值
 // 采用ts专有声明，有默认值
 const props = withDefaults(defineProps<Props>(), {

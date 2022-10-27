@@ -3,7 +3,9 @@
     <el-button size="small" type="primary">
       <!-- <span>{{ $t("tabs.more") }}</span> -->
       <span>更多</span>
-      <el-icon class="el-icon--right"><arrow-down /></el-icon>
+      <el-icon class="el-icon--right">
+        <arrow-down />
+      </el-icon>
     </el-button>
     <template #dropdown>
       <el-dropdown-menu>
@@ -27,6 +29,7 @@
 <script setup lang="ts">
 import { useTabsStore } from "@/store/modules/tabs";
 import { HOME_URL } from "@/config/config";
+
 const tabStore = useTabsStore();
 
 // Close Current

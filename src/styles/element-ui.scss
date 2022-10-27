@@ -1,5 +1,9 @@
 // cover some element-ui styles
 
+#app .el-range-editor.el-input__inner {
+  padding: 0 10px;
+}
+
 .el-breadcrumb__inner,
 .el-breadcrumb__inner a {
   font-weight: 400 !important;

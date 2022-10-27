@@ -17,13 +17,15 @@
 <script setup lang="ts">
 import { useLanguageStore } from "@/store/modules/lang";
 import { i18n } from "@/lang";
+
 const store = useLanguageStore();
 const language = computed(() => {
   return store.language;
 });
 const handleSetLanguage = (lang: string) => {
-  i18n.setLang && i18n.setLang("zh_CN");
+  i18n.setLang?.(lang);
   store.setLanguage(lang);
+  location.reload();
 };
 </script>
 
