@@ -78,9 +78,9 @@ export const constantRoutes: RouteRecordRaw[] = [
   {
     path: "/:pathMatch(.*)*",
     name: "NotFound",
-    component: () => import("@/views/login/index.vue"),
+    component: () => import("@/components/NotFound/index.vue"),
     meta: {
-      title: "登录",
+      title: "404",
       showMenu: false,
       hidden: true,
       notRequiredAuth: true,

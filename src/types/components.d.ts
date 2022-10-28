@@ -28,6 +28,7 @@ declare module "@vue/runtime-core" {
     Hamburger: typeof import("./../components/Hamburger/index.vue")["default"];
     ICilLanguage: typeof import("~icons/cil/language")["default"];
     LangSelect: typeof import("./../components/LangSelect/index.vue")["default"];
+    NotFound: typeof import("./../components/NotFound/index.vue")["default"];
     Pagination: typeof import("./../components/Pagination/index.vue")["default"];
     RouterLink: typeof import("vue-router")["RouterLink"];
     RouterView: typeof import("vue-router")["RouterView"];
