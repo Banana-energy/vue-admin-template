@@ -1,9 +1,9 @@
 <template>
   <div :class="classObj" class="app-wrapper">
     <sidebar class="sidebar-container" />
-    <div class="main-container">
+    <div class="main-container flex flex-col">
       <navbar />
-      <el-scrollbar :max-height="mainHeight">
+      <el-scrollbar class="flex-1">
         <section class="app-main">
           <router-view v-slot="{ Component, route }">
             <transition name="fade-transform" mode="out-in">
@@ -24,39 +24,16 @@ import { useMenuStore } from "@/store/modules/menu";
 const { isCollapse } = storeToRefs(useMenuStore());
 
 interface IClassObj {
-  hideSidebar: boolean;
-  openSidebar: boolean;
+  "hide-sidebar": boolean;
   withoutAnimation: boolean;
 }
 
 const classObj = computed((): IClassObj => {
   return {
-    hideSidebar: isCollapse.value,
-    openSidebar: !isCollapse.value,
+    "hide-sidebar": isCollapse.value,
     withoutAnimation: false,
   };
 });
-
-const useElScroll = () => {
-  // 50 = navbar height 40 = tabs height
-  const mainHeight = ref(document.documentElement.offsetHeight - 50 - 40);
-
-  const getMainHeight = () => {
-    mainHeight.value = document.documentElement.offsetHeight - 50 - 40;
-  };
-
-  window.addEventListener("resize", getMainHeight);
-
-  onBeforeUnmount(() => {
-    window.removeEventListener("resize", getMainHeight);
-  });
-
-  return {
-    mainHeight,
-  };
-};
-
-const { mainHeight } = useElScroll();
 </script>
 
 <style scoped lang="scss">

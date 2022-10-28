@@ -41,15 +41,14 @@
   </div>
 </template>
 
-<script lang="ts" setup>
+<script lang="ts" setup name="Login">
 import { FormInstance, FormRules } from "element-plus";
 import { Avatar, Lock } from "@element-plus/icons-vue";
 import { useUserStore } from "@/store/modules/user";
 
-const route = useRoute();
-const router = useRouter();
-
 const useLogin = () => {
+  const route = useRoute();
+  const router = useRouter();
   const loginFormRef = ref<FormInstance>();
   const loading = ref(false);
   const redirect = ref<string | null>(null);

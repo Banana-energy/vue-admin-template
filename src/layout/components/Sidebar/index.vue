@@ -1,7 +1,7 @@
 <template>
-  <div class="has-logo">
+  <div class="has-logo flex flex-col">
     <logo :is-collapse="isCollapse" />
-    <el-scrollbar wrap-class="scrollbar-wrapper">
+    <el-scrollbar class="flex-1" wrap-class="scrollbar-wrapper">
       <el-menu
         :background-color="variables.menuBg"
         :text-color="variables.menuText"

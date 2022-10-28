@@ -18,7 +18,7 @@
         <template #dropdown>
           <el-dropdown-menu class="user-dropdown">
             <router-link to="/">
-              <el-dropdown-item> Home</el-dropdown-item>
+              <el-dropdown-item>Home</el-dropdown-item>
             </router-link>
             <a
               target="_blank"

@@ -19,9 +19,7 @@ import { useLanguageStore } from "@/store/modules/lang";
 import { i18n } from "@/lang";
 
 const store = useLanguageStore();
-const language = computed(() => {
-  return store.language;
-});
+const language = computed(() => store.language);
 const handleSetLanguage = (lang: string) => {
   i18n.setLang?.(lang);
   store.setLanguage(lang);

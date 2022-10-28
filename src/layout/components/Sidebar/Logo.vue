@@ -48,16 +48,14 @@ const logo = ref<string>(
 .sidebar-logo-container {
   position: relative;
   width: 100%;
-  height: 50px;
-  line-height: 50px;
+  min-height: 50px;
   background: #2b2f3a;
   text-align: center;
   overflow: hidden;
 
   & .sidebar-logo-link {
     height: 100%;
-    width: 100%;
-    display: flex;
+    line-height: 50px;
 
     & .sidebar-logo {
       display: inline-block;
