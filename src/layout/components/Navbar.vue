@@ -27,7 +27,7 @@
               <el-dropdown-item>Github</el-dropdown-item>
             </a>
             <el-dropdown-item divided>
-              <span style="display: block">Log Out</span>
+              <span class="block" @click="handleLogout">Log Out</span>
             </el-dropdown-item>
           </el-dropdown-menu>
         </template>
@@ -39,6 +39,7 @@
 import Hamburger from "@/components/Hamburger/index.vue";
 import { useMenuStore } from "@/store/modules/menu";
 import Breadcrumb from "@/components/Breadcrumb/index.vue";
+import { useUserStore } from "@/store/modules/user";
 
 const store = useMenuStore();
 
@@ -46,6 +47,14 @@ const { isCollapse } = storeToRefs(useMenuStore());
 
 const toggleCollapse = (): void => {
   store.setCollapse();
+};
+
+const handleLogout = async () => {
+  const store = useUserStore();
+  const result = await store.logout();
+  if (result) {
+    location.reload();
+  }
 };
 </script>
 <style scoped lang="scss">

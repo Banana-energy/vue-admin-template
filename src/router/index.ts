@@ -14,7 +14,7 @@ export const constantRoutes: RouteRecordRaw[] = [
     path: "/login",
     name: "Login",
     component: () => import("@/views/login/index.vue"),
-    meta: { hidden: true },
+    meta: { hidden: true, notRequiredAuth: true },
   },
 
   {
@@ -27,7 +27,6 @@ export const constantRoutes: RouteRecordRaw[] = [
         path: "/dashboard",
         name: "Dashboard",
         component: () => import("@/views/dashboard/index.vue"),
-        meta: { requiresAuth: true },
       },
     ],
   },
@@ -84,6 +83,7 @@ export const constantRoutes: RouteRecordRaw[] = [
       title: "登录",
       showMenu: false,
       hidden: true,
+      notRequiredAuth: true,
     },
   },
 ];
@@ -127,7 +127,7 @@ router.beforeEach(async (to) => {
     }
   } else {
     const { meta } = to;
-    if (meta.requiresAuth) {
+    if (!meta.notRequiredAuth) {
       done();
       return `/login?redirect=${to.fullPath}`;
     }

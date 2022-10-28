@@ -72,16 +72,22 @@ const useLogin = () => {
     ],
   });
 
-  watch(route, () => {
-    const { redirect: routeRedirect } = route.query;
-    if (routeRedirect) {
-      if (typeof routeRedirect === "string") {
-        redirect.value = routeRedirect;
-      } else {
-        redirect.value = routeRedirect[0];
+  watch(
+    route,
+    () => {
+      const { redirect: routeRedirect } = route.query;
+      if (routeRedirect) {
+        if (typeof routeRedirect === "string") {
+          redirect.value = routeRedirect;
+        } else {
+          redirect.value = routeRedirect[0];
+        }
       }
+    },
+    {
+      immediate: true,
     }
-  });
+  );
 
   const handleLogin = () => {
     loginFormRef.value?.validate(async (valid) => {

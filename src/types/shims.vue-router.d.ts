@@ -2,9 +2,8 @@ import "vue-router";
 
 declare module "vue-router" {
   interface RouteMeta {
-    requiresAuth?: boolean;
     title?: string; // 页面标题
-    requiresAuth?: boolean; // 是否需要登录
+    notRequiredAuth?: boolean; // 是否不需要登录
     breadcrumb?: boolean; // 如果设置为false，则不会在breadcrumb面包屑中显示(默认 true)
     roles?: string[];
     affix?: boolean; // 如果设置为true，它则会固定在tags-view中(默认 false)

@@ -1,6 +1,9 @@
 <template>
   <el-dropdown @command="handleSetLanguage">
-    <i-cil-language style="color: #000000bf" class="text-xl mr-4" />
+    <i-cil-language
+      style="color: #000000bf"
+      class="text-xl mr-4 outline-none"
+    />
     <template #dropdown>
       <el-dropdown-menu>
         <el-dropdown-item :disabled="language === 'zh_CN'" command="zh_CN">
