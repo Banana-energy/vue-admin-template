@@ -5,22 +5,15 @@ import AutoImport from "unplugin-auto-import/vite";
 import Components from "unplugin-vue-components/vite";
 import { ElementPlusResolver } from "unplugin-vue-components/resolvers";
 import VueSetupExtend from "vite-plugin-vue-setup-extend";
-import { babel } from "@rollup/plugin-babel";
 import Icons from "unplugin-icons/vite";
 import IconsResolver from "unplugin-icons/resolver";
 
 // https://vitejs.dev/config/
-export default defineConfig(({ mode }) => ({
+export default defineConfig(() => ({
   server: {
     host: "0.0.0.0",
   },
   plugins: [
-    mode === "production"
-      ? ""
-      : babel({
-          extensions: [".js", ".jsx", ".es6", ".es", ".mjs", "ts", "tsx"],
-          babelHelpers: "bundled",
-        }),
     AutoImport({
       dts: "src/types/auto-import.d.ts",
       imports: ["vue", "vue-router", "pinia"],
