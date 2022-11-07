@@ -11,17 +11,7 @@ type KiwiLang = {
   [key: string]: KiwiValues;
 };
 
-type KiwiValues = {
-  [key in keyof typeof zhLocale]: Language | string;
-} & typeof zhCn;
-
-type Language = {
-  [key: string]: string | Language;
-};
-
-type Messages = {
-  [key in keyof KiwiLang]: KiwiValues;
-};
+type KiwiValues = typeof zhLocale & typeof zhCn;
 
 export const messages: KiwiLang = {
   zh_CN: {
@@ -56,7 +46,7 @@ export function getLanguage() {
 
 export const i18n = KiwiIntl.init(
   getLanguage(),
-  Object.keys(messages).reduce<Messages>((rs, key) => {
+  Object.keys(messages).reduce<KiwiLang>((rs, key) => {
     rs[key] = messages[key];
     return rs;
   }, {})
