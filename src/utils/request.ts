@@ -2,7 +2,7 @@ import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
 import { start, done } from "@/utils/nprogress";
 import { useUserStore } from "@/store/modules/user";
 import { ElMessage } from "element-plus";
-import env from "@/config/env";
+import env from "@/config/env.config";
 import qs from "qs";
 import to from "await-to-js";
 

@@ -2,8 +2,9 @@ import { createRouter, createWebHistory, RouteRecordRaw } from "vue-router";
 import { start, done } from "@/utils/nprogress";
 import { ElMessage } from "element-plus";
 import { useUserStore } from "@/store/modules/user";
+import env from "@/config/env.config";
 
-const DEFAULT_DOCUMENT_TITLE = "Vue-Admin-Template";
+const DEFAULT_DOCUMENT_TITLE = env.appTitle;
 
 // layout
 import Layout from "@/layout/index.vue";

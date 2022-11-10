@@ -22,7 +22,7 @@ import { useLanguageStore } from "@/store/modules/lang";
 import { i18n } from "@/lang";
 
 const store = useLanguageStore();
-const language = computed(() => store.language);
+const { language } = storeToRefs(store);
 const handleSetLanguage = (lang: string) => {
   i18n.setLang?.(lang);
   store.setLanguage(lang);

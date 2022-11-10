@@ -26,7 +26,7 @@ export const messages: KiwiLang = {
 
 export function getLanguage() {
   const chooseLanguage = Cookies.get("language");
-  if (chooseLanguage) {
+  if (chooseLanguage && chooseLanguage in messages) {
     document.documentElement.lang = chooseLanguage;
     return chooseLanguage;
   }
