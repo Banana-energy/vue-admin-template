@@ -28,7 +28,6 @@ service.interceptors.request.use(
     start();
     const { getToken } = useToken();
     if (config.headers) {
-      config.headers["x-referer"] = location.href;
       if (!config.notNeedToken && getToken()) {
         config.headers.Authorization = `${getToken()}`;
       }
@@ -68,27 +67,16 @@ service.interceptors.response.use(
       exportResponseData(data, contentType, fileName);
       return;
     }
-    const { responseCode, code } = data || {};
-    if (code !== 0) {
-      if (responseCode !== "200") {
-        const msg =
-          data?.responseDesc ||
-          data?.error ||
-          data?.msg ||
-          data?.message ||
-          i18n.get("common.ServerError");
-        if (responseCode === "401" || responseCode === "302") {
-          const { removeToken } = useToken();
-          const userStore = useUserStore();
-          userStore.resetState();
-          removeToken();
-          location.replace(data?.data?.redirectPath || "/");
-        }
-        handleError(msg);
-        return Promise.reject(new Error(msg));
+    const { code } = data || {};
+    if (code !== 200) {
+      const msg = data.msg || i18n.get("ServerError");
+      handleError(msg);
+      if (code === 401) {
+        const userStore = useUserStore();
+        userStore.resetState();
+        location.reload();
       }
-      handleError(i18n.get("common.ServerError"));
-      return Promise.reject(new Error(i18n.get("common.ServerError")));
+      return Promise.reject(new Error(msg));
     }
     return data;
   },
