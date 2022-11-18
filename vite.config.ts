@@ -7,6 +7,7 @@ import { ElementPlusResolver } from "unplugin-vue-components/resolvers";
 import VueSetupExtend from "vite-plugin-vue-setup-extend";
 import Icons from "unplugin-icons/vite";
 import IconsResolver from "unplugin-icons/resolver";
+import WindiCSS from "vite-plugin-windicss";
 
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => {
@@ -20,6 +21,7 @@ export default defineConfig(({ mode }) => {
       sourcemap: !isProd,
     },
     plugins: [
+      WindiCSS(),
       AutoImport({
         dts: "src/types/auto-import.d.ts",
         imports: ["vue", "vue-router", "pinia"],
