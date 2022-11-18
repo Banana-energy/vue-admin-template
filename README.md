@@ -6,6 +6,8 @@
 
 使用 [alibaba/kiwi](https://github.com/alibaba/kiwi) 进行多语言管理。
 
+项目分支template-js是该项目的js版本。
+
 ### 注意事项
 
 由于 `vite-plugin-vue-setup-extend` 作者没有合并 PR，如有调试需要，可自行修改 `node_modules/vite-plugin-vue-setup-extend/dist` 中的 `index.cjs` 文件修改为如下内容：
