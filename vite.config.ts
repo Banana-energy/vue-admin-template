@@ -24,7 +24,7 @@ export default defineConfig(({ mode }) => {
       WindiCSS(),
       AutoImport({
         dts: "src/types/auto-import.d.ts",
-        imports: ["vue", "vue-router", "pinia"],
+        imports: ["vue", "vue-router", "pinia", "@vueuse/core"],
         resolvers: [ElementPlusResolver()],
         eslintrc: {
           enabled: false, // 默认false, true启用。生成一次就可以，避免每次工程启动都生成

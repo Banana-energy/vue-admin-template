@@ -8,7 +8,7 @@ const DEFAULT_DOCUMENT_TITLE = env.appTitle;
 
 // layout
 import Layout from "@/layout/index.vue";
-import { getToken } from "@/utils/auth";
+import { useToken } from "@/utils/auth";
 
 export const constantRoutes: RouteRecordRaw[] = [
   {
@@ -94,6 +94,8 @@ const router = createRouter({
   scrollBehavior: () => ({ top: 0 }),
   routes: constantRoutes,
 });
+
+const { getToken } = useToken();
 
 router.beforeEach(async (to) => {
   start();
