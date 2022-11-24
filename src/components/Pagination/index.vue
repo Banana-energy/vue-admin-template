@@ -7,8 +7,6 @@
       :layout="layout"
       :total="total"
       :background="background"
-      @size-change="handleSizeChange"
-      @current-change="handleCurrentChange"
     />
   </div>
 </template>
@@ -67,6 +65,7 @@ const currentPage = computed({
   },
   set(val: number) {
     emits("update:page", val);
+    handleCurrentChange(val);
   },
 });
 
@@ -77,6 +76,7 @@ const pageSize = computed({
   },
   set(val: number) {
     emits("update:limit", val);
+    handleSizeChange(val);
   },
 });
 
