@@ -21,7 +21,11 @@ export const constantRoutes = [
   {
     path: "/",
     component: Layout,
-    meta: { title: "Dashboard", icon: "HomeFilled", activeMenu: "/dashboard" },
+    meta: {
+      title: "Dashboard",
+      icon: "vscode-icons:file-type-jpm",
+      activeMenu: "/dashboard",
+    },
     redirect: "/dashboard",
     children: [
       {
@@ -37,18 +41,18 @@ export const constantRoutes = [
     component: Layout,
     name: "System",
     redirect: "/system/roles",
-    meta: { title: "System", icon: "Setting" },
+    meta: { title: "System", icon: "vscode-icons:file-type-rust-toolchain" },
     children: [
       {
         path: "/system/roles",
         name: "Roles",
-        meta: { title: "Roles", icon: "Avatar" },
+        meta: { title: "Roles", icon: "vscode-icons:file-type-robots" },
         component: () => import("@/views/system/roles.vue"),
       },
       {
         path: "/system/user",
         name: "User",
-        meta: { title: "User", icon: "UserFilled" },
+        meta: { title: "User", icon: "vscode-icons:file-type-travis" },
         component: () => import("@/views/system/roles.vue"),
       },
     ],
@@ -59,19 +63,19 @@ export const constantRoutes = [
     component: Layout,
     redirect: "/example/table",
     name: "Example",
-    meta: { title: "Example", icon: "Menu" },
+    meta: { title: "Example", icon: "vscode-icons:file-type-pulumi" },
     children: [
       {
         path: "/example/table",
         name: "Table",
         component: () => import("@/views/table/index.vue"),
-        meta: { title: "Table", icon: "Menu" },
+        meta: { title: "Table", icon: "vscode-icons:file-type-registry" },
       },
       {
         path: "/example/tree",
         name: "Tree",
         component: () => import("@/views/tree/index.vue"),
-        meta: { title: "Tree", icon: "Menu" },
+        meta: { title: "Tree", icon: "vscode-icons:file-type-registry" },
       },
     ],
   },

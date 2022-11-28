@@ -23,11 +23,10 @@
     </el-scrollbar>
   </div>
 </template>
-<script setup lang="ts" name="Sidebar">
+<script setup name="Sidebar">
 import SidebarItem from "./SidebarItem.vue";
 import Logo from "./Logo.vue";
 import variables from "@/styles/variables.module.scss";
-import { RouteRecordRaw } from "vue-router";
 import { useMenuStore } from "@/store/modules/menu";
 
 const router = useRouter();

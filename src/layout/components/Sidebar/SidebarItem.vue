@@ -30,9 +30,8 @@
     </el-menu-item>
   </div>
 </template>
-<script setup lang="ts" name="SidebarItem">
+<script setup name="SidebarItem">
 import { Icon } from "@iconify/vue";
-import { RouteRecordRaw } from "vue-router";
 
 const props = defineProps({
   item: {

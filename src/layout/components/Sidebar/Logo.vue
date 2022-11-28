@@ -1,16 +1,16 @@
 <template>
   <div
     class="sidebar-logo-container"
-    :class="{ 'sidebar-collapse': props.isCollapse }"
+    :class="{ 'sidebar-collapse': isCollapse }"
   >
     <transition name="sidebarLogoFade">
       <router-link
-        v-if="props.isCollapse"
+        v-if="isCollapse"
         key="collapse"
         class="sidebar-logo-link"
         to="/"
       >
-        <img v-if="logoSquare" :src="logoSquare" class="sidebar-logo square" />
+        <img v-if="logo" :src="logo" class="sidebar-logo" />
         <h1 v-else class="sidebar-title">{{ title }}</h1>
       </router-link>
       <router-link v-else key="expand" class="sidebar-logo-link" to="/">
@@ -20,12 +20,10 @@
     </transition>
   </div>
 </template>
-<script setup lang="ts" name="Logo">
+<script setup name="Logo">
 import config from "@/constants/env.config";
-import logo from "@/assets/images/logo.png";
-import logoSquare from "@/assets/images/logo-square.png";
 
-const props = defineProps({
+defineProps({
   isCollapse: {
     type: Boolean,
     default: false,
@@ -33,6 +31,9 @@ const props = defineProps({
 });
 
 const title = config.appTitle;
+const logo = ref(
+  "https://wpimg.wallstcn.com/69a1c46c-eb1c-4b46-8bd4-e9e686ef5251.png"
+);
 </script>
 <style scoped lang="scss">
 .sidebarLogoFade-enter-active {
@@ -59,24 +60,19 @@ const title = config.appTitle;
 
     & .sidebar-logo {
       display: inline-block;
-      width: 80px;
-      height: 40px;
+      width: 32px;
+      height: 32px;
       vertical-align: middle;
       margin-right: 12px;
-
-      &.square {
-        width: 40px;
-        height: 40px;
-      }
     }
 
     & .sidebar-title {
       display: inline-block;
       margin: 0;
-      color: #515a6e;
-      font-weight: 500;
+      color: #61bf8e;
+      font-weight: 550;
       line-height: 50px;
-      font-size: 18px;
+      font-size: 14px;
       font-family: PingFang SC, Avenir, Helvetica Neue, Arial, Helvetica,
         sans-serif;
       vertical-align: middle;

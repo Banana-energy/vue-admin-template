@@ -1,7 +1,10 @@
 <template>
   <el-dropdown @command="handleSetLanguage">
-    <i-vscode-icons-folder-type-locale-opened
-      class="text-2xl mr-4 outline-none"
+    <icon
+      class="mr-4 outline-none"
+      icon="vscode-icons:file-type-locale"
+      :width="24"
+      :height="24"
     />
     <template #dropdown>
       <el-dropdown-menu>
@@ -17,6 +20,7 @@
 </template>
 
 <script setup name="LangSelect">
+import { Icon } from "@iconify/vue";
 import { useLanguageStore } from "@/store/modules/lang";
 import { i18n } from "@/lang";
 
