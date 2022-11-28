@@ -6,11 +6,13 @@
 
 使用 [alibaba/kiwi](https://github.com/alibaba/kiwi) 进行多语言管理。
 
-项目分支template-js是该项目的js版本。
+**项目分支template-js是该项目的js版本。**
+
+图标使用了 [@iconify](https://iconify.design/)，可自行安装图标，目前已安装 [vscode-icons](https://icon-sets.iconify.design/vscode-icons/)
 
 ### 注意事项
 
-由于 `vite-plugin-vue-setup-extend` 作者没有合并 PR，如有调试需要，可自行修改 `node_modules/vite-plugin-vue-setup-extend/dist` 中的 `index.cjs` 文件修改为如下内容：
+由于 `vite-plugin-vue-setup-extend` 插件会导致sourcemap错乱，如有调试需要，可自行修改 `node_modules/vite-plugin-vue-setup-extend/dist` 中的 `index.cjs` 文件修改为如下内容：
 
 ```js
 "use strict";
