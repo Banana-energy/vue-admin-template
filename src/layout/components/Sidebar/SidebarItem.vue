@@ -7,9 +7,10 @@
       :index="item.meta?.activeMenu || item.path"
     >
       <template #title>
-        <el-icon>
+        <el-icon v-if="isElIcon" :size="18">
           <component :is="item.meta?.icon" />
         </el-icon>
+        <icon v-if="isIcon" class="el-icon" :icon="item.meta?.icon" />
         <span>{{ item.meta?.title }}</span>
       </template>
       <sidebar-item
@@ -19,9 +20,10 @@
       />
     </el-sub-menu>
     <el-menu-item v-else :index="item.meta?.activeMenu || item.path">
-      <el-icon>
+      <el-icon v-if="isElIcon" :size="18">
         <component :is="item.meta?.icon" />
       </el-icon>
+      <icon v-if="isIcon" class="el-icon" :icon="item.meta?.icon" />
       <template #title>
         <span>{{ item.meta?.title }}</span>
       </template>
@@ -29,12 +31,14 @@
   </div>
 </template>
 <script setup lang="ts" name="SidebarItem">
+import { Icon } from "@iconify/vue";
 import { RouteRecordRaw } from "vue-router";
 
-// 取到传过来的值
-// 采用ts专有声明，无默认值
-defineProps<{
+const props = defineProps<{
   item: RouteRecordRaw;
 }>();
+
+const isElIcon = !props.item.meta?.icon?.includes(":");
+const isIcon = props.item.meta?.icon?.includes(":");
 </script>
 <style scoped lang="scss"></style>

@@ -21,7 +21,11 @@ export const constantRoutes: RouteRecordRaw[] = [
   {
     path: "/",
     component: Layout,
-    meta: { title: "Dashboard", icon: "HomeFilled", activeMenu: "/dashboard" },
+    meta: {
+      title: "Dashboard",
+      icon: "vscode-icons:file-type-jpm",
+      activeMenu: "/dashboard",
+    },
     redirect: "/dashboard",
     children: [
       {
@@ -37,18 +41,18 @@ export const constantRoutes: RouteRecordRaw[] = [
     component: Layout,
     name: "System",
     redirect: "/system/roles",
-    meta: { title: "System", icon: "Setting" },
+    meta: { title: "System", icon: "vscode-icons:file-type-ron" },
     children: [
       {
         path: "/system/roles",
         name: "Roles",
-        meta: { title: "Roles", icon: "Avatar" },
+        meta: { title: "Roles", icon: "vscode-icons:file-type-robots" },
         component: () => import("@/views/system/roles.vue"),
       },
       {
         path: "/system/user",
         name: "User",
-        meta: { title: "User", icon: "UserFilled" },
+        meta: { title: "User", icon: "vscode-icons:file-type-travis" },
         component: () => import("@/views/system/roles.vue"),
       },
     ],
@@ -59,7 +63,7 @@ export const constantRoutes: RouteRecordRaw[] = [
     component: Layout,
     redirect: "/example/table",
     name: "Example",
-    meta: { title: "Example", icon: "Menu" },
+    meta: { title: "Example", icon: "vscode-icons:file-type-pulumi" },
     children: [
       {
         path: "/example/table",

@@ -4,7 +4,8 @@ specifiers:
   '@commitlint/cli': ^16.2.3
   '@commitlint/config-conventional': ^16.2.1
   '@element-plus/icons-vue': ^1.1.4
-  '@iconify-json/cil': ^1.1.1
+  '@iconify-json/vscode-icons': ^1.1.14
+  '@iconify/vue': ^4.0.0
   '@rushstack/eslint-patch': ^1.1.0
   '@types/node': ^17.0.33
   '@types/nprogress': ^0.2.0
@@ -45,6 +46,8 @@ specifiers:
 
 dependencies:
   '@element-plus/icons-vue': 1.1.4_vue@3.2.41
+  '@iconify-json/vscode-icons': 1.1.14
+  '@iconify/vue': 4.0.0_vue@3.2.41
   '@vueuse/core': 9.5.0_vue@3.2.41
   '@vueuse/integrations': 9.5.0_owahqi3e6jid2a6io6vpbbdqpy
   await-to-js: 3.0.0
@@ -62,7 +65,6 @@ dependencies:
 devDependencies:
   '@commitlint/cli': 16.3.0
   '@commitlint/config-conventional': 16.2.4
-  '@iconify-json/cil': 1.1.2
   '@rushstack/eslint-patch': 1.2.0
   '@types/node': 17.0.45
   '@types/nprogress': 0.2.0
@@ -654,15 +656,14 @@ packages:
     resolution: {integrity: sha512-ZnQMnLV4e7hDlUvw8H+U8ASL02SS2Gn6+9Ac3wGGLIe7+je2AeAOxPY+izIPJDfFDb7eDjev0Us8MO1iFRN8hA==}
     dev: true
 
-  /@iconify-json/cil/1.1.2:
-    resolution: {integrity: sha512-fu9x1f+A2H5qGWnApU1aw0EREAKqg5EP2Z6cWHV11XchlKgzY+jWQCalctkV+Jsef2M2m3C2DX/ukgyhMclIcw==}
+  /@iconify-json/vscode-icons/1.1.14:
+    resolution: {integrity: sha512-we1er6h6WNDuV/dNSey/f4RDea5DILfDPCM7QN32EkjINr3ggAh7JhfTuQPP9A5lUQkjq5Xu2BpLyiz+E0Yd8w==}
     dependencies:
       '@iconify/types': 2.0.0
-    dev: true
+    dev: false
 
   /@iconify/types/2.0.0:
     resolution: {integrity: sha512-+wluvCrRhXrhyOmRDJ3q8mux9JkKy5SJ/v8ol2tu4FVjyYvtEzkc/3pK15ET6RKg4b4w4BmTk1+gsCUhf21Ykg==}
-    dev: true
 
   /@iconify/utils/2.0.1:
     resolution: {integrity: sha512-t8IyICk25wgZL4YKn/2kYfjG5MGA6EWZlaUJZ1OEIku4V+kX9V900T5E4HIqS3hLyD6/RJET0zY4vxO9pHLHHw==}
@@ -676,6 +677,15 @@ packages:
     transitivePeerDependencies:
       - supports-color
     dev: true
+
+  /@iconify/vue/4.0.0_vue@3.2.41:
+    resolution: {integrity: sha512-73z81Yf2HISfehu3qvN9GqL1OnUO7wEMKkiFwVGJ2pqAdGCR8FrVylhRhka+6U+gFLlng0ynnT20svk3jJYwow==}
+    peerDependencies:
+      vue: '>=3'
+    dependencies:
+      '@iconify/types': 2.0.0
+      vue: 3.2.41
+    dev: false
 
   /@jridgewell/gen-mapping/0.1.1:
     resolution: {integrity: sha512-sQXCasFk+U8lWYEe66WxRDOE9PjVz4vSM51fTu3Hw+ClTpUSQb718772vH3pyS5pShp6lvQM7SxgIDXXXmOX7w==}

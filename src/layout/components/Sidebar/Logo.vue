@@ -1,11 +1,11 @@
 <template>
   <div
     class="sidebar-logo-container"
-    :class="{ 'sidebar-collapse': props.isCollapse }"
+    :class="{ 'sidebar-collapse': isCollapse }"
   >
     <transition name="sidebarLogoFade">
       <router-link
-        v-if="props.isCollapse"
+        v-if="isCollapse"
         key="collapse"
         class="sidebar-logo-link"
         to="/"
@@ -25,9 +25,7 @@ interface Props {
   isCollapse: boolean;
 }
 
-// 取到传过来的值
-// 采用ts专有声明，有默认值
-const props = withDefaults(defineProps<Props>(), {
+withDefaults(defineProps<Props>(), {
   isCollapse: false,
 });
 const title = ref<string>("Vue-Admin-Template");
@@ -49,9 +47,10 @@ const logo = ref<string>(
   position: relative;
   width: 100%;
   min-height: 50px;
-  background: #2b2f3a;
+  background: #fff;
   text-align: center;
   overflow: hidden;
+  white-space: nowrap;
 
   & .sidebar-logo-link {
     height: 100%;
@@ -68,11 +67,12 @@ const logo = ref<string>(
     & .sidebar-title {
       display: inline-block;
       margin: 0;
-      color: #fff;
-      font-weight: 600;
+      color: #61bf8e;
+      font-weight: 550;
       line-height: 50px;
       font-size: 14px;
-      font-family: Avenir, Helvetica Neue, Arial, Helvetica, sans-serif;
+      font-family: PingFang SC, Avenir, Helvetica Neue, Arial, Helvetica,
+        sans-serif;
       vertical-align: middle;
     }
   }
