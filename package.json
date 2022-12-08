@@ -17,6 +17,7 @@
     "@vueuse/integrations": "^9.6.0",
     "await-to-js": "^3.0.0",
     "axios": "^0.27.2",
+    "dayjs": "^1.11.7",
     "element-plus": "^2.2.26",
     "kiwi-intl": "^1.2.6-beta.0",
     "nprogress": "^0.2.0",

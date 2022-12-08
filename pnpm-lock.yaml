@@ -19,6 +19,7 @@ specifiers:
   '@vueuse/integrations': ^9.6.0
   await-to-js: ^3.0.0
   axios: ^0.27.2
+  dayjs: ^1.11.7
   element-plus: ^2.2.26
   eslint: ^8.29.0
   eslint-plugin-vue: ^8.7.1
@@ -52,6 +53,7 @@ dependencies:
   '@vueuse/integrations': 9.6.0_yjsvltparhm77zdpgfx2rdsufu
   await-to-js: 3.0.0
   axios: 0.27.2
+  dayjs: 1.11.7
   element-plus: 2.2.26_vue@3.2.45
   kiwi-intl: 1.2.6-beta.0
   nprogress: 0.2.0
