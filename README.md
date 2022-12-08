@@ -6,6 +6,9 @@
 
 使用 [alibaba/kiwi](https://github.com/alibaba/kiwi) 进行多语言管理。
 
+## 预览
+https://vue-admin-template-five.vercel.app/
+
 **项目分支template-js是该项目的js版本。**
 
 图标使用了 [@iconify](https://iconify.design/)，可自行安装图标，目前已安装 [vscode-icons](https://icon-sets.iconify.design/vscode-icons/)
