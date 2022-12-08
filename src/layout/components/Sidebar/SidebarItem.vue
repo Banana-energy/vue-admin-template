@@ -10,7 +10,11 @@
         <el-icon v-if="isElIcon" :size="18">
           <component :is="item.meta?.icon" />
         </el-icon>
-        <icon v-if="isIcon" class="el-icon" :icon="item.meta?.icon" />
+        <icon
+          v-if="isIcon && item.meta?.icon"
+          class="el-icon"
+          :icon="item.meta?.icon"
+        />
         <span>{{ item.meta?.title }}</span>
       </template>
       <sidebar-item
@@ -23,7 +27,11 @@
       <el-icon v-if="isElIcon" :size="18">
         <component :is="item.meta?.icon" />
       </el-icon>
-      <icon v-if="isIcon" class="el-icon" :icon="item.meta?.icon" />
+      <icon
+        v-if="isIcon && item.meta?.icon"
+        class="el-icon"
+        :icon="item.meta?.icon"
+      />
       <template #title>
         <span>{{ item.meta?.title }}</span>
       </template>
