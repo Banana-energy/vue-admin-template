@@ -18,7 +18,7 @@
 
 <script lang="ts" setup name="Layout">
 import Navbar from "./components/Navbar.vue";
-import Sidebar from "./components/SideBar/index.vue";
+import Sidebar from "./components/Sidebar/index.vue";
 import { useMenuStore } from "@/store/modules/menu";
 
 const { isCollapse } = storeToRefs(useMenuStore());
