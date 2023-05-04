@@ -1,5 +1,8 @@
 <template>
-  <div class="sidebar-logo-container" :class="{ collapse: props.isCollapse }">
+  <div
+    class="sidebar-logo-container"
+    :class="{ collapse: props.isCollapse }"
+  >
     <transition name="sidebarLogoFade">
       <router-link
         v-if="props.isCollapse"
@@ -7,12 +10,32 @@
         class="sidebar-logo-link"
         to="/"
       >
-        <img v-if="logo" :src="logo" class="sidebar-logo" />
-        <h1 v-else class="sidebar-title">{{ title }}</h1>
+        <img
+          v-if="logo"
+          class="sidebar-logo"
+          :src="logo"
+        />
+        <h1
+          v-else
+          class="sidebar-title"
+        >
+          {{ title }}
+        </h1>
       </router-link>
-      <router-link v-else key="expand" class="sidebar-logo-link" to="/">
-        <img v-if="logo" :src="logo" class="sidebar-logo" />
-        <h1 class="sidebar-title">{{ title }}</h1>
+      <router-link
+        v-else
+        key="expand"
+        class="sidebar-logo-link"
+        to="/"
+      >
+        <img
+          v-if="logo"
+          class="sidebar-logo"
+          :src="logo"
+        />
+        <h1 class="sidebar-title">
+          {{ title }}
+        </h1>
       </router-link>
     </transition>
   </div>

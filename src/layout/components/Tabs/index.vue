@@ -10,13 +10,16 @@
         <el-tab-pane
           v-for="item in tabsMenuList"
           :key="item.path"
-          :path="item.path"
+          :closable="item.close"
           :label="item.title"
           :name="item.path"
-          :closable="item.close"
+          :path="item.path"
         >
           <template #label>
-            <el-icon v-if="item.icon" class="tabs-icon">
+            <el-icon
+              v-if="item.icon"
+              class="tabs-icon"
+            >
               <component :is="item.icon" />
             </el-icon>
             {{ item.title }}

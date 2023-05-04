@@ -1,5 +1,8 @@
 <template>
-  <div :class="classObj" class="app-wrapper">
+  <div
+    class="app-wrapper"
+    :class="classObj"
+  >
     <sidebar class="sidebar-container" />
     <div class="main-container">
       <navbar />
@@ -7,8 +10,14 @@
       <el-scrollbar :max-height="mainHeight">
         <section class="app-main">
           <router-view v-slot="{ Component, route }">
-            <transition name="fade-transform" mode="out-in">
-              <component :is="Component" :key="route.path" />
+            <transition
+              mode="out-in"
+              name="fade-transform"
+            >
+              <component
+                :is="Component"
+                :key="route.path"
+              />
             </transition>
           </router-view>
         </section>

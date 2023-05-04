@@ -18,7 +18,10 @@
         :item="child"
       />
     </el-sub-menu>
-    <el-menu-item v-else :index="item.meta?.activeMenu || item.path">
+    <el-menu-item
+      v-else
+      :index="item.meta?.activeMenu || item.path"
+    >
       <el-icon>
         <component :is="item.meta?.icon" />
       </el-icon>

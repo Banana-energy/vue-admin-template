@@ -3,21 +3,21 @@
     <logo :is-collapse="isCollapse" />
     <el-scrollbar wrap-class="scrollbar-wrapper">
       <el-menu
-        :background-color="variables.menuBg"
-        :text-color="variables.menuText"
         :active-text-color="variables.menuActiveText"
-        :default-active="activeMenu"
-        :unique-opened="false"
+        :background-color="variables.menuBg"
+        :collapse="isCollapse"
         :collapse-transition="false"
+        :default-active="activeMenu"
         mode="vertical"
         :router="true"
-        :collapse="isCollapse"
+        :text-color="variables.menuText"
+        :unique-opened="false"
       >
         <sidebar-item
           v-for="r in routes"
           :key="r.path"
-          :item="r"
           :base-path="r.path"
+          :item="r"
         />
       </el-menu>
     </el-scrollbar>

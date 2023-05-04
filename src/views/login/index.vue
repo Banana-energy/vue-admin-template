@@ -2,7 +2,9 @@
   <div
     class="login-container h-full flex w-full flex-col justify-center items-center"
   >
-    <div class="font-bold text-2xl text-white mb-5">Login Form</div>
+    <div class="font-bold text-2xl text-white mb-5">
+      Login Form
+    </div>
     <el-form
       ref="loginFormRef"
       class="w-1/3"
@@ -23,9 +25,9 @@
         <el-input
           v-model="loginForm.password"
           clearable
-          show-password
           placeholder="Password"
           :prefix-icon="Lock"
+          show-password
           @keyup.enter="handleLogin"
         />
       </el-form-item>

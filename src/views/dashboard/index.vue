@@ -1,5 +1,7 @@
 <template>
-  <div style="height: 100vh">dashbord</div>
+  <div style="height: 100vh">
+    dashbord
+  </div>
 </template>
 <script lang="ts" setup></script>
 

@@ -1,18 +1,21 @@
 <template>
   <div class="navbar">
     <hamburger
-      :is-collapse="isCollapse"
       class="hamburger-container"
+      :is-collapse="isCollapse"
       @toggle-collapse="toggleCollapse"
     />
     <breadcrumb />
     <div class="right-menu">
       <lang-select />
-      <el-dropdown class="avatar-container" trigger="click">
+      <el-dropdown
+        class="avatar-container"
+        trigger="click"
+      >
         <div class="avatar-wrapper">
           <img
-            src="http://admin.spicyboy.cn/assets/gif/avatar-ea67286d.gif"
             class="user-avatar"
+            src="http://admin.spicyboy.cn/assets/gif/avatar-ea67286d.gif"
           />
         </div>
         <template #dropdown>
@@ -21,8 +24,8 @@
               <el-dropdown-item> Home </el-dropdown-item>
             </router-link>
             <a
-              target="_blank"
               href="https://github.com/Banana-energy/vue-admin-template"
+              target="_blank"
             >
               <el-dropdown-item>Github</el-dropdown-item>
             </a>

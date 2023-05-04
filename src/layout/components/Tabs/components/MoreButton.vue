@@ -1,9 +1,14 @@
 <template>
   <el-dropdown trigger="click">
-    <el-button size="small" type="primary">
+    <el-button
+      size="small"
+      type="primary"
+    >
       <!-- <span>{{ $t("tabs.more") }}</span> -->
       <span>更多</span>
-      <el-icon class="el-icon--right"><arrow-down /></el-icon>
+      <el-icon class="el-icon--right">
+        <arrow-down />
+      </el-icon>
     </el-button>
     <template #dropdown>
       <el-dropdown-menu>
