@@ -1,11 +1,11 @@
 <template>
   <div
     class="sidebar-logo-container"
-    :class="{ collapse: props.isCollapse }"
+    :class="{ 'sidebar-collapse': isCollapse }"
   >
     <transition name="sidebarLogoFade">
       <router-link
-        v-if="props.isCollapse"
+        v-if="isCollapse"
         key="collapse"
         class="sidebar-logo-link"
         to="/"
@@ -40,16 +40,16 @@
     </transition>
   </div>
 </template>
-<script setup lang="ts">
+<script setup lang="ts" name="Logo">
+import config from "@/config/env.config";
 interface Props {
   isCollapse: boolean;
 }
-// 取到传过来的值
-// 采用ts专有声明，有默认值
-const props = withDefaults(defineProps<Props>(), {
+
+withDefaults(defineProps<Props>(), {
   isCollapse: false,
 });
-const title = ref<string>("Vue-Admin-Template");
+const title = config.appTitle;
 const logo = ref<string>(
   "https://wpimg.wallstcn.com/69a1c46c-eb1c-4b46-8bd4-e9e686ef5251.png"
 );
@@ -67,16 +67,15 @@ const logo = ref<string>(
 .sidebar-logo-container {
   position: relative;
   width: 100%;
-  height: 50px;
-  line-height: 50px;
-  background: #2b2f3a;
+  min-height: 50px;
+  background: #fff;
   text-align: center;
   overflow: hidden;
+  white-space: nowrap;
 
   & .sidebar-logo-link {
     height: 100%;
-    width: 100%;
-    display: flex;
+    line-height: 50px;
 
     & .sidebar-logo {
       display: inline-block;
@@ -89,16 +88,17 @@ const logo = ref<string>(
     & .sidebar-title {
       display: inline-block;
       margin: 0;
-      color: #fff;
-      font-weight: 600;
+      color: #61bf8e;
+      font-weight: 550;
       line-height: 50px;
       font-size: 14px;
-      font-family: Avenir, Helvetica Neue, Arial, Helvetica, sans-serif;
+      font-family: PingFang SC, Avenir, Helvetica Neue, Arial, Helvetica,
+        sans-serif;
       vertical-align: middle;
     }
   }
 
-  &.collapse {
+  &.sidebar-collapse {
     .sidebar-logo {
       margin-right: 0px;
     }

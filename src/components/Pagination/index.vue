@@ -16,7 +16,7 @@
   </div>
 </template>
 
-<script lang="ts" setup>
+<script lang="ts" setup name="Pagination">
 type pageInfo = {
   page: number;
   limit: number;
@@ -70,6 +70,7 @@ const currentPage = computed({
   },
   set(val: number) {
     emits("update:page", val);
+    handleCurrentChange(val);
   },
 });
 
@@ -80,6 +81,7 @@ const pageSize = computed({
   },
   set(val: number) {
     emits("update:limit", val);
+    handleSizeChange(val);
   },
 });
 
@@ -103,6 +105,7 @@ const handleCurrentChange = (val: number) => {
   background: #fff;
   padding: 32px 16px;
 }
+
 .pagination-container.hidden {
   display: none;
 }

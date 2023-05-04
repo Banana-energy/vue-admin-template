@@ -1,9 +1,10 @@
-import { getLanguage } from "@/lang";
-import Cookies from "js-cookie";
+import { getLanguage, useLocale } from "@/lang";
 
 interface LanguageState {
   language: string;
 }
+
+const { setLocale } = useLocale();
 
 export const useLanguageStore = defineStore("LanguageStore", {
   state: (): LanguageState => ({
@@ -11,7 +12,7 @@ export const useLanguageStore = defineStore("LanguageStore", {
   }),
   actions: {
     setLanguage(language: string) {
-      Cookies.set("language", language);
+      setLocale(language);
       this.language = language;
     },
   },

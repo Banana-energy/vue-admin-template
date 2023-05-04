@@ -1,7 +1,10 @@
 <template>
-  <div class="has-logo">
+  <div class="has-logo flex flex-col">
     <logo :is-collapse="isCollapse" />
-    <el-scrollbar wrap-class="scrollbar-wrapper">
+    <el-scrollbar
+      class="flex-1"
+      wrap-class="scrollbar-wrapper"
+    >
       <el-menu
         :active-text-color="variables.menuActiveText"
         :background-color="variables.menuBg"
@@ -23,7 +26,7 @@
     </el-scrollbar>
   </div>
 </template>
-<script setup lang="ts">
+<script setup lang="ts" name="Sidebar">
 import SidebarItem from "./SidebarItem.vue";
 import Logo from "./Logo.vue";
 import variables from "@/styles/variables.module.scss";
@@ -40,7 +43,7 @@ const activeMenu = computed((): string => {
   return path;
 });
 
-const routes = computed((): RouteRecordRaw[] => {
+const routes = computed((): readonly RouteRecordRaw[] => {
   return router.options.routes;
 });
 </script>

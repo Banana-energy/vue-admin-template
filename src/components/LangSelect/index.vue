@@ -1,8 +1,10 @@
 <template>
   <el-dropdown @command="handleSetLanguage">
-    <i-cil-language
-      class="text-xl mr-4"
-      style="color: #000000bf"
+    <icon
+      class="mr-4 outline-none"
+      :height="24"
+      icon="vscode-icons:file-type-locale"
+      :width="24"
     />
     <template #dropdown>
       <el-dropdown-menu>
@@ -23,16 +25,17 @@
   </el-dropdown>
 </template>
 
-<script setup lang="ts">
+<script setup lang="ts" name="LangSelect">
+import { Icon } from "@iconify/vue";
 import { useLanguageStore } from "@/store/modules/lang";
 import { i18n } from "@/lang";
+
 const store = useLanguageStore();
-const language = computed(() => {
-  return store.language;
-});
+const { language } = storeToRefs(store);
 const handleSetLanguage = (lang: string) => {
-  i18n.setLang && i18n.setLang("zh_CN");
+  i18n.setLang?.(lang);
   store.setLanguage(lang);
+  location.reload();
 };
 </script>
 

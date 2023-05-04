@@ -1,18 +1,16 @@
-import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
+import axios, { AxiosError, AxiosRequestConfig, AxiosResponse } from "axios";
 import { start, done } from "@/utils/nprogress";
+import { useToken } from "@/utils/auth";
 import { useUserStore } from "@/store/modules/user";
 import { ElMessage } from "element-plus";
-import env from "@/config/env";
+import { i18n } from "@/lang";
 import qs from "qs";
 import to from "await-to-js";
+import env from "@/config/env.config";
+import dayjs from "dayjs";
+import { exportResponseData } from "./export";
 
 const TIMEOUT = import.meta.env.DEV ? 1000 * 20 : 5 * 1000 * 60;
-
-const enum TIP_MESSAGE {
-  ServerError = "服务端出错，请稍后再试!",
-  ClientError = "请求发生错误，请稍后再试!",
-  DefaultError = "发生未知错误，请稍后再试!",
-}
 
 const service = axios.create({
   baseURL: env.baseUrl,
@@ -21,16 +19,18 @@ const service = axios.create({
 });
 
 const handleError = (msg: string) => {
-  const localMsg = msg || TIP_MESSAGE.DefaultError;
+  const localMsg = msg || i18n.get("common.DefaultError");
   ElMessage.error(localMsg);
 };
 
 service.interceptors.request.use(
   (config) => {
     start();
-    const token = sessionStorage.getItem("Token");
-    if (token && config.headers && !config.notNeedToken) {
-      config.headers.satoken = token;
+    const { getToken } = useToken();
+    if (config.headers) {
+      if (!config.notNeedToken && getToken()) {
+        config.headers.Authorization = `${getToken()}`;
+      }
     }
     // 处理 get 请求的 data 参数
     if (config.method === "get" && config.data) {
@@ -40,28 +40,44 @@ service.interceptors.request.use(
   },
   (error) => {
     done();
-    handleError(TIP_MESSAGE.ClientError);
+    handleError(i18n.get("common.ClientError"));
     return Promise.reject(error);
   }
 );
 
 interface ResponseData {
-  code?: number | null;
-  data?: unknown;
-  msg?: string | null;
-  traceId?: string | null;
+  success?: boolean;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  data?: any;
+  code?: number;
+  msg?: string;
 }
 
 service.interceptors.response.use(
-  (response: AxiosResponse<ResponseData>) => {
+  (response: AxiosResponse<ResponseData | undefined>) => {
     done();
     const { data, config } = response;
     if (config.dataNotIncludeCode) {
       return data;
     }
-    const { code } = data;
+    if (config.responseType === "blob") {
+      const data = response.data as string;
+      const contentType = response.headers["content-type"];
+      let fileName;
+      if (response.headers["content-disposition"]) {
+        fileName = decodeURI(
+          response.headers["content-disposition"].match(/filename=(.*)/)?.[1] ||
+            ""
+        );
+      } else {
+        fileName = dayjs().format("YYYYMMDD");
+      }
+      exportResponseData(data, contentType, fileName);
+      return;
+    }
+    const { code } = data || {};
     if (code !== 200) {
-      const msg = data.msg || TIP_MESSAGE.ServerError;
+      const msg = data?.msg || i18n.get("ServerError");
       handleError(msg);
       if (code === 401) {
         const userStore = useUserStore();
@@ -72,12 +88,12 @@ service.interceptors.response.use(
     }
     return data;
   },
-  (error: Error) => {
-    if (import.meta.env.DEV) {
+  (error: AxiosError) => {
+    if (!env.isProd) {
       console.error(error);
     }
     done();
-    handleError(error.message || TIP_MESSAGE.ClientError);
+    handleError(error.message || i18n.get("common.ClientError"));
     return Promise.reject(error);
   }
 );
@@ -87,9 +103,10 @@ service.interceptors.response.use(
 // -------------------------------------------------
 
 type Response<T = Record<string, never>> = {
-  code: number;
-  msg: string;
-  data: T;
+  success?: boolean;
+  code?: number;
+  msg?: string;
+  data?: T;
 } & T;
 
 type ResponsePromise<T> = Promise<[Error, undefined] | [null, Response<T>]>;
@@ -101,7 +118,7 @@ function _get<T = Record<string, never>>(
 function _get(config: AxiosRequestConfig) {
   return to(
     service.request({
-      method: "get",
+      method: "GET",
       ...config,
     })
   );
@@ -114,9 +131,9 @@ function _putJSON<T = Record<string, never>>(
 function _putJSON(config: AxiosRequestConfig) {
   return to(
     service.request({
-      method: "put",
+      method: "PUT",
       headers: {
-        "context-type": "application/json",
+        "Content-Type": "application/json",
       },
       ...config,
     })
@@ -130,9 +147,9 @@ function _postJSON<T = Record<string, never>>(
 function _postJSON(config: AxiosRequestConfig) {
   return to(
     service.request({
-      method: "post",
+      method: "POST",
       headers: {
-        "content-type": "application/json",
+        "Content-Type": "application/json",
       },
       ...config,
     })
@@ -147,9 +164,9 @@ function _postFormData<T = Record<string, never>>(
 function _postFormData(config: AxiosRequestConfig) {
   return to(
     service.request({
-      method: "post",
+      method: "POST",
       headers: {
-        "content-type": "multipart/form-data",
+        "Content-Type": "multipart/form-data",
       },
       ...config,
     })
@@ -163,10 +180,24 @@ function _postForm<T = Record<string, never>>(
 function _postForm(config: AxiosRequestConfig) {
   return to(
     service.request({
-      method: "post",
+      method: "POST",
       headers: {
-        "content-type": "application/x-www-form-urlencoded",
+        "Content-Type": "application/x-www-form-urlencoded",
       },
+      ...config,
+    })
+  );
+}
+
+// 导出文件
+function _exportFile<T = Record<string, never>>(
+  config: AxiosRequestConfig
+): ResponsePromise<T>;
+function _exportFile(config: AxiosRequestConfig) {
+  return to(
+    service.request({
+      method: "GET",
+      responseType: "blob",
       ...config,
     })
   );
@@ -177,3 +208,4 @@ export const postFormData = _postFormData;
 export const get = _get;
 export const postJSON = _postJSON;
 export const putJSON = _putJSON;
+export const exportFile = _exportFile;

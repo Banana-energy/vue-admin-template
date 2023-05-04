@@ -37,8 +37,6 @@ export interface IResUserInfo {
 export function getUserInfo(token: IReqUserInfo) {
   return get<IResUserInfo>({
     url: "/user/info",
-    params: {
-      token,
-    },
+    params: token,
   });
 }

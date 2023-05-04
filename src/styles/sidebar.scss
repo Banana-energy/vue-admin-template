@@ -1,6 +1,7 @@
 #app {
   .main-container {
     min-height: 100%;
+    height: 100%;
     transition: margin-left 0.28s;
     margin-left: $sideBarWidth;
     position: relative;
@@ -19,6 +20,7 @@
     left: 0;
     z-index: 1001;
     overflow: hidden;
+    box-shadow: 0 1px 4px rgb(0 21 41 / 8%);
 
     // reset element-ui css
     .horizontal-collapse-transition {
@@ -32,16 +34,6 @@
 
     .el-scrollbar__bar.is-vertical {
       right: 0px;
-    }
-
-    .el-scrollbar {
-      height: 100%;
-    }
-
-    &.has-logo {
-      .el-scrollbar {
-        height: calc(100% - 50px);
-      }
     }
 
     .is-horizontal {
@@ -89,10 +81,14 @@
       &:hover {
         background-color: $subMenuHover !important;
       }
+
+      &.is-active {
+        background-color: $menuHover !important;
+      }
     }
   }
 
-  .hideSidebar {
+  .hide-sidebar {
     .sidebar-container {
       width: 54px !important;
     }
@@ -162,6 +158,7 @@
     .el-icon {
       margin-left: -5px;
     }
+
     .el-sub-menu {
       .el-icon {
         margin-left: 15px;
@@ -180,7 +177,7 @@
       width: $sideBarWidth !important;
     }
 
-    &.hideSidebar {
+    &.hide-sidebar {
       .sidebar-container {
         pointer-events: none;
         transition-duration: 0.3s;
@@ -203,6 +200,7 @@
     .svg-icon {
       margin-right: 16px;
     }
+
     .sub-el-icon {
       margin-right: 12px;
       margin-left: -2px;
@@ -213,6 +211,10 @@
   .el-menu-item {
     &:hover {
       // you can use $subMenuHover
+      background-color: $menuHover !important;
+    }
+
+    &.is-active {
       background-color: $menuHover !important;
     }
   }

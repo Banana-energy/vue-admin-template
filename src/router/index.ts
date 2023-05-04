@@ -2,32 +2,58 @@ import { createRouter, createWebHistory, RouteRecordRaw } from "vue-router";
 import { start, done } from "@/utils/nprogress";
 import { ElMessage } from "element-plus";
 import { useUserStore } from "@/store/modules/user";
+import env from "@/config/env.config";
 
-const DEFAULT_DOCUMENT_TITLE = "Vue-Admin-Template";
+const DEFAULT_DOCUMENT_TITLE = env.appTitle;
 
 // layout
 import Layout from "@/layout/index.vue";
-import { getToken } from "@/utils/auth";
+import { useToken } from "@/utils/auth";
 
 export const constantRoutes: RouteRecordRaw[] = [
   {
     path: "/login",
     name: "Login",
     component: () => import("@/views/login/index.vue"),
-    meta: { hidden: true },
+    meta: { hidden: true, notRequiredAuth: true },
   },
 
   {
     path: "/",
     component: Layout,
-    meta: { title: "Dashboard", icon: "HomeFilled", activeMenu: "/dashboard" },
+    meta: {
+      title: "Dashboard",
+      icon: "vscode-icons:file-type-jpm",
+      activeMenu: "/dashboard",
+    },
     redirect: "/dashboard",
     children: [
       {
         path: "/dashboard",
         name: "Dashboard",
         component: () => import("@/views/dashboard/index.vue"),
-        meta: { requiresAuth: true },
+      },
+    ],
+  },
+
+  {
+    path: "/system",
+    component: Layout,
+    name: "System",
+    redirect: "/system/roles",
+    meta: { title: "System", icon: "vscode-icons:file-type-rust-toolchain" },
+    children: [
+      {
+        path: "/system/roles",
+        name: "Roles",
+        meta: { title: "Roles", icon: "vscode-icons:file-type-robots" },
+        component: () => import("@/views/system/roles.vue"),
+      },
+      {
+        path: "/system/user",
+        name: "User",
+        meta: { title: "User", icon: "vscode-icons:file-type-travis" },
+        component: () => import("@/views/system/roles.vue"),
       },
     ],
   },
@@ -37,19 +63,19 @@ export const constantRoutes: RouteRecordRaw[] = [
     component: Layout,
     redirect: "/example/table",
     name: "Example",
-    meta: { title: "Example", icon: "Menu" },
+    meta: { title: "Example", icon: "vscode-icons:file-type-pulumi" },
     children: [
       {
         path: "/example/table",
         name: "Table",
         component: () => import("@/views/table/index.vue"),
-        meta: { title: "Table", icon: "Menu" },
+        meta: { title: "Table", icon: "vscode-icons:file-type-registry" },
       },
       {
         path: "/example/tree",
         name: "Tree",
         component: () => import("@/views/tree/index.vue"),
-        meta: { title: "Tree", icon: "Menu" },
+        meta: { title: "Tree", icon: "vscode-icons:file-type-registry" },
       },
     ],
   },
@@ -57,11 +83,12 @@ export const constantRoutes: RouteRecordRaw[] = [
   {
     path: "/:pathMatch(.*)*",
     name: "NotFound",
-    component: () => import("@/views/login/index.vue"),
+    component: () => import("@/components/NotFound/index.vue"),
     meta: {
-      title: "登录",
+      title: "404",
       showMenu: false,
       hidden: true,
+      notRequiredAuth: true,
     },
   },
 ];
@@ -71,6 +98,8 @@ const router = createRouter({
   scrollBehavior: () => ({ top: 0 }),
   routes: constantRoutes,
 });
+
+const { getToken } = useToken();
 
 router.beforeEach(async (to) => {
   start();
@@ -98,13 +127,15 @@ router.beforeEach(async (to) => {
           ElMessage.error({
             message: "Has Error",
           });
+          done();
           return `/login?redirect=${to.fullPath}`;
         }
       }
     }
   } else {
     const { meta } = to;
-    if (meta.requiresAuth) {
+    if (!meta.notRequiredAuth) {
+      done();
       return `/login?redirect=${to.fullPath}`;
     }
     return true;

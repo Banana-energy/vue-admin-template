@@ -4,10 +4,9 @@
     :class="classObj"
   >
     <sidebar class="sidebar-container" />
-    <div class="main-container">
+    <div class="main-container flex flex-col">
       <navbar />
-      <tabs />
-      <el-scrollbar :max-height="mainHeight">
+      <el-scrollbar class="flex-1">
         <section class="app-main">
           <router-view v-slot="{ Component, route }">
             <transition
@@ -26,48 +25,24 @@
   </div>
 </template>
 
-<script lang="ts" setup>
+<script lang="ts" setup name="Layout">
 import Navbar from "./components/Navbar.vue";
-import Sidebar from "./components/SideBar/index.vue";
+import Sidebar from "./components/Sidebar/index.vue";
 import { useMenuStore } from "@/store/modules/menu";
-import Tabs from "./components/Tabs/index.vue";
 
 const { isCollapse } = storeToRefs(useMenuStore());
 
 interface IClassObj {
-  hideSidebar: boolean;
-  openSidebar: boolean;
+  "hide-sidebar": boolean;
   withoutAnimation: boolean;
 }
 
 const classObj = computed((): IClassObj => {
   return {
-    hideSidebar: isCollapse.value,
-    openSidebar: !isCollapse.value,
+    "hide-sidebar": isCollapse.value,
     withoutAnimation: false,
   };
 });
-
-const useElScroll = () => {
-  // 50 = navbar height 40 = tabs height
-  const mainHeight = ref(document.documentElement.offsetHeight - 50 - 40);
-
-  const getMainHeight = () => {
-    mainHeight.value = document.documentElement.offsetHeight - 50 - 40;
-  };
-
-  window.addEventListener("resize", getMainHeight);
-
-  onBeforeUnmount(() => {
-    window.removeEventListener("resize", getMainHeight);
-  });
-
-  return {
-    mainHeight,
-  };
-};
-
-const { mainHeight } = useElScroll();
 </script>
 
 <style scoped lang="scss">
@@ -83,7 +58,7 @@ const { mainHeight } = useElScroll();
 
 .app-main {
   /*50 = navbar  */
-  min-height: calc(100vh - 50px - 40px);
+  min-height: calc(100vh - 50px);
   padding: 16px;
   width: 100%;
   position: relative;

@@ -43,14 +43,14 @@
   </div>
 </template>
 
-<script lang="ts" setup>
+<script lang="ts" setup name="Login">
 import { FormInstance, FormRules } from "element-plus";
 import { Avatar, Lock } from "@element-plus/icons-vue";
 import { useUserStore } from "@/store/modules/user";
-const route = useRoute();
-const router = useRouter();
 
 const useLogin = () => {
+  const route = useRoute();
+  const router = useRouter();
   const loginFormRef = ref<FormInstance>();
   const loading = ref(false);
   const redirect = ref<string | null>(null);
@@ -74,16 +74,22 @@ const useLogin = () => {
     ],
   });
 
-  watch(route, () => {
-    const { redirect: routeRedirect } = route.query;
-    if (routeRedirect) {
-      if (typeof routeRedirect === "string") {
-        redirect.value = routeRedirect;
-      } else {
-        redirect.value = routeRedirect[0];
+  watch(
+    route,
+    () => {
+      const { redirect: routeRedirect } = route.query;
+      if (routeRedirect) {
+        if (typeof routeRedirect === "string") {
+          redirect.value = routeRedirect;
+        } else {
+          redirect.value = routeRedirect[0];
+        }
       }
+    },
+    {
+      immediate: true,
     }
-  });
+  );
 
   const handleLogin = () => {
     loginFormRef.value?.validate(async (valid) => {
@@ -121,6 +127,7 @@ const { rules, loading, loginForm, loginFormRef, handleLogin } = useLogin();
   caret-color: #fff;
   box-shadow: none !important;
 }
+
 :deep .el-input__inner {
   color: #fff;
 }

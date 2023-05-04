@@ -1,5 +1,7 @@
 import { getUserInfo, IReqLogin, login, logout } from "@/api/user";
-import { getToken, removeToken, setToken } from "@/utils/auth";
+import { useToken } from "@/utils/auth";
+
+const { getToken, setToken, removeToken } = useToken();
 
 interface UserState {
   name?: string | null;
@@ -20,9 +22,12 @@ export const useUserStore = defineStore("userStore", {
       const { username, password } = userInfo;
       const [error, result] = await login({ username, password });
       if (!error && result) {
-        this.token = result.data;
-        setToken(result.data);
-        return true;
+        if (result.data) {
+          this.token = result.data;
+          setToken(result.data);
+          return true;
+        }
+        return false;
       }
       return false;
     },
@@ -40,11 +45,12 @@ export const useUserStore = defineStore("userStore", {
       if (token) {
         const [error, result] = await getUserInfo({ token });
         if (!error && result) {
-          const {
-            data: { roles },
-          } = result;
-          this.roles = roles;
-          return roles;
+          const { data } = result;
+          if (data?.roles) {
+            this.roles = data.roles;
+            return data.roles;
+          }
+          return false;
         }
         return false;
       }
