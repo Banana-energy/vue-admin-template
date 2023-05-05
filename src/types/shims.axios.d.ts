@@ -9,4 +9,8 @@ declare module "axios" {
     // 不要携带 token
     notNeedToken?: boolean;
   }
+
+  interface AxiosInterceptorManager<V> {
+    use(onFulfilled?: ((value: V) => void) | null, onRejected?: ((error: any) => any) | null, options?: AxiosInterceptorOptions): number;
+  }
 }
