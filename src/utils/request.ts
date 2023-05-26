@@ -10,7 +10,7 @@ import env from "@/config/env.config";
 import dayjs from "dayjs";
 import { exportResponseData } from "./export";
 
-const TIMEOUT = import.meta.env.DEV ? 1000 * 20 : 5 * 1000 * 60;
+const TIMEOUT = import.meta.env.DEV ? 1000 * 20 : undefined;
 
 const service = axios.create({
   baseURL: env.baseUrl,
@@ -60,7 +60,7 @@ service.interceptors.response.use(
     if (config.dataNotIncludeCode) {
       return data;
     }
-    if (config.responseType === "blob") {
+    if (config.isExport) {
       const data = response.data as string;
       const contentType = response.headers["content-type"];
       let fileName;
@@ -70,7 +70,7 @@ service.interceptors.response.use(
             ""
         );
       } else {
-        fileName = dayjs().format("YYYYMMDD");
+        fileName = dayjs().format("YYYY-MM-DD");
       }
       exportResponseData(data, contentType, fileName);
       return;

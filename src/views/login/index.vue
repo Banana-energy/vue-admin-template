@@ -5,33 +5,33 @@
     <div class="font-bold text-2xl text-white mb-5">Login Form</div>
     <el-form
       ref="loginFormRef"
-      class="w-1/3"
       :model="loginForm"
       :rules="rules"
+      class="w-1/3"
       size="large"
     >
       <el-form-item prop="username">
         <el-input
           v-model="loginForm.username"
-          clearable
-          placeholder="Username"
           :prefix-icon="Avatar"
+          placeholder="Username"
+          clearable
           @keyup.enter="handleLogin"
         />
       </el-form-item>
       <el-form-item prop="password">
         <el-input
           v-model="loginForm.password"
+          :prefix-icon="Lock"
+          placeholder="Password"
           clearable
           show-password
-          placeholder="Password"
-          :prefix-icon="Lock"
           @keyup.enter="handleLogin"
         />
       </el-form-item>
       <el-button
-        class="w-full"
         :loading="loading"
+        class="w-full"
         type="primary"
         @click="handleLogin"
       >

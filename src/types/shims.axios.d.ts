@@ -8,5 +8,7 @@ declare module "axios" {
     dataNotIncludeCode?: boolean;
     // 不要携带 token
     notNeedToken?: boolean;
+    // 是否导出文件
+    isExport?: boolean;
   }
 }
