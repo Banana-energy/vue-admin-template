@@ -1,21 +1,18 @@
 <template>
   <div class="navbar">
     <hamburger
-      class="hamburger-container"
       :is-collapse="isCollapse"
+      class="hamburger-container"
       @toggle-collapse="toggleCollapse"
     />
     <breadcrumb />
     <div class="right-menu">
       <lang-select />
-      <el-dropdown
-        class="avatar-container"
-        trigger="click"
-      >
+      <el-dropdown class="avatar-container" trigger="click">
         <div class="avatar-wrapper">
           <img
-            class="user-avatar"
             src="http://admin.spicyboy.cn/assets/gif/avatar-ea67286d.gif"
+            class="user-avatar"
           />
         </div>
         <template #dropdown>
@@ -24,16 +21,13 @@
               <el-dropdown-item>Home</el-dropdown-item>
             </router-link>
             <a
-              href="https://github.com/Banana-energy/vue-admin-template"
               target="_blank"
+              href="https://github.com/Banana-energy/vue-admin-template"
             >
               <el-dropdown-item>Github</el-dropdown-item>
             </a>
             <el-dropdown-item divided>
-              <span
-                class="block"
-                @click="handleLogout"
-              >Log Out</span>
+              <span class="block" @click="handleLogout">Log Out</span>
             </el-dropdown-item>
           </el-dropdown-menu>
         </template>
@@ -41,11 +35,13 @@
     </div>
   </div>
 </template>
-<script setup lang="ts" name="Navbar">
+<script setup lang="ts">
 import Hamburger from "@/components/Hamburger/index.vue";
 import { useMenuStore } from "@/store/modules/menu";
 import Breadcrumb from "@/components/Breadcrumb/index.vue";
 import { useUserStore } from "@/store/modules/user";
+
+defineOptions({ name: "Navbar" });
 
 const store = useMenuStore();
 

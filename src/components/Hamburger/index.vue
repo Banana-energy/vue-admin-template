@@ -1,14 +1,11 @@
 <template>
-  <div
-    class="cursor-pointer px-4"
-    @click="toggleClick"
-  >
+  <div class="cursor-pointer px-4" @click="toggleClick">
     <icon
-      class="transform inline-block align-middle"
       :class="{ 'rotate-180': !isCollapse }"
-      :height="24"
+      class="transform inline-block align-middle"
       icon="vscode-icons:file-type-esbuild"
       :width="24"
+      :height="24"
     />
   </div>
 </template>
@@ -22,11 +19,11 @@ defineProps({
   },
 });
 
-const emit = defineEmits(["toggle-collapse"]);
+const emit = defineEmits(["toggleCollapse"]);
 
 // 切换
 const toggleClick = () => {
-  emit("toggle-collapse");
+  emit("toggleCollapse");
 };
 </script>
 

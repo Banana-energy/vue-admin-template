@@ -7,10 +7,7 @@
       :index="item.meta?.activeMenu || item.path"
     >
       <template #title>
-        <el-icon
-          v-if="isElIcon && item.meta?.icon"
-          :size="18"
-        >
+        <el-icon v-if="isElIcon && item.meta?.icon" :size="18">
           <component :is="item.meta?.icon" />
         </el-icon>
         <icon
@@ -26,14 +23,8 @@
         :item="child"
       />
     </el-sub-menu>
-    <el-menu-item
-      v-else
-      :index="item.meta?.activeMenu || item.path"
-    >
-      <el-icon
-        v-if="isElIcon && item.meta?.icon"
-        :size="18"
-      >
+    <el-menu-item v-else :index="item.meta?.activeMenu || item.path">
+      <el-icon v-if="isElIcon && item.meta?.icon" :size="18">
         <component :is="item.meta?.icon" />
       </el-icon>
       <icon
@@ -47,9 +38,11 @@
     </el-menu-item>
   </div>
 </template>
-<script setup lang="ts" name="SidebarItem">
+<script setup lang="ts">
 import { Icon } from "@iconify/vue";
 import { RouteRecordRaw } from "vue-router";
+
+defineOptions({ name: "SidebarItem" });
 
 const props = defineProps<{
   item: RouteRecordRaw;

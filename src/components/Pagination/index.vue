@@ -1,17 +1,12 @@
 <template>
-  <div
-    class="pagination-container"
-    :class="{ hidden: hidden }"
-  >
+  <div :class="{ hidden: hidden }" class="pagination-container">
     <el-pagination
       v-bind="$attrs"
       v-model:current-page="currentPage"
       v-model:page-size="pageSize"
-      :background="background"
       :layout="layout"
       :total="total"
-      @current-change="handleCurrentChange"
-      @size-change="handleSizeChange"
+      :background="background"
     />
   </div>
 </template>

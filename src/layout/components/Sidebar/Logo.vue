@@ -10,38 +10,21 @@
         class="sidebar-logo-link"
         to="/"
       >
-        <img
-          v-if="logo"
-          class="sidebar-logo"
-          :src="logo"
-        />
-        <h1
-          v-else
-          class="sidebar-title"
-        >
-          {{ title }}
-        </h1>
+        <img v-if="logo" :src="logo" class="sidebar-logo" />
+        <h1 v-else class="sidebar-title">{{ title }}</h1>
       </router-link>
-      <router-link
-        v-else
-        key="expand"
-        class="sidebar-logo-link"
-        to="/"
-      >
-        <img
-          v-if="logo"
-          class="sidebar-logo"
-          :src="logo"
-        />
-        <h1 class="sidebar-title">
-          {{ title }}
-        </h1>
+      <router-link v-else key="expand" class="sidebar-logo-link" to="/">
+        <img v-if="logo" :src="logo" class="sidebar-logo" />
+        <h1 class="sidebar-title">{{ title }}</h1>
       </router-link>
     </transition>
   </div>
 </template>
-<script setup lang="ts" name="Logo">
+<script setup lang="ts">
 import config from "@/config/env.config";
+
+defineOptions({ name: "Logo" });
+
 interface Props {
   isCollapse: boolean;
 }

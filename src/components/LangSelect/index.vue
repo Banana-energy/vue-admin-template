@@ -2,22 +2,16 @@
   <el-dropdown @command="handleSetLanguage">
     <icon
       class="mr-4 outline-none"
-      :height="24"
       icon="vscode-icons:file-type-locale"
       :width="24"
+      :height="24"
     />
     <template #dropdown>
       <el-dropdown-menu>
-        <el-dropdown-item
-          command="zh_CN"
-          :disabled="language === 'zh_CN'"
-        >
+        <el-dropdown-item :disabled="language === 'zh_CN'" command="zh_CN">
           中文
         </el-dropdown-item>
-        <el-dropdown-item
-          command="en_US"
-          :disabled="language === 'en_US'"
-        >
+        <el-dropdown-item :disabled="language === 'en_US'" command="en_US">
           English
         </el-dropdown-item>
       </el-dropdown-menu>

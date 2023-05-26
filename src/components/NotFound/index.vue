@@ -1,21 +1,12 @@
 <template>
   <div class="flex justify-center">
     <div class="text-center">
-      <img
-        alt=""
-        :src="NotFound"
-        width="350"
-      />
+      <img :src="NotFound" width="350" alt="" />
       <div class="text-14px text-[var(--el-color-info)]">
         抱歉，您访问的页面不存在。
       </div>
       <div class="mt-20px">
-        <el-button
-          type="primary"
-          @click="btnClick"
-        >
-          返回首页
-        </el-button>
+        <el-button type="primary" @click="btnClick"> 返回首页 </el-button>
       </div>
     </div>
   </div>
