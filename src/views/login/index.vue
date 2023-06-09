@@ -1,44 +1,44 @@
 <template>
-  <div
-    class="login-container h-full flex w-full flex-col justify-center items-center"
-  >
-    <div class="font-bold text-2xl text-white mb-5">Login Form</div>
-    <el-form
-      ref="loginFormRef"
-      :model="loginForm"
-      :rules="rules"
-      class="w-1/3"
-      size="large"
-    >
-      <el-form-item prop="username">
-        <el-input
-          v-model="loginForm.username"
-          :prefix-icon="Avatar"
-          placeholder="Username"
-          clearable
-          @keyup.enter="handleLogin"
-        />
-      </el-form-item>
-      <el-form-item prop="password">
-        <el-input
-          v-model="loginForm.password"
-          :prefix-icon="Lock"
-          placeholder="Password"
-          clearable
-          show-password
-          @keyup.enter="handleLogin"
-        />
-      </el-form-item>
-      <el-button
-        :loading="loading"
-        class="w-full"
-        type="primary"
-        @click="handleLogin"
-      >
-        Login
-      </el-button>
-    </el-form>
-  </div>
+	<div
+		class="login-container h-full flex w-full flex-col justify-center items-center"
+	>
+		<div class="font-bold text-2xl text-white mb-5">Login Form</div>
+		<el-form
+			ref="loginFormRef"
+			:model="loginForm"
+			:rules="rules"
+			class="w-1/3"
+			size="large"
+		>
+			<el-form-item prop="username">
+				<el-input
+					v-model="loginForm.username"
+					:prefix-icon="Avatar"
+					placeholder="Username"
+					clearable
+					@keyup.enter="handleLogin"
+				/>
+			</el-form-item>
+			<el-form-item prop="password">
+				<el-input
+					v-model="loginForm.password"
+					:prefix-icon="Lock"
+					placeholder="Password"
+					clearable
+					show-password
+					@keyup.enter="handleLogin"
+				/>
+			</el-form-item>
+			<el-button
+				:loading="loading"
+				class="w-full"
+				type="primary"
+				@click="handleLogin"
+			>
+				Login
+			</el-button>
+		</el-form>
+	</div>
 </template>
 
 <script lang="ts" setup>

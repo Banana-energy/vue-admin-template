@@ -1,13 +1,13 @@
 <template>
-  <div class="cursor-pointer px-4" @click="toggleClick">
-    <icon
-      :class="{ 'rotate-180': !isCollapse }"
-      class="transform inline-block align-middle"
-      icon="vscode-icons:file-type-esbuild"
-      :width="24"
-      :height="24"
-    />
-  </div>
+	<div class="cursor-pointer px-4" @click="toggleClick">
+		<icon
+			:class="{ 'rotate-180': !isCollapse }"
+			:height="24"
+			:width="24"
+			class="transform inline-block align-middle"
+			icon="vscode-icons:file-type-esbuild"
+		/>
+	</div>
 </template>
 
 <script setup lang="ts" name="Hamburger">

@@ -1,27 +1,27 @@
 <template>
-  <div class="has-logo flex flex-col">
-    <logo :is-collapse="isCollapse" />
-    <el-scrollbar class="flex-1" wrap-class="scrollbar-wrapper">
-      <el-menu
-        :active-text-color="variables.menuActiveText"
-        :background-color="variables.menuBg"
-        :collapse="isCollapse"
-        :collapse-transition="false"
-        :default-active="activeMenu"
-        :text-color="variables.menuText"
-        :unique-opened="false"
-        mode="vertical"
-        router
-      >
-        <sidebar-item
-          v-for="r in routes"
-          :key="r.path"
-          :base-path="r.path"
-          :item="r"
-        />
-      </el-menu>
-    </el-scrollbar>
-  </div>
+	<div class="has-logo flex flex-col">
+		<logo :is-collapse="isCollapse" />
+		<el-scrollbar class="flex-1" wrap-class="scrollbar-wrapper">
+			<el-menu
+				:active-text-color="variables.menuActiveText"
+				:background-color="variables.menuBg"
+				:collapse="isCollapse"
+				:collapse-transition="false"
+				:default-active="activeMenu"
+				:text-color="variables.menuText"
+				:unique-opened="false"
+				mode="vertical"
+				router
+			>
+				<sidebar-item
+					v-for="r in routes"
+					:key="r.path"
+					:base-path="r.path"
+					:item="r"
+				/>
+			</el-menu>
+		</el-scrollbar>
+	</div>
 </template>
 <script setup lang="ts">
 import SidebarItem from "./SidebarItem.vue";

@@ -1,14 +1,14 @@
 <template>
-  <div :class="{ hidden: hidden }" class="pagination-container">
-    <el-pagination
-      v-bind="$attrs"
-      v-model:current-page="currentPage"
-      v-model:page-size="pageSize"
-      :layout="layout"
-      :total="total"
-      :background="background"
-    />
-  </div>
+	<div :class="{ hidden: hidden }" class="pagination-container">
+		<el-pagination
+			v-bind="$attrs"
+			v-model:current-page="currentPage"
+			v-model:page-size="pageSize"
+			:background="background"
+			:layout="layout"
+			:total="total"
+		/>
+	</div>
 </template>
 
 <script lang="ts" setup name="Pagination">

@@ -1,24 +1,26 @@
 <template>
-  <div
-    class="sidebar-logo-container"
-    :class="{ 'sidebar-collapse': isCollapse }"
-  >
-    <transition name="sidebarLogoFade">
-      <router-link
-        v-if="isCollapse"
-        key="collapse"
-        class="sidebar-logo-link"
-        to="/"
-      >
-        <img v-if="logo" :src="logo" class="sidebar-logo" />
-        <h1 v-else class="sidebar-title">{{ title }}</h1>
-      </router-link>
-      <router-link v-else key="expand" class="sidebar-logo-link" to="/">
-        <img v-if="logo" :src="logo" class="sidebar-logo" />
-        <h1 class="sidebar-title">{{ title }}</h1>
-      </router-link>
-    </transition>
-  </div>
+	<div :class="{ 'sidebar-collapse': isCollapse }" class="sidebar-logo-container">
+		<transition name="sidebarLogoFade">
+			<router-link
+				v-if="isCollapse"
+				key="collapse"
+				class="sidebar-logo-link"
+				to="/"
+			>
+				<img v-if="logo" :src="logo" class="sidebar-logo" />
+				<h1 v-else class="sidebar-title">{{ title }}</h1>
+			</router-link>
+			<router-link
+				v-else
+				key="expand"
+				class="sidebar-logo-link"
+				to="/"
+			>
+				<img v-if="logo" :src="logo" class="sidebar-logo" />
+				<h1 class="sidebar-title">{{ title }}</h1>
+			</router-link>
+		</transition>
+	</div>
 </template>
 <script setup lang="ts">
 import config from "@/config/env.config";

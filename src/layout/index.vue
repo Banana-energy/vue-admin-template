@@ -1,19 +1,19 @@
 <template>
-  <div :class="classObj" class="app-wrapper">
-    <sidebar class="sidebar-container" />
-    <div class="main-container flex flex-col">
-      <navbar />
-      <el-scrollbar class="flex-1">
-        <section class="app-main">
-          <router-view v-slot="{ Component, route }">
-            <transition name="fade-transform" mode="out-in">
-              <component :is="Component" :key="route.path" />
-            </transition>
-          </router-view>
-        </section>
-      </el-scrollbar>
-    </div>
-  </div>
+	<div :class="classObj" class="app-wrapper">
+		<sidebar class="sidebar-container" />
+		<div class="main-container flex flex-col">
+			<navbar />
+			<el-scrollbar class="flex-1">
+				<section class="app-main">
+					<router-view v-slot="{ Component, route }">
+						<transition mode="out-in" name="fade-transform">
+							<component :is="Component" :key="route.path" />
+						</transition>
+					</router-view>
+				</section>
+			</el-scrollbar>
+		</div>
+	</div>
 </template>
 
 <script lang="ts" setup>

@@ -1,5 +1,5 @@
 <template>
-  <div>tree</div>
+	<div>tree</div>
 </template>
 <script lang="ts" setup></script>
 
