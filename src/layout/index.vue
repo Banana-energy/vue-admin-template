@@ -1,7 +1,7 @@
 <template>
 	<div :class="classObj" class="app-wrapper">
 		<sidebar class="sidebar-container" />
-		<div class="main-container flex flex-col">
+		<div class="main-container flex flex-col h-screen">
 			<navbar />
 			<el-scrollbar class="flex-1">
 				<section class="app-main">
