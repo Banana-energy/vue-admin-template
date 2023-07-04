@@ -39,11 +39,9 @@ const classObj = computed((): IClassObj => {
 </script>
 
 <style scoped lang="scss">
-@import "@/styles/mixin.scss";
 @import "@/styles/variables.module.scss";
 
 .app-wrapper {
-  @include clearfix;
   position: relative;
   height: 100%;
   width: 100%;
