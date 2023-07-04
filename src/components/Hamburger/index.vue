@@ -1,17 +1,22 @@
 <template>
-  <div class="cursor-pointer px-4" @click="toggleClick">
-    <icon
-      :class="{ 'rotate-180': !isCollapse }"
-      class="transform inline-block align-middle"
-      icon="vscode-icons:file-type-esbuild"
-      :width="24"
-      :height="24"
-    />
-  </div>
+	<div class="cursor-pointer px-4" @click="toggleClick">
+		<icon
+			:class="{ 'rotate-180': !isCollapse }"
+			:height="24"
+			:width="24"
+			class="transform inline-block align-middle"
+			icon="vscode-icons:file-type-esbuild"
+		/>
+	</div>
 </template>
 
-<script setup name="Hamburger">
+<script setup>
 import { Icon } from "@iconify/vue";
+
+defineOptions({
+  name:"Hamburger"
+})
+
 defineProps({
   isCollapse: {
     type: Boolean,
@@ -28,14 +33,4 @@ const toggleClick = () => {
 </script>
 
 <style scoped>
-.hamburger {
-  display: inline-block;
-  vertical-align: middle;
-  width: 20px;
-  height: 20px;
-}
-
-.hamburger.is-active {
-  transform: rotate(180deg);
-}
 </style>

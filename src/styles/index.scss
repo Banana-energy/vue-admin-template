@@ -1,60 +1,10 @@
 @import "./variables.module.scss";
-@import "./mixin.scss";
 @import "./transition.scss";
-@import "./element-ui.scss";
 @import "./sidebar.scss";
-
-body {
-  height: 100%;
-  -moz-osx-font-smoothing: grayscale;
-  -webkit-font-smoothing: antialiased;
-  text-rendering: optimizeLegibility;
-  font-family: PingFang SC Helvetica Neue, Helvetica, Hiragino Sans GB,
-    Microsoft YaHei, Arial, sans-serif;
-}
-
-html {
-  height: 100%;
-  box-sizing: border-box;
-}
 
 #app {
   height: 100%;
   overflow: hidden;
-}
-
-*,
-*:before,
-*:after {
-  box-sizing: inherit;
-}
-
-a:focus,
-a:active {
-  outline: none;
-}
-
-a,
-a:focus,
-a:hover {
-  cursor: pointer;
-  color: inherit;
-  text-decoration: none;
-}
-
-div:focus {
-  outline: none;
-}
-
-.clearfix {
-  &:after {
-    visibility: hidden;
-    display: block;
-    font-size: 0;
-    content: " ";
-    clear: both;
-    height: 0;
-  }
 }
 
 // 滚动条
@@ -87,43 +37,4 @@ div:focus {
 /*边角，即两个滚动条的交汇处*/
 ::-webkit-scrollbar-corner {
   background-color: #ffffff;
-}
-
-// main-container global css
-.app-container {
-  height: calc(100vh - 50px - 20px);
-  padding: 20px;
-  background-color: #fff;
-  border: 1px solid #e6ebf5;
-  border-radius: 4px;
-  font-size: 14px;
-  color: #606266;
-  -webkit-box-shadow: 0 2px 12px 0 #0000001a;
-  box-shadow: 0 2px 12px 0 #0000001a;
-  overflow-y: auto;
-}
-
-.app-container-left {
-  width: calc(100% - 250px);
-}
-
-.app-container-right {
-  width: 250px;
-  margin-left: 20px;
-  white-space: nowrap;
-}
-
-.def-search {
-  height: 51px;
-  overflow: hidden;
-}
-
-.search-more {
-  height: auto;
-}
-
-.flx-center {
-  display: flex;
-  align-items: center;
-  justify-content: center;
 }

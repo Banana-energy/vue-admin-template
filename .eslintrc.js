@@ -3,7 +3,6 @@ module.exports = {
   extends: [
     "plugin:vue/vue3-essential",
     "eslint:recommended",
-    "@vue/eslint-config-prettier",
     "plugin:vue/vue3-recommended",
     "./.eslintrc-auto-import.json",
   ],
@@ -18,11 +17,65 @@ module.exports = {
     "no-unused-vars": "off",
     "@typescript-eslint/no-unused-vars-experimental": "off",
     "@typescript-eslint/explicit-module-boundary-types": 0,
-    "vue/max-attributes-per-line": 0,
+    "vue/attributes-order": [
+      "error",
+      {
+        order: [
+          "DEFINITION",
+          "LIST_RENDERING",
+          "CONDITIONALS",
+          "RENDER_MODIFIERS",
+          "GLOBAL",
+          ["UNIQUE", "SLOT"],
+          "TWO_WAY_BINDING",
+          "OTHER_DIRECTIVES",
+          "ATTR_DYNAMIC",
+          "ATTR_STATIC",
+          "ATTR_SHORTHAND_BOOL",
+          "EVENTS",
+          "CONTENT",
+        ],
+        alphabetical: true,
+      },
+    ],
+    "vue/v-on-event-hyphenation": [
+      "error",
+      "always",
+      {
+        autofix: true,
+        ignore: [],
+      },
+    ],
+    "vue/max-attributes-per-line": [
+      "error",
+      {
+        singleline: {
+          max: 3,
+        },
+        multiline: {
+          max: 1,
+        },
+      },
+    ],
     "vue/singleline-html-element-content-newline": 0,
     "vue/require-default-prop": 0,
+    "vue/html-closing-bracket-newline": [
+      "error",
+      {
+        singleline: "never",
+        multiline: "always",
+      },
+    ],
+    "vue/component-definition-name-casing": ["error", "PascalCase"],
+    "vue/attribute-hyphenation": [
+      "error",
+      "always",
+      {
+        ignore: [],
+      },
+    ],
     "vue/html-self-closing": [
-      "warn",
+      "error",
       {
         html: {
           void: "always",
@@ -42,8 +95,7 @@ module.exports = {
       },
     ],
     "no-debugger": "warn",
-    "vue/html-closing-bracket-newline": 0,
-    "vue/html-indent": 0,
+    "vue/html-indent": ["error", "tab"],
     "no-fallthrough": "off",
     "no-console": process.env.NODE_ENV === "production" ? "warn" : "off",
     "vue/multi-word-component-names": "off",

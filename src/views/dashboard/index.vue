@@ -1,6 +1,7 @@
 <template>
-  <div>{{ i18n.get("common.ServerError") }}</div>
+	<div>{{ i18n.get("common.ServerError") }}</div>
 </template>
+
 <script setup>
 import { i18n } from "@/lang";
 </script>

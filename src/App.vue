@@ -1,7 +1,7 @@
 <template>
-  <el-config-provider :locale="languages">
-    <router-view />
-  </el-config-provider>
+	<el-config-provider :locale="languages">
+		<router-view />
+	</el-config-provider>
 </template>
 
 <script setup>

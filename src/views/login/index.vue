@@ -1,49 +1,53 @@
 <template>
-  <div
-    class="login-container h-full flex w-full flex-col justify-center items-center"
-  >
-    <div class="font-bold text-2xl text-white mb-5">Login Form</div>
-    <el-form
-      ref="loginFormRef"
-      class="w-1/3"
-      :model="loginForm"
-      :rules="rules"
-      size="large"
-    >
-      <el-form-item prop="username">
-        <el-input
-          v-model="loginForm.username"
-          clearable
-          placeholder="Username"
-          :prefix-icon="Avatar"
-          @keyup.enter="handleLogin"
-        />
-      </el-form-item>
-      <el-form-item prop="password">
-        <el-input
-          v-model="loginForm.password"
-          clearable
-          show-password
-          placeholder="Password"
-          :prefix-icon="Lock"
-          @keyup.enter="handleLogin"
-        />
-      </el-form-item>
-      <el-button
-        class="w-full"
-        :loading="loading"
-        type="primary"
-        @click="handleLogin"
-      >
-        Login
-      </el-button>
-    </el-form>
-  </div>
+	<div
+		class="login-container h-full flex w-full flex-col justify-center items-center"
+	>
+		<div class="font-bold text-2xl text-white mb-5">Login Form</div>
+		<el-form
+			ref="loginFormRef"
+			:model="loginForm"
+			:rules="rules"
+			class="w-1/3"
+			size="large"
+		>
+			<el-form-item prop="username">
+				<el-input
+					v-model="loginForm.username"
+					:prefix-icon="Avatar"
+					placeholder="Username"
+					clearable
+					@keyup.enter="handleLogin"
+				/>
+			</el-form-item>
+			<el-form-item prop="password">
+				<el-input
+					v-model="loginForm.password"
+					:prefix-icon="Lock"
+					placeholder="Password"
+					clearable
+					show-password
+					@keyup.enter="handleLogin"
+				/>
+			</el-form-item>
+			<el-button
+				:loading="loading"
+				class="w-full"
+				type="primary"
+				@click="handleLogin"
+			>
+				Login
+			</el-button>
+		</el-form>
+	</div>
 </template>
 
-<script setup name="Login">
+<script setup>
 import { Avatar, Lock } from "@element-plus/icons-vue";
 import { useUserStore } from "@/store/modules/user";
+
+defineOptions({
+  name: "Login"
+});
 
 const useLogin = () => {
   const route = useRoute();
@@ -54,21 +58,21 @@ const useLogin = () => {
   const store = useUserStore();
   const loginForm = reactive({
     username: "",
-    password: "",
+    password: ""
   });
   const rules = reactive({
     username: [
       {
         required: true,
-        message: "请输入用户名",
-      },
+        message: "请输入用户名"
+      }
     ],
     password: [
       {
         required: true,
-        message: "请输入密码",
-      },
-    ],
+        message: "请输入密码"
+      }
+    ]
   });
 
   watch(
@@ -84,7 +88,7 @@ const useLogin = () => {
       }
     },
     {
-      immediate: true,
+      immediate: true
     }
   );
 
@@ -106,7 +110,7 @@ const useLogin = () => {
     loading,
     loginForm,
     loginFormRef,
-    handleLogin,
+    handleLogin
   };
 };
 

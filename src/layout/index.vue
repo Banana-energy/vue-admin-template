@@ -1,42 +1,44 @@
 <template>
-  <div :class="classObj" class="app-wrapper">
-    <sidebar class="sidebar-container" />
-    <div class="main-container flex flex-col">
-      <navbar />
-      <el-scrollbar class="flex-1">
-        <section class="app-main">
-          <router-view v-slot="{ Component, route }">
-            <transition name="fade-transform" mode="out-in">
-              <component :is="Component" :key="route.path" />
-            </transition>
-          </router-view>
-        </section>
-      </el-scrollbar>
-    </div>
-  </div>
+	<div :class="classObj" class="app-wrapper">
+		<sidebar class="sidebar-container" />
+		<div class="main-container flex flex-col h-screen">
+			<navbar />
+			<el-scrollbar class="flex-1">
+				<section class="app-main">
+					<router-view v-slot="{ Component, route }">
+						<transition mode="out-in" name="fade-transform">
+							<component :is="Component" :key="route.path" />
+						</transition>
+					</router-view>
+				</section>
+			</el-scrollbar>
+		</div>
+	</div>
 </template>
 
-<script setup name="Layout">
+<script setup>
 import Navbar from "./components/Navbar.vue";
 import Sidebar from "./components/Sidebar/index.vue";
 import { useMenuStore } from "@/store/modules/menu";
+
+defineOptions({
+  name: "Layout"
+});
 
 const { isCollapse } = storeToRefs(useMenuStore());
 
 const classObj = computed(() => {
   return {
     "hide-sidebar": isCollapse.value,
-    withoutAnimation: false,
+    withoutAnimation: false
   };
 });
 </script>
 
 <style scoped lang="scss">
-@import "@/styles/mixin.scss";
 @import "@/styles/variables.module.scss";
 
 .app-wrapper {
-  @include clearfix;
   position: relative;
   height: 100%;
   width: 100%;

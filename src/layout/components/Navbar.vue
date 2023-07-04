@@ -1,36 +1,40 @@
 <template>
-  <div class="navbar">
-    <hamburger
-      :is-collapse="isCollapse"
-      class="hamburger-container"
-      @toggle-collapse="toggleCollapse"
-    />
-    <breadcrumb />
-    <div class="right-menu">
-      <lang-select />
-      <el-dropdown class="avatar-container" trigger="click">
-        <div class="avatar-wrapper">
-          <img :src="avatarUrl" class="user-avatar" />
-        </div>
-        <template #dropdown>
-          <el-dropdown-menu class="user-dropdown">
-            <router-link to="/">
-              <el-dropdown-item>首页</el-dropdown-item>
-            </router-link>
-            <el-dropdown-item divided>
-              <span class="block" @click="handleLogout">退出登录</span>
-            </el-dropdown-item>
-          </el-dropdown-menu>
-        </template>
-      </el-dropdown>
-    </div>
-  </div>
+	<div class="navbar">
+		<hamburger
+			:is-collapse="isCollapse"
+			class="hamburger-container"
+			@toggle-collapse="toggleCollapse"
+		/>
+		<breadcrumb />
+		<div class="right-menu">
+			<lang-select />
+			<el-dropdown class="avatar-container" trigger="click">
+				<div class="avatar-wrapper">
+					<img :src="avatarUrl" class="user-avatar" />
+				</div>
+				<template #dropdown>
+					<el-dropdown-menu class="user-dropdown">
+						<router-link to="/">
+							<el-dropdown-item>首页</el-dropdown-item>
+						</router-link>
+						<el-dropdown-item divided>
+							<span class="block" @click="handleLogout">退出登录</span>
+						</el-dropdown-item>
+					</el-dropdown-menu>
+				</template>
+			</el-dropdown>
+		</div>
+	</div>
 </template>
-<script setup name="Navbar">
+<script setup>
 import Hamburger from "@/components/Hamburger/index.vue";
 import { useMenuStore } from "@/store/modules/menu";
 import Breadcrumb from "@/components/Breadcrumb/index.vue";
 import { useUserStore } from "@/store/modules/user";
+
+defineOptions({
+  name: "Navbar",
+});
 
 const store = useMenuStore();
 
