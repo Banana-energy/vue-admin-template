@@ -55,7 +55,6 @@
     "windicss": "^3.5.6"
   },
   "lint-staged": {
-    "*.{js,ts,vue}": "eslint --fix",
-    "*.scss": "prettier --write"
+    "*.{js,ts,vue}": "eslint --fix"
   }
 }
