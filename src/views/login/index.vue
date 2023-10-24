@@ -42,11 +42,11 @@
 </template>
 
 <script setup>
-import { Avatar, Lock } from "@element-plus/icons-vue";
-import { useUserStore } from "@/store/modules/user";
+import { Avatar, Lock } from '@element-plus/icons-vue';
+import { useUserStore } from '@/store/modules/user';
 
 defineOptions({
-  name: "Login"
+  name: 'Login'
 });
 
 const useLogin = () => {
@@ -57,20 +57,20 @@ const useLogin = () => {
   const redirect = ref(null);
   const store = useUserStore();
   const loginForm = reactive({
-    username: "",
-    password: ""
+    username: '',
+    password: ''
   });
   const rules = reactive({
     username: [
       {
         required: true,
-        message: "请输入用户名"
+        message: '请输入用户名'
       }
     ],
     password: [
       {
         required: true,
-        message: "请输入密码"
+        message: '请输入密码'
       }
     ]
   });
@@ -80,7 +80,7 @@ const useLogin = () => {
     () => {
       const { redirect: routeRedirect } = route.query;
       if (routeRedirect) {
-        if (typeof routeRedirect === "string") {
+        if (typeof routeRedirect === 'string') {
           redirect.value = routeRedirect;
         } else {
           redirect.value = routeRedirect[0];
@@ -99,7 +99,7 @@ const useLogin = () => {
         const result = await store.login(loginForm);
         loading.value = false;
         if (result) {
-          router.push({ path: redirect.value || "/" });
+          router.push({ path: redirect.value || '/' });
         }
       }
     });
@@ -117,7 +117,7 @@ const useLogin = () => {
 const { rules, loading, loginForm, loginFormRef, handleLogin } = useLogin();
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 .login-container {
   background-color: #2d3a4b;
 }

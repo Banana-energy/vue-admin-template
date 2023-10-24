@@ -17,10 +17,10 @@
 </template>
 
 <script setup>
-import { compile } from "path-to-regexp";
+import { compile } from 'path-to-regexp';
 
 defineOptions({
-  name: "Breadcrumb"
+  name: 'Breadcrumb'
 });
 
 const levelList = ref([]);
@@ -29,10 +29,10 @@ const router = useRouter();
 
 const isDashboard = (route) => {
   const name = route?.name;
-  if (!name || typeof name === "symbol") {
+  if (!name || typeof name === 'symbol') {
     return false;
   }
-  return name.trim().toLocaleLowerCase() === "Dashboard".toLocaleLowerCase();
+  return name.trim().toLocaleLowerCase() === 'Dashboard'.toLocaleLowerCase();
 };
 
 const getBreadcrumb = () => {
@@ -63,7 +63,7 @@ const pathCompile = (path) => {
 
 const handleLink = (item) => {
   const { redirect, path } = item;
-  if (redirect && typeof redirect === "string") {
+  if (redirect && typeof redirect === 'string') {
     router.push(redirect);
     return;
   }

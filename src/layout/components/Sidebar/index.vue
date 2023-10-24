@@ -24,13 +24,13 @@
 	</div>
 </template>
 <script setup>
-import SidebarItem from "./SidebarItem.vue";
-import Logo from "./Logo.vue";
-import variables from "@/styles/variables.module.scss";
-import { useMenuStore } from "@/store/modules/menu";
+import SidebarItem from './SidebarItem.vue';
+import Logo from './Logo.vue';
+import variables from '@/styles/variables.module.scss';
+import { useMenuStore } from '@/store/modules/menu';
 
 defineOptions({
-  name: "Sidebar",
+  name: 'Sidebar',
 });
 
 const router = useRouter();

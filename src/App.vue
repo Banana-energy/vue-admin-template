@@ -5,8 +5,8 @@
 </template>
 
 <script setup>
-import { useLanguageStore } from "./store/modules/lang";
-import { messages } from "@/lang";
+import { useLanguageStore } from './store/modules/lang';
+import { messages } from '@/lang';
 
 const { language } = storeToRefs(useLanguageStore());
 const languages = computed(() => {

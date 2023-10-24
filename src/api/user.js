@@ -1,21 +1,13 @@
-import { get, postJSON } from "@/utils/request";
-
-export function login(data) {
-  return postJSON({
-    url: "/user/login",
-    data,
-  });
-}
+import { get, postJSON } from '@/utils/request';
 
 export function logout() {
   return postJSON({
-    url: "/user/logout",
+    url: '/sso/client/logout',
   });
 }
 
-export function getUserInfo(token) {
+export function getUserInfo() {
   return get({
-    url: "/user/info",
-    params: token,
+    url: '/sso/user',
   });
 }

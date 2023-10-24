@@ -3,7 +3,7 @@
 </template>
 
 <script setup>
-import { i18n } from "@/lang";
+import { i18n } from '@/lang';
 </script>
 
-<style scoped lang="scss"></style>
+<style lang="scss" scoped></style>

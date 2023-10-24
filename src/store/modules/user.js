@@ -1,48 +1,34 @@
-import { getUserInfo, login, logout } from "@/api/user";
-import { useToken } from "@/utils/auth";
+import { getUserInfo, logout } from '@/api/user';
+import { useToken } from '@/utils/auth';
 
 const { getToken, setToken, removeToken } = useToken();
 
 const getDefaultState = () => ({
-  name: "",
-  token: getToken(),
+  name: '',
+  avatarUrl: '',
+  userId: '',
+  email: '',
   roles: [],
 });
 
-export const useUserStore = defineStore("userStore", {
+export const useUserStore = defineStore('UserStore', {
   state: getDefaultState,
   actions: {
-    async login(userInfo) {
-      const { username, password } = userInfo;
-      const [error, result] = await login({ username, password });
-      if (!error && result) {
-        this.token = result.data;
-        setToken(result.data);
-        return true;
-      }
-      return false;
-    },
     async logout() {
-      const [error] = await logout();
-      if (!error) {
+      const [ error, result ] = await logout();
+      if (!error && result) {
         removeToken();
         this.resetState();
-        return true;
+        return result.data;
       }
       return false;
     },
     async getUserInfo() {
-      const { token } = this;
-      if (token) {
-        const [error, result] = await getUserInfo({ token });
-        if (!error && result) {
-          const {
-            data: { roles },
-          } = result;
-          this.roles = roles;
-          return roles;
-        }
-        return false;
+      const [ error, result ] = await getUserInfo();
+      if (!error && result) {
+        const { datas } = result;
+        this.$state = datas || {};
+        return datas;
       }
       return false;
     },

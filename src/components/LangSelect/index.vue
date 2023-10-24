@@ -20,12 +20,12 @@
 </template>
 
 <script setup>
-import { Icon } from "@iconify/vue";
-import { useLanguageStore } from "@/store/modules/lang";
-import { i18n } from "@/lang";
+import { Icon } from '@iconify/vue';
+import { useLanguageStore } from '@/store/modules/lang';
+import { i18n } from '@/lang';
 
 defineOptions({
-  name: "LangSelect"
+  name: 'LangSelect'
 });
 
 const store = useLanguageStore();

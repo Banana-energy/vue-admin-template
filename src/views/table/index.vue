@@ -24,14 +24,14 @@
 </template>
 <script setup>
 const formInline = reactive({
-  user: "",
-  region: "",
-  time: ""
+  user: '',
+  region: '',
+  time: ''
 });
 
 const onSubmit = () => {
-  console.log("submit!");
+  console.log('submit!');
 };
 </script>
 
-<style scoped lang="scss"></style>
+<style lang="scss" scoped></style>

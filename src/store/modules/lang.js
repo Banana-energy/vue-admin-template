@@ -1,8 +1,8 @@
-import { getLanguage, useLocale } from "@/lang";
+import { getLanguage, useLocale } from '@/lang';
 
 const { setLocale } = useLocale();
 
-export const useLanguageStore = defineStore("LanguageStore", {
+export const useLanguageStore = defineStore('LanguageStore', {
   state: () => ({
     language: getLanguage(),
   }),

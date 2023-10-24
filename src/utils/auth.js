@@ -1,7 +1,7 @@
-import config from "@/constants/env.config";
+import config from '@/constants/env.config';
 
 const TokenKey = config.tokenName;
-const token = useLocalStorage(TokenKey, "");
+const token = useLocalStorage(TokenKey, '');
 export const useToken = () => {
   const getToken = () => token.value;
   const setToken = (value) => {

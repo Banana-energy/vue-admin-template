@@ -1,4 +1,4 @@
-export const useMenuStore = defineStore("MenuStore", {
+export const useMenuStore = defineStore('MenuStore', {
   state: () => ({
     isCollapse: false,
   }),

@@ -11,11 +11,11 @@
 </template>
 
 <script setup>
-import { Icon } from "@iconify/vue";
+import { Icon } from '@iconify/vue';
 
 defineOptions({
-  name:"Hamburger"
-})
+  name: 'Hamburger'
+});
 
 defineProps({
   isCollapse: {
@@ -24,11 +24,11 @@ defineProps({
   },
 });
 
-const emit = defineEmits(["toggleCollapse"]);
+const emit = defineEmits([ 'toggleCollapse' ]);
 
 // 切换
 const toggleClick = () => {
-  emit("toggleCollapse");
+  emit('toggleCollapse');
 };
 </script>
 

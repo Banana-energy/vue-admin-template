@@ -1,5 +1,5 @@
-import NProgress from "nprogress";
-import "nprogress/nprogress.css";
+import NProgress from 'nprogress';
+import 'nprogress/nprogress.css';
 
 NProgress.configure({ showSpinner: false });
 

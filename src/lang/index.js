@@ -1,11 +1,11 @@
-import KiwiIntl from "kiwi-intl";
+import KiwiIntl from 'kiwi-intl';
 // 业务多语言
-import zhLocale from "./translations/zh_CN";
-import enLocale from "./translations/en_US";
+import zhLocale from './translations/zh_CN';
+import enLocale from './translations/en_US';
 // element多语言
-import zhCn from "element-plus/lib/locale/lang/zh-cn";
-import enUs from "element-plus/lib/locale/lang/en";
-import { useCookies } from "@vueuse/integrations/useCookies";
+import zhCn from 'element-plus/es/locale/lang/zh-cn';
+import enUs from 'element-plus/es/locale/lang/en';
+import { useCookies } from '@vueuse/integrations/useCookies';
 
 export const messages = {
   zh_CN: {
@@ -18,18 +18,19 @@ export const messages = {
   },
 };
 
-const locale = useLocalStorage("locale", "", {
+const locale = useLocalStorage('locale', '', {
   mergeDefaults: true,
 });
-const cookieLocale = useCookies(["language"]);
+const cookieLocale = useCookies([ 'language' ]);
+
 export function useLocale() {
   const getLocale = () => locale.value;
   const setLocale = (value) => {
-    cookieLocale.set("language", value);
+    cookieLocale.set('language', value);
     locale.value = value;
   };
   const removeLocale = () => {
-    cookieLocale.remove("language");
+    cookieLocale.remove('language');
     locale.value = null;
   };
   return {
@@ -59,9 +60,9 @@ export function getLanguage() {
       return locale;
     }
   }
-  setLocale("en_US");
-  document.documentElement.lang = "en_US";
-  return "en_US";
+  setLocale('en_US');
+  document.documentElement.lang = 'en_US';
+  return 'en_US';
 }
 
 export const i18n = KiwiIntl.init(

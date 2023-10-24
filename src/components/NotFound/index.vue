@@ -6,16 +6,16 @@
 				抱歉，您访问的页面不存在。
 			</div>
 			<div class="mt-20px">
-				<el-button type="primary" @click="btnClick"> 返回首页</el-button>
+				<el-button type="primary" @click="btnClick">返回首页</el-button>
 			</div>
 		</div>
 	</div>
 </template>
 <script setup>
-import NotFound from "@/assets/svgs/NotFound.svg";
+import NotFound from '@/assets/svgs/NotFound.svg';
 
 const router = useRouter();
 const btnClick = () => {
-  router.push("/");
+  router.push('/');
 };
 </script>

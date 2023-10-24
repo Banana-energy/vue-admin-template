@@ -27,13 +27,14 @@
 	</div>
 </template>
 <script setup>
-import Hamburger from "@/components/Hamburger/index.vue";
-import { useMenuStore } from "@/store/modules/menu";
-import Breadcrumb from "@/components/Breadcrumb/index.vue";
-import { useUserStore } from "@/store/modules/user";
+import LangSelect from '@/components/LangSelect/index.vue';
+import Hamburger from '@/components/Hamburger/index.vue';
+import { useMenuStore } from '@/store/modules/menu';
+import Breadcrumb from '@/components/Breadcrumb/index.vue';
+import { useUserStore } from '@/store/modules/user';
 
 defineOptions({
-  name: "Navbar",
+  name: 'Navbar',
 });
 
 const store = useMenuStore();
@@ -43,7 +44,7 @@ const { isCollapse } = storeToRefs(store);
 const avatarUrl = computed(() => {
   return (
     useUserStore().avatarUrl ||
-    "http://admin.spicyboy.cn/assets/gif/avatar-ea67286d.gif"
+    'http://admin.spicyboy.cn/assets/gif/avatar-ea67286d.gif'
   );
 });
 
@@ -61,7 +62,7 @@ const handleLogout = async () => {
   }
 };
 </script>
-<style scoped lang="scss">
+<style lang="scss" scoped>
 .navbar {
   height: 50px;
   overflow: hidden;
