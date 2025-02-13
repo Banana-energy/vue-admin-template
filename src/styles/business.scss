@@ -1,0 +1,39 @@
+:root {
+    // 主题色
+    --primary-color: #1890ff;
+    --success-color: #52c41a;
+    --warning-color: #faad14;
+    --danger-color: #ff4d4f;
+
+    // 背景色
+    --bg-page-color: #f1f4f8;
+
+    // 单元格左右padding
+    --cell-padding-x: 12px;
+
+    // 单元格文字高度
+    --cell-line-height: 21px;
+
+    // 文字颜色
+    --primary-text-color: #303133;
+    --regular-text-color: #606266;
+    --secondary-text-color: #909399;
+    --placeholder-text-color: #cccccc;
+}
+
+
+:root {
+    --el-color-primary: var(--primary-color);
+    --el-color-success: var(--success-color);
+    --el-color-warning: var(--warning-color);
+    --el-color-danger: var(--danger-color);
+    --el-bg-color-page: var(--bg-page-color);
+    --el-text-color-placeholder: var(--placeholder-text-color);
+
+    --vxe-ui-font-primary-color: var(--el-color-primary);
+    --vxe-ui-table-cell-padding-left: var(--cell-padding-x);
+    --vxe-ui-table-cell-padding-right: var(--cell-padding-x);
+    --vxe-ui-font-color: var(--regular-text-color);
+    --vxe-ui-table-header-font-color: var(--primary-text-color);
+    --vxe-ui-table-row-line-height: var(--cell-line-height);
+}

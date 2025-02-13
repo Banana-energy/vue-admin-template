@@ -1,0 +1,90 @@
+@use './var.css';
+@use 'element-plus/theme-chalk/dark/css-vars.css';
+
+// 解决抽屉弹出时，body宽度变化的问题
+.el-popup-parent--hidden {
+  width: 100% !important;
+}
+
+.custom-hover {
+  display: flex;
+  height: 100%;
+  padding: 1px 10px 0;
+  cursor: pointer;
+  align-items: center;
+  transition: background var(--transition-time-02);
+
+  &:hover {
+    background-color: var(--top-header-hover-color);
+  }
+
+  .dark & {
+    &:hover {
+      background-color: var(--el-bg-color-overlay);
+    }
+  }
+}
+
+// layout-border__left
+.layout-border__left {
+  position: relative;
+
+  &::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 1px;
+    height: 100%;
+    background-color: var(--el-border-color);
+    z-index: 3;
+  }
+}
+
+// layout-border__right
+.layout-border__right {
+  position: relative;
+
+  &::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 1px;
+    height: 100%;
+    background-color: var(--el-border-color);
+    z-index: 3;
+  }
+}
+
+// layout-border__top
+.layout-border__top {
+  position: relative;
+
+  &::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 1px;
+    background-color: var(--el-border-color);
+    z-index: 3;
+  }
+}
+
+// layout-border__bottom
+.layout-border__bottom {
+  position: relative;
+
+  &::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 1px;
+    background-color: var(--el-border-color);
+    z-index: 3;
+  }
+}
