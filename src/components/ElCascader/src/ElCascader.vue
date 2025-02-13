@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script lang="ts" setup>
 import type { CascaderNode, } from "element-plus"
 import type { ElCascaderInstance, } from "./types.ts"
 import { ElCascader, } from "element-plus"
@@ -13,6 +13,6 @@ const props = withDefaults(defineProps<ElCascaderInstance["$props"]>(), {
   <ElCascader v-bind="props" />
 </template>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 
 </style>

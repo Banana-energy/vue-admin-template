@@ -21,7 +21,7 @@ export function mix(color1: string, color2: string, weight: number = 0.5,): stri
  * 输入形式可为 #fff000 #f00
  */
 export function isHexColor(color: string,) {
-  const reg = /^#([0-9a-fA-F]{3}|[0-9A-f]{6})$/
+  const reg = /^#(?:[0-9a-f]{3}|[0-9a-f]{6})$/i
   return reg.test(color,)
 }
 

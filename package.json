@@ -8,7 +8,7 @@
     "uat": "vite --mode uat",
     "pro": "vite --mode pro",
     "ts:check": "vue-tsc -b",
-    "lint:eslint": "eslint --fix --ext .js,.ts,.vue ./src",
+    "lint:eslint": "eslint --config eslint.config.ts --fix ./src",
     "build:pro": "vue-tsc -b && vite build --mode pro",
     "build:uat": "vue-tsc -b && vite build --mode uat",
     "build:dev": "vue-tsc -b && vite build --mode dev"
@@ -30,6 +30,7 @@
     "@vitejs/plugin-vue-jsx": "^4.1.1",
     "@vue/tsconfig": "^0.7.0",
     "eslint": "^9.20.1",
+    "jiti": "^2.4.2",
     "sass": "^1.84.0",
     "typescript": "^5.7.3",
     "unocss": "^65.4.3",
