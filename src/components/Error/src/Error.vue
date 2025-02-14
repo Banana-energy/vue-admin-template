@@ -3,11 +3,9 @@ import noPermission from "@/assets/svgs/403.svg"
 import pageError from "@/assets/svgs/404.svg"
 import networkError from "@/assets/svgs/500.svg"
 
-interface ErrorMap {
-  url: string
-  message: string
-  buttonText: string
-}
+defineOptions({
+  name: "Error",
+},)
 
 const props = defineProps({
   type: {
@@ -17,6 +15,12 @@ const props = defineProps({
 },)
 
 const emit = defineEmits(["errorClick",],)
+
+interface ErrorMap {
+  url: string
+  message: string
+  buttonText: string
+}
 
 const errorMap: {
   [key: string]: ErrorMap

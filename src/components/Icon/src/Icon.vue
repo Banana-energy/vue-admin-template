@@ -1,10 +1,14 @@
-<script setup lang="ts">
+<script lang="ts" setup>
 import type { IconTypes, } from "@/components/Icon"
 import { ICON_PREFIX, } from "@/constants"
 import { useDesign, } from "@/hooks/useDesign"
 import { Icon, } from "@iconify/vue"
 import { ElIcon, } from "element-plus"
 import { computed, unref, } from "vue"
+
+defineOptions({
+  name: "Icon",
+},)
 
 const props = defineProps<IconTypes>()
 

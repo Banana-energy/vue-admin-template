@@ -7,7 +7,7 @@
     "dev": "vite --mode dev",
     "uat": "vite --mode uat",
     "pro": "vite --mode pro",
-    "ts:check": "vue-tsc -b",
+    "ts:check": "vue-tsc --noEmit",
     "lint:eslint": "eslint --config eslint.config.ts --fix ./src",
     "build:pro": "vue-tsc -b && vite build --mode pro",
     "build:uat": "vue-tsc -b && vite build --mode uat",

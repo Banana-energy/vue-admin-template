@@ -1,5 +1,6 @@
-<script setup lang="ts">
+<script lang="ts" setup>
 import type { DescriptionItem, } from "@/components/Descriptions"
+import type { CascaderValue, } from "element-plus"
 
 const value = ref("",)
 const disabled = ref(false,)
@@ -25,6 +26,10 @@ const preliminaryInvestigationInfo: DescriptionItem[] = [
   { field: "designerName", label: "设计师", },
   { field: "screeningOperateTime", label: "创建时间", },
 ]
+
+function handleChange(val: CascaderValue,) {
+  console.log(val,)
+}
 </script>
 
 <template>
@@ -35,7 +40,14 @@ const preliminaryInvestigationInfo: DescriptionItem[] = [
       <ElFormItem label="测试">
         <ElSwitch v-model="disabled" />
       </ElFormItem>
-      <ElCascader />
+      <ElCascader
+        v-model="value"
+        :options="preliminaryInvestigationInfo"
+        :props="{ value: 'field', label: 'field', emitPath: false }"
+        filterable
+        @change="handleChange"
+      />
+      <BaseUpload />
     </ElForm>
     <VxeTable :data="tableData">
       <VxeColumn type="seq" width="70" row-resize />
@@ -50,6 +62,6 @@ const preliminaryInvestigationInfo: DescriptionItem[] = [
   </div>
 </template>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 
 </style>

@@ -4,7 +4,6 @@ import { useDesign, } from "@/hooks/useDesign"
 import { useAppStore, } from "@/store/App"
 import { setCssVar, } from "@/utils"
 import { useWindowSize, } from "@vueuse/core"
-import { ElConfigProvider, } from "element-plus"
 
 const props = withDefaults(defineProps<{
   size: ComponentSize

@@ -2,7 +2,6 @@
   "extends": "@vue/tsconfig/tsconfig.json",
   "compilerOptions": {
     "lib": ["esnext", "dom"],
-    "moduleResolution": "node",
     "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"],
@@ -14,6 +13,7 @@
     "src/**/*.d.ts",
     "src/**/*.tsx",
     "src/**/*.vue",
+    "vite.config.ts"
   ],
   "exclude": ["dist", "node_modules"]
 }

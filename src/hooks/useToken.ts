@@ -5,6 +5,10 @@ export const TOKEN_NAME = "jwt_token"
 const state = useSessionStorage(TOKEN_NAME, "",)
 const cookies = useCookies([TOKEN_NAME,],)
 
+export function getToken() {
+  return state.value
+}
+
 export function useToken() {
   return {
     getToken: () => {

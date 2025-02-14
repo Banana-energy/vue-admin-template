@@ -1,12 +1,12 @@
-<script setup lang="ts">
+<script lang="ts" setup>
 import type { DictAPI, } from "@/apis/dict"
 import type { ApiConfig, ApiSelectProps, ModelValue, } from "@/components/ApiSelect"
 import { getDictList, } from "@/apis/dict"
+import { omit, } from "lodash-es"
 
-type Props = Pick<ApiSelectProps, "component" | "apiConfig" | "immediate" | "params" | "cacheData" | "modelPropName"> & {
-  dictCode: DictAPI.DictKey
-  modelValue: ModelValue
-}
+defineOptions({
+  name: "DictSelect",
+},)
 
 const props = withDefaults(defineProps<Props>(), {
   modelPropName: "modelValue",
@@ -16,13 +16,20 @@ const props = withDefaults(defineProps<Props>(), {
   cacheData: true,
 },)
 
+type Props = Pick<ApiSelectProps, "component" | "apiConfig" | "immediate" | "params" | "cacheData" | "modelPropName"> & {
+  dictCode: DictAPI.DictKey
+  modelValue: ModelValue
+}
+
 const attrs = useAttrs()
 
-const bindProps = computed(() => {
+const bindProps = computed<Props>(() => {
+  const omitKeys: (keyof Props)[] = ["apiConfig", "cacheData",]
+  const omitProps = omit(props, omitKeys,)
   return {
     ...attrs,
-    ...props,
-  }
+    ...omitProps,
+  } as Props
 },)
 
 const apiConfig: ApiConfig = {
@@ -42,13 +49,13 @@ function afterFetch(data: DictAPI.Response,) {
 
 <template>
   <ApiSelect
-    v-bind="bindProps"
     :after-fetch="afterFetch"
     :api-config="apiConfig"
     cache-data
+    v-bind="bindProps"
   />
 </template>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 
 </style>

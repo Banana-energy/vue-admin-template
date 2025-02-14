@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script lang="ts" setup>
 import type { ModelValue, Props, } from "./types.ts"
 import { useOptions, } from "./useOptions.ts"
 
@@ -93,6 +93,6 @@ defineExpose({
   </component>
 </template>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 
 </style>

@@ -113,7 +113,8 @@ export default defineConfig(({ mode, },) => {
           chunkFileNames: "assets/js/[name]-[hash].js",
           entryFileNames: "assets/js/[name]-[hash].js",
           assetFileNames: (assetInfo,) => {
-            const { ext, } = parse(assetInfo.name,)
+            console.log(assetInfo.names,)
+            const { ext, } = parse(typeof assetInfo.name === "string" ? assetInfo.name : "",)
             const img = [
               "svgz",
               "pjp",
