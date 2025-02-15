@@ -12,6 +12,7 @@ defineOptions({
 
 const props = withDefaults(defineProps<Props>(), defaultProps,)
 const emits = defineEmits<Emits>()
+const attrs = useAttrs()
 
 const value = computed({
   get() {
@@ -85,7 +86,7 @@ const handleUploadImage: RawEditorOptions["images_upload_handler"] = (blobInfo,)
 const defaultOptions: RawEditorOptions = {
   promotion: false,
   branding: false,
-  menubar: "file edit view insert format tools table help",
+  menubar: props.menubar || "file edit view insert format tools table help",
   autosave_ask_before_unload: true,
   autosave_interval: "30s",
   autosave_prefix: "tinymce-autosave-{path}{query}-{id}-",
@@ -104,7 +105,6 @@ const defaultOptions: RawEditorOptions = {
   content_css: useDarkMode ? "dark" : "default",
   images_upload_handler: props.useOss ? handleUploadImage : undefined,
   automatic_uploads: props.useOss,
-  license_key: "gpl",
   init_instance_callback(editor,) {
     tinymceEditor.value = editor
   },
@@ -116,6 +116,8 @@ const options = computed<RawEditorOptions>(() => {
     ...props.options,
   }
 },)
+
+console.log(options.value,)
 </script>
 
 <template>
@@ -125,8 +127,9 @@ const options = computed<RawEditorOptions>(() => {
     :init="options"
     :plugins="plugins"
     :toolbar="toolbar"
+    license-key="gpl"
     tinymce-script-src="/tinymce/js/tinymce/tinymce.min.js"
-    v-bind="$attrs"
+    v-bind="attrs"
   />
 </template>
 

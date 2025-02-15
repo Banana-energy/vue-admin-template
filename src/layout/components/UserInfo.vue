@@ -22,7 +22,7 @@ function loginOut() {
         alt=""
         class="w-[calc(var(--logo-height)-25px)] rounded-[50%]"
       />
-      <span class="pl-[5px] text-14px text-[var(--top-header-text-color)] <lg:hidden">
+      <span class="pl-[5px] text-[14px] text-[var(--top-header-text-color)] <lg:hidden">
         {{ userStore.name }}
       </span>
     </div>

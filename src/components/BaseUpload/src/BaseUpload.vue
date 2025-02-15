@@ -173,7 +173,7 @@ const handleRemove: Props["onRemove"] = (uploadFile: UploadFile, uploadFiles: Up
 
 const viewVisible = ref(false,)
 const viewUrlList = computed(() => {
-  return props.modelValue?.map(item => item.signatureUrl!,).filter(Boolean,) || []
+  return props.modelValue?.map(item => item.signatureUrl!,).filter(Boolean,) || fileList.value.map(item => item.url!,)
 },)
 const handlePreview: Props["onPreview"] = (uploadFile: UploadFile,) => {
   const { onPreview, listType, accept, } = props
@@ -244,7 +244,7 @@ defineExpose({
     <ElUpload ref="uploadRef" v-bind="bindProps">
       <template v-if="!hideUpload" #trigger>
         <slot name="trigger">
-          <Icon v-if="listType === 'picture-card'" :size="24" icon="ep:plus" />
+          <Icon v-if="props.listType === 'picture-card'" :size="24" icon="ep:plus" />
           <ElButton v-else>
             <Icon icon="mdi:upload" />
             上传文件

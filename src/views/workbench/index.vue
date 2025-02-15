@@ -37,7 +37,7 @@ function handleChange(val: CascaderValue,) {
     <ElForm label-position="top">
       <DictSelect v-model="value" dict-code="COMMON_YES_NO" />
       <DictSelect v-model="value" dict-code="COMMON_YES_NO" />
-      <ElFormItem label="测试">
+      <ElFormItem class="!bg-primary" label="测试">
         <ElSwitch v-model="disabled" />
       </ElFormItem>
       <ElCascader
@@ -47,7 +47,7 @@ function handleChange(val: CascaderValue,) {
         filterable
         @change="handleChange"
       />
-      <BaseUpload />
+      <OssUpload />
     </ElForm>
     <VxeTable :data="tableData">
       <VxeColumn type="seq" width="70" row-resize />

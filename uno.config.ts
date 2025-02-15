@@ -1,39 +1,58 @@
-import * as process from "node:process"
-import transformerVariantGroup from "@unocss/transformer-variant-group"
-import { defineConfig, presetIcons, presetUno } from "unocss"
-import { loadEnv } from "vite"
-import { ICON_PREFIX } from "./src/constants"
+import type { Rule, } from "unocss"
+import { defineConfig, presetIcons, presetUno, } from "unocss"
+import { ICON_PREFIX, } from "./src/constants"
 
-const root = process.cwd()
+const propertyMap = {
+  text: "color",
+  bg: "background-color",
+  border: "border-color",
+  outline: "outline-color",
+}
 
-function createPresetIcons() {
-  const isBuild = !!process.argv[4]
-  let env: Record<string, string>
-  if (!isBuild) {
-    env = loadEnv(process.argv[3], root)
-  } else {
-    env = loadEnv(process.argv[4], root)
-  }
+interface Theme {
+  colors: Record<string, string>
+}
 
-  if (env.VITE_USE_ONLINE_ICON === "true") {
-    return []
-  } else {
-    return [
-      presetIcons({
-        autoInstall: false,
-        prefix: ICON_PREFIX,
-      }),
-    ]
-  }
+function generateColorRules() {
+  return Object.keys(propertyMap,).map(property => [
+    new RegExp(`^${property}-(.*)$`,),
+    ([, color,], { theme, }: { theme: Theme },) => {
+      color = theme.colors[color]
+      if (color) {
+        const cssProperty = propertyMap[property]
+        return { [cssProperty]: color, }
+      }
+    },
+  ],) as Rule<object>[]
 }
 
 export default defineConfig({
   // ...UnoCSS options
-  presets: [presetUno({ dark: "class", attributify: false }), ...createPresetIcons()],
-  transformers: [transformerVariantGroup()],
-  content: {
-    pipeline: {
-      include: [/\.(vue|svelte|[jt]sx|mdx?|astro|elm|php|phtml|html|ts)($|\?)/],
+  presets: [
+    presetUno({ dark: "class", attributify: false, },),
+    presetIcons({
+      autoInstall: false,
+      prefix: ICON_PREFIX,
+    },),
+  ],
+  theme: {
+    colors: {
+      primary: "var(--primary-color)",
+      success: "var(--success-color)",
+      warning: "var(--warning-color)",
+      danger: "var(--danger-color)",
     },
   },
-})
+  rules: [
+    ...generateColorRules(),
+    ["text-main", { color: "var(--primary-text-color)", },],
+    ["text-regular", { color: "var(--regular-text-color)", },],
+    ["text-secondary", { color: "var(--secondary-text-color)", },],
+    ["text-placeholder", { color: "var(--placeholder-text-color)", },],
+  ],
+  content: {
+    pipeline: {
+      include: [/\.(vue|svelte|[jt]sx|mdx?|astro|elm|php|phtml|html|ts)($|\?)/,],
+    },
+  },
+},)
