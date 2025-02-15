@@ -135,7 +135,7 @@ $prefix-cls: "#{$adminNamespace}-menu";
   position: relative;
   transition: width var(--transition-time-02);
 
-  :deep(.#{$prefix-cls}-menu) {
+  :deep(.#{$elNamespace}-menu) {
     width: 100% !important;
     border-right: none;
 
@@ -191,7 +191,7 @@ $prefix-cls: "#{$adminNamespace}-menu";
 
   // 折叠动画的时候，就需要把文字给隐藏掉
   :deep(.horizontal-collapse-transition) {
-    .#{$prefix-cls} __title {
+    .#{$prefix-cls}__title {
       display: none;
     }
   }
@@ -218,7 +218,7 @@ $prefix-cls: "#{$adminNamespace}-menu";
         }
       }
 
-      .#{$prefix-cls} __title {
+      .#{$prefix-cls}__title {
         max-height: calc(var(--top-tool-height) - 2px) !important;
         line-height: calc(var(--top-tool-height) - 2px);
       }
