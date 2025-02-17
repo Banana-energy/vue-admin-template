@@ -19,6 +19,17 @@
     --regular-text-color: #606266;
     --secondary-text-color: #909399;
     --placeholder-text-color: #cccccc;
+
+    // 字体
+    --font-family: Inter, 'Helvetica Neue', Helvetica, 'PingFang SC',
+    'Hiragino Sans GB', 'Microsoft YaHei', '微软雅黑', Arial, sans-serif;
+
+    // 字体大小
+    --font-size-h1: 24px;
+    --font-size-h2: 20px;
+    --font-size-h3: 16px;
+    --font-size-normal: 14px;
+    --font-size-small: 12px;
 }
 
 
@@ -36,4 +47,5 @@
     --vxe-ui-font-color: var(--regular-text-color);
     --vxe-ui-table-header-font-color: var(--primary-text-color);
     --vxe-ui-table-row-line-height: var(--cell-line-height);
+    --vxe-ui-font-family: var(--font-family)
 }

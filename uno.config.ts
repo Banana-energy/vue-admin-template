@@ -49,6 +49,12 @@ export default defineConfig({
     ["text-regular", { color: "var(--regular-text-color)", },],
     ["text-secondary", { color: "var(--secondary-text-color)", },],
     ["text-placeholder", { color: "var(--placeholder-text-color)", },],
+    ["text-h1", { fontSize: "var(--font-size-h1)", },],
+    ["text-h2", { fontSize: "var(--font-size-h2)", },],
+    ["text-h3", { fontSize: "var(--font-size-h3)", },],
+    ["text-normal", { fontSize: "var(--font-size-normal)", },],
+    ["text-small", { fontSize: "var(--font-size-small)", },],
+    ["text-title", { fontSize: "var(--font-size-h3)", fontWeight: "bold", color: "var(--primary-text-color)", },],
   ],
   content: {
     pipeline: {

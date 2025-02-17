@@ -1,27 +1,18 @@
 <script lang="ts" setup>
+import type { OssUploadFile, } from "@/components/OssUpload/src/helper.ts"
 import type { UploadFile, UploadFiles, UploadInstance, UploadRawFile, UploadUserFile, } from "element-plus"
 import type { Props, } from "./types.ts"
-import { getToken, } from "@/hooks/useToken.ts"
 import { MessageBox, } from "@/utils/messageBox.ts"
 import { genFileId, } from "element-plus"
-import { isArray, isFunction, omit, } from "lodash-es"
+import { isFunction, omit, } from "lodash-es"
 import { formatFileSize, validateFileType, } from "./helper.ts"
+import { defaultProps, } from "./types.ts"
 
 defineOptions({
   name: "BaseUpload",
 },)
 
-const props = withDefaults(defineProps<Props>(), {
-  modelValue: () => [],
-  limit: 0,
-  accept: "",
-  sizeLimit: 0,
-  hideOnExceeded: true,
-  listType: "text",
-  headers: () => ({
-    "x-sso-auth": getToken(),
-  }),
-},)
+const props = withDefaults(defineProps<Props>(), defaultProps,)
 
 const emits = defineEmits<{
   (e: "update:modelValue", val: BaseFileDTO[]): void
@@ -122,38 +113,27 @@ const handleError: Props["onError"] = (error: Error, uploadFile: UploadFile, upl
   ElMessage.error(error.message,)
 }
 
-const handleSuccess: Props["onSuccess"] = (response: NewResponseData<BaseFileDTO[]> | ResponseData<BaseFileDTO[]>, uploadFile: UploadFile, uploadFiles: UploadFiles,) => {
+const handleSuccess: Props["onSuccess"] = (response: ResponseData<OssUploadFile>, uploadFile: UploadFile, uploadFiles: UploadFiles,) => {
   const { onSuccess, modelValue, } = props
+  innerFlag = true
   if (onSuccess && isFunction(onSuccess,)) {
     onSuccess(response, uploadFile, uploadFiles,)
     return
   }
-  let data: BaseFileDTO[] | null = null
-  if (("datas" in response && response.datas)) {
-    data = response.datas
-  }
-  if (("data" in response && response.data)) {
-    data = response.data
-  }
+  const data: OssUploadFile = response.datas
   if (!data) {
-    let msg = "上传失败"
     fileList.value = fileList.value.filter(item => item.uid !== uploadFile.uid,)
-    if ("responseDesc" in response) {
-      msg = response.responseDesc
-    }
-    if ("msg" in response) {
-      msg = response.msg
-    }
-    handleError(new Error(msg,), uploadFile, uploadFiles,)
+    handleError(new Error(response.msg || "上传失败",), uploadFile, uploadFiles,)
     return
   }
   const list = modelValue ? [...modelValue,] : []
-  if (isArray(data,) && data.length > 0) {
-    list.push(...data.map(item => ({
-      ...item,
-      uid: uploadFile.uid,
-    }),),)
-  }
+  const { objectName, originFileName, downLoadUrl, } = data
+  list.push({
+    uid: uploadFile.uid,
+    fileName: originFileName,
+    fileUrl: objectName,
+    signatureUrl: downLoadUrl,
+  },)
   emits("update:modelValue", list,)
 }
 
@@ -189,7 +169,7 @@ const handlePreview: Props["onPreview"] = (uploadFile: UploadFile,) => {
 }
 
 const bindProps = computed<Props>(() => {
-  const omitKeys: (keyof Props)[] = ["ref", "onError", "onExceed", "onPreview", "onSuccess", "beforeUpload", "onRemove",]
+  const omitKeys: (keyof Props)[] = ["onError", "onExceed", "onPreview", "onSuccess", "beforeUpload", "onRemove",]
   const omitProps = omit(props, omitKeys,)
   return {
     ...attrs,

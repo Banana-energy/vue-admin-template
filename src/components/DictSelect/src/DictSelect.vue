@@ -16,7 +16,7 @@ const props = withDefaults(defineProps<Props>(), {
   cacheData: true,
 },)
 
-type Props = Pick<ApiSelectProps, "component" | "apiConfig" | "immediate" | "params" | "cacheData" | "modelPropName"> & {
+type Props = ApiSelectProps & {
   dictCode: DictAPI.DictKey
   modelValue: ModelValue
 }
@@ -24,11 +24,12 @@ type Props = Pick<ApiSelectProps, "component" | "apiConfig" | "immediate" | "par
 const attrs = useAttrs()
 
 const bindProps = computed<Props>(() => {
-  const omitKeys: (keyof Props)[] = ["apiConfig", "cacheData",]
+  const omitKeys: (keyof Props)[] = ["apiConfig", "cacheData", "dictCode",]
   const omitProps = omit(props, omitKeys,)
   return {
     ...attrs,
     ...omitProps,
+    afterFetch: props.afterFetch || afterFetch,
   } as Props
 },)
 
@@ -49,7 +50,6 @@ function afterFetch(data: DictAPI.Response,) {
 
 <template>
   <ApiSelect
-    :after-fetch="afterFetch"
     :api-config="apiConfig"
     cache-data
     v-bind="bindProps"

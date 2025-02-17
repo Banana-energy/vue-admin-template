@@ -2,6 +2,29 @@ import type { UploadProgressEvent, UploadRequestHandler, UploadRequestOptions, }
 import { getOSSSign, } from "@/apis/upload"
 import { isNil, } from "lodash-es"
 
+export interface OssUploadFile {
+  /**
+   * 文件内型
+   */
+  contentType: string
+  /**
+   * 文件下载地址
+   */
+  downLoadUrl: string
+  /**
+   * 相对文件路径
+   */
+  objectName: string
+  /**
+   * 文件名
+   */
+  originFileName: string
+  /**
+   * 文件大小
+   */
+  size: number
+}
+
 /**
  * 上传过程中 AJAX 请求的错误类。
  */
@@ -101,13 +124,15 @@ export const httpRequest: UploadRequestHandler = (option: UploadRequestOptions,)
       const formData = new FormData()
       const form = Object.assign(
         { name: encodeURIComponent(name!,), key, policy, OSSAccessKeyId, callback, signature, },
-        { file: option.file, success_action_status: 200, },
+        { success_action_status: 200, },
       )
       Object.entries(form,).forEach(([key, value,],) => {
         if (typeof value !== "undefined") {
           formData.set(key, value.toString(),)
         }
       },)
+      // 使用Object.entries会将file对象转为普通Object对象
+      formData.set("file", option.file,)
 
       xhr.addEventListener("error", () => {
         option.onError(getError(action, option, xhr,),)

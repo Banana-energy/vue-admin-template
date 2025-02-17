@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script lang="ts" setup>
 import { ConfigGlobal, } from "@/components/ConfigGlobal"
 import { useAppStore, } from "@/store/App"
 
@@ -33,6 +33,7 @@ $prefix-cls: "#{$adminNamespace}-app";
 
 html,
 body {
+  font-family: var(--font-family);
   padding: 0 !important;
   margin: 0;
   overflow: hidden;

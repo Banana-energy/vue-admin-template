@@ -1,5 +1,9 @@
 import type { Awaitable, } from "@vueuse/core"
+import type { CheckboxGroupProps, ISelectProps, } from "element-plus"
 import type { Component, } from "vue"
+
+export type ElSelectProps = Partial<ISelectProps>
+export type ElCheckboxGroupProps = Partial<CheckboxGroupProps>
 
 interface FieldConfig {
   label: string
@@ -14,18 +18,18 @@ export interface ApiConfig {
 }
 
 export interface OptionItem {
-  [name: string]: any
   children?: OptionItem[]
   disabled?: boolean
   label?: string
   value?: string
+  [name: string]: any
 }
 
 export type Options = OptionItem[] | string[] | number[]
 
 export type ModelValue = any[] | string | number | boolean | Record<string, any>
 
-export interface Props {
+export type Props = {
   /**
    * 组件
    */
@@ -59,4 +63,27 @@ export interface Props {
    */
   cacheData?: boolean
   checkboxButton?: boolean
+} & ElSelectProps & ElCheckboxGroupProps
+
+export const defaultProps = {
+  modelPropName: "modelValue",
+  component: () => ElSelect,
+  params: () => ({}),
+  immediate: true,
+  beforeFetch: (params: unknown,) => params,
+  afterFetch: (res?: ResponseData<[]>,) => {
+    if (!res) {
+      return []
+    }
+    const { datas, } = res
+    return datas || []
+  },
+  apiConfig: undefined,
+  cacheData: true,
+  checkboxButton: false,
+
+  // ElCascader
+  persistent: true,
+  teleported: true,
+  validateEvent: true,
 }

@@ -1,8 +1,10 @@
 <script lang="ts" setup>
 import type { DescriptionItem, } from "@/components/Descriptions"
 import type { CascaderValue, } from "element-plus"
+import { allUserApiConfig, } from "@/apis/userInfo"
+import { ElCascader, } from "@/components/ElCascader"
 
-const value = ref("",)
+const value = ref([],)
 const disabled = ref(false,)
 const tableData = ref([
   { id: 10001, name: "Test1", role: "Develop", sex: "Man", age: 28, address: "test abc", },
@@ -35,8 +37,32 @@ function handleChange(val: CascaderValue,) {
 <template>
   <div>
     <ElForm label-position="top">
-      <DictSelect v-model="value" dict-code="COMMON_YES_NO" />
-      <DictSelect v-model="value" dict-code="COMMON_YES_NO" />
+      <ElCascader
+        v-model="value"
+        :options="[{
+          label: '一级 1',
+          value: '1',
+          children: [{
+            label: '二级 1-1',
+            value: '1-1',
+            children: [{
+              label: '三级 1-1-1',
+              value: '1-1-1',
+            }],
+          }],
+        }]"
+        :props="{ multiple: true }"
+      />
+      <ApiSelect
+        v-model="value"
+        :api-config="allUserApiConfig"
+        :component="ElCascader"
+        :props="{ multiple: true }"
+      />
+      <DictSelect
+        v-model="value"
+        dict-code="COMMON_YES_NO"
+      />
       <ElFormItem class="!bg-primary" label="测试">
         <ElSwitch v-model="disabled" />
       </ElFormItem>
@@ -47,7 +73,7 @@ function handleChange(val: CascaderValue,) {
         filterable
         @change="handleChange"
       />
-      <OssUpload />
+      <OssUpload v-model="value" list-type="picture-card" />
     </ElForm>
     <VxeTable :data="tableData">
       <VxeColumn type="seq" width="70" row-resize />
@@ -58,7 +84,7 @@ function handleChange(val: CascaderValue,) {
       <VxeColumn field="address" title="Address" />
     </VxeTable>
     <Descriptions :border="false" :descriptions="preliminaryInvestigationInfo" title="测试" />
-    <RichTextEditor v-model="value" :disabled="disabled" use-oss />
+    <RichTextEditor :disabled="disabled" use-oss />
   </div>
 </template>
 

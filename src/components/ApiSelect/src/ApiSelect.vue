@@ -1,33 +1,33 @@
 <script lang="ts" setup>
 import type { ModelValue, Props, } from "./types.ts"
+import { omit, } from "lodash-es"
+import { defaultProps, } from "./types.ts"
 import { useOptions, } from "./useOptions.ts"
 
 defineOptions({
   name: "ApiSelect",
 },)
-
-const props = withDefaults(defineProps<Props>(), {
-  modelPropName: "modelValue",
-  component: () => ElSelect,
-  params: () => ({}),
-  immediate: true,
-  beforeFetch: (params: unknown,) => params,
-  afterFetch: (res: unknown,) => Array.isArray(res,) ? res : [res,],
-  apiConfig: undefined,
-  cacheData: true,
-},)
+const props = withDefaults(defineProps<Props>(), defaultProps,)
 
 const emits = defineEmits<{
   change: [val: ModelValue,]
 }>()
 
+interface DynamicSlots {
+  [key: string]: unknown
+}
+
 const modelValue = defineModel<ModelValue>({ required: true, },)
 
 const attrs = useAttrs()
+const slots = useSlots() as DynamicSlots
 
 const { options, loading, formatOptions, fetchOptions, } = useOptions(props,)
 
 const bindProps = computed(() => {
+  const omitKeys: (keyof Props)[] = Object.keys(defaultProps,)
+  const omitProps = omit(props, omitKeys,)
+  const optionsComponents = ["ElCascader",]
   return {
     [props.modelPropName]: unref(modelValue,),
     [`onUpdate:${props.modelPropName}`]: (value: ModelValue,) => {
@@ -35,7 +35,8 @@ const bindProps = computed(() => {
       modelValue.value = value
     },
     ...attrs,
-    options: unref(formatOptions,),
+    ...omitProps,
+    options: optionsComponents.includes(props.component.name,) ? unref(formatOptions,) : undefined,
     loading: unref(loading,),
   }
 },)
@@ -49,7 +50,7 @@ defineExpose({
 
 <template>
   <component :is="props.component" v-bind="bindProps">
-    <template v-for="item in Object.keys($slots)" #[item]="data">
+    <template v-for="item in Object.keys(slots) " #[item]="data">
       <slot :name="item" v-bind="data || {}" />
     </template>
     <template v-if="component.name === 'ElCheckboxGroup'">
