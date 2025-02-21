@@ -1,17 +1,37 @@
 <script lang="ts" setup>
 import type { DescriptionItem, } from "@/components/Descriptions"
+import type { ModelListPageAPI, } from "@/views/workbench/apis"
 import type { CascaderValue, } from "element-plus"
+import type { VxeTableInstance, } from "vxe-table"
 import { allUserApiConfig, } from "@/apis/userInfo"
 import { ElCascader, } from "@/components/ElCascader"
+import { useMaxHeight, } from "@/hooks/useMaxHeight.ts"
+import { getModelListByPage, } from "@/views/workbench/apis"
+import { useRequest, } from "vue-hooks-plus"
 
-const value = ref([],)
+const tableRef = ref<VxeTableInstance>()
 const disabled = ref(false,)
-const tableData = ref([
-  { id: 10001, name: "Test1", role: "Develop", sex: "Man", age: 28, address: "test abc", },
-  { id: 10002, name: "Test2", role: "Test", sex: "Women", age: 22, address: "Guangzhou", },
-  { id: 10003, name: "Test3", role: "PM", sex: "Man", age: 32, address: "Shanghai", },
-  { id: 10004, name: "Test4", role: "Designer", sex: "Women", age: 24, address: "Shanghai", },
-],)
+const formData = reactive<ModelListPageAPI.Params & {
+  date?: DateRange
+}>({},)
+const pager = reactive<BasicPage>({
+  current: 1,
+  size: 10,
+  total: 0,
+},)
+
+const { data, loading, } = useRequest(() => getModelListByPage({
+  ...formData,
+  ...pager,
+},), {
+  loadingDelay: 500,
+},)
+
+const tableData = computed(() => data.value?.datas?.records,)
+
+const { maxHeight, } = useMaxHeight({
+  targetRef: tableRef,
+},)
 
 const preliminaryInvestigationInfo: DescriptionItem[] = [
   { field: "referenceBrand", label: "参考品牌", },
@@ -36,55 +56,83 @@ function handleChange(val: CascaderValue,) {
 
 <template>
   <div>
-    <ElForm label-position="top">
-      <ElCascader
-        v-model="value"
-        :options="[{
-          label: '一级 1',
-          value: '1',
-          children: [{
-            label: '二级 1-1',
-            value: '1-1',
-            children: [{
-              label: '三级 1-1-1',
-              value: '1-1-1',
-            }],
-          }],
-        }]"
-        :props="{ multiple: true }"
-      />
-      <ApiSelect
-        v-model="value"
-        :api-config="allUserApiConfig"
-        :component="ElCascader"
-        :props="{ multiple: true }"
-      />
-      <DictSelect
-        v-model="value"
-        dict-code="COMMON_YES_NO"
-      />
+    <LayoutForm
+      :descriptions="preliminaryInvestigationInfo"
+      :loading="loading"
+      :model="formData"
+      query-form
+    >
+      <ElFormItem label="测试">
+        <ApiSelect
+          v-model="formData.productNumber"
+          :api-config="allUserApiConfig"
+          :component="ElCascader"
+          :props="{ multiple: true }"
+        />
+      </ElFormItem>
+      <ElFormItem label="测试">
+        <DictSelect
+          v-model="formData.code"
+          dict-code="COMMON_YES_NO"
+        />
+      </ElFormItem>
       <ElFormItem class="!bg-primary" label="测试">
         <ElSwitch v-model="disabled" />
       </ElFormItem>
-      <ElCascader
-        v-model="value"
-        :options="preliminaryInvestigationInfo"
-        :props="{ value: 'field', label: 'field', emitPath: false }"
-        filterable
-        @change="handleChange"
-      />
-      <OssUpload v-model="value" list-type="picture-card" />
-    </ElForm>
-    <VxeTable :data="tableData">
+      <ElFormItem label="测试">
+        <ElCascader
+          v-model="formData.styleWms"
+          :options="preliminaryInvestigationInfo"
+          :props="{ value: 'field', label: 'field', emitPath: false }"
+          filterable
+          @change="handleChange"
+        />
+      </ElFormItem>
+      <ElFormItem :span="12" label="测试">
+        <ElDatePicker v-model="formData.date" type="daterange" />
+      </ElFormItem>
+    </LayoutForm>
+    <VxeTable ref="tableRef" :data="tableData" :max-height="maxHeight">
       <VxeColumn type="seq" width="70" row-resize />
-      <VxeColumn field="name" title="Name" />
-      <VxeColumn field="sex" title="Sex" />
-      <VxeColumn field="age" title="Age" />
-      <VxeColumn field="time" title="Time" />
-      <VxeColumn field="address" title="Address" />
+      <VxeColumn
+        field="code"
+        title="型体编码"
+        width="90"
+      />
+      <VxeColumn field="brandItemName" min-width="100" title="品牌" />
+      <VxeColumn field="developmentYearItemName" title="开发年份" width="80" />
+      <VxeColumn field="regionItemName" min-width="100" title="区域" />
+      <VxeColumn field="targetAudienceItemName" min-width="100" title="适用人群" />
+      <VxeColumn
+        field="productNumber"
+        min-width="120"
+        title="关联的产品"
+      />
+      <VxeColumn
+        field="status"
+        fixed="right"
+        title="状态"
+        width="80"
+      />
+      <VxeColumn field="modifyByIdItemName" title="操作人" width="120" />
+      <VxeColumn field="modifyTime" title="操作时间" width="80" />
+      <VxeColumn
+        fixed="right"
+        title="操作"
+        width="120"
+      >
+        <template #default>
+          <ElButton
+            type="primary"
+            link
+          >
+            版本记录
+          </ElButton>
+        </template>
+      </VxeColumn>
     </VxeTable>
     <Descriptions :border="false" :descriptions="preliminaryInvestigationInfo" title="测试" />
-    <RichTextEditor :disabled="disabled" use-oss />
+    <RichTextEditor v-model="formData.code" :disabled="disabled" use-oss />
   </div>
 </template>
 

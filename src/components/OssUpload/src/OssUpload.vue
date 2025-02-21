@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import type { Props, } from "@/components/BaseUpload"
-import { defaultProps, } from "@/components/BaseUpload/src/types.ts"
+import { defaultProps, } from "@/components/BaseUpload"
 import { omit, } from "lodash-es"
 import { httpRequest, } from "./helper.ts"
 

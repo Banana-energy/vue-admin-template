@@ -2,8 +2,8 @@ import type { Awaitable, } from "@vueuse/core"
 import type { CheckboxGroupProps, ISelectProps, } from "element-plus"
 import type { Component, } from "vue"
 
-export type ElSelectProps = Partial<ISelectProps>
-export type ElCheckboxGroupProps = Partial<CheckboxGroupProps>
+export type ElSelectProps = Partial<Omit<ISelectProps, "modelValue">>
+export type ElCheckboxGroupProps = Partial<Omit<CheckboxGroupProps, "modelValue">>
 
 interface FieldConfig {
   label: string
@@ -27,9 +27,10 @@ export interface OptionItem {
 
 export type Options = OptionItem[] | string[] | number[]
 
-export type ModelValue = any[] | string | number | boolean | Record<string, any>
+export type ModelValue = any[] | string | number | boolean | Record<string, any> | undefined
 
 export type Props = {
+  modelValue?: ModelValue
   /**
    * 组件
    */

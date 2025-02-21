@@ -33,7 +33,7 @@ $prefix-cls: "#{$adminNamespace}-app";
 
 html,
 body {
-  font-family: var(--font-family);
+  font-family: var(--font-family), serif;
   padding: 0 !important;
   margin: 0;
   overflow: hidden;

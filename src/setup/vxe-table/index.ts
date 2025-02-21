@@ -35,6 +35,10 @@ export function setupVxeTable(app: App<Element>,) {
         resizable: true,
       },
     },
+    column: {
+      showOverflow: true,
+      showHeaderOverflow: true,
+    },
   },)
   app
     .use(VxeUI,)

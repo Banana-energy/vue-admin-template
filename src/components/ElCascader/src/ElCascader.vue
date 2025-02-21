@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import type { CascaderEmits, CascaderNode, } from "element-plus"
+import type { CascaderNode, } from "element-plus"
 import type { ElCascaderInstance, } from "./types.ts"
 import { ElCascader, } from "element-plus"
 import "element-plus/es/components/cascader/style/index"
@@ -11,7 +11,6 @@ defineOptions({
 },)
 
 const props = defineProps<Props>()
-const emits = defineEmits<CascaderEmits>()
 
 function defaultFilterMethod(node: CascaderNode, keyword: string,) {
   return node.text.toLowerCase().includes(keyword.toLowerCase(),)
@@ -31,12 +30,7 @@ const bindProps = computed(() => {
 </script>
 
 <template>
-  <ElCascader
-    :model-value="props.modelValue"
-    v-bind="bindProps"
-    @change="val => emits('change', val)"
-    @update:model-value="val => emits('update:model-value', val)"
-  />
+  <ElCascader class="w-full" v-bind="bindProps" />
 </template>
 
 <style lang="scss" scoped>

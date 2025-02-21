@@ -9,29 +9,21 @@ defineOptions({
 },)
 
 const props = withDefaults(defineProps<Props>(), {
+  modelValue: "",
   modelPropName: "modelValue",
   component: () => ElSelect,
   params: () => ({}),
   immediate: true,
   cacheData: true,
 },)
-
+const emits = defineEmits<{
+  (event: "update:modelValue", value: ModelValue): void
+}>()
 type Props = ApiSelectProps & {
   dictCode: DictAPI.DictKey
-  modelValue: ModelValue
 }
 
 const attrs = useAttrs()
-
-const bindProps = computed<Props>(() => {
-  const omitKeys: (keyof Props)[] = ["apiConfig", "cacheData", "dictCode",]
-  const omitProps = omit(props, omitKeys,)
-  return {
-    ...attrs,
-    ...omitProps,
-    afterFetch: props.afterFetch || afterFetch,
-  } as Props
-},)
 
 const apiConfig: ApiConfig = {
   api: getDictList,
@@ -42,6 +34,18 @@ const apiConfig: ApiConfig = {
   },
 }
 
+const bindProps = computed<ApiSelectProps>(() => {
+  const omitKeys: (keyof Props)[] = ["apiConfig", "cacheData", "dictCode", "modelValue",]
+  const omitProps = omit(props, omitKeys,)
+  return {
+    ...attrs,
+    ...omitProps,
+    apiConfig,
+    cacheData: true,
+    afterFetch: props.afterFetch || afterFetch,
+  }
+},)
+
 function afterFetch(data: DictAPI.Response,) {
   const currentData = data.datas.find(item => item.dictItem === props.dictCode,)
   return currentData?.dictValueList || []
@@ -49,11 +53,7 @@ function afterFetch(data: DictAPI.Response,) {
 </script>
 
 <template>
-  <ApiSelect
-    :api-config="apiConfig"
-    cache-data
-    v-bind="bindProps"
-  />
+  <ApiSelect :model-value="modelValue" v-bind="bindProps" @update:model-value="val => emits('update:modelValue', val)" />
 </template>
 
 <style lang="scss" scoped>

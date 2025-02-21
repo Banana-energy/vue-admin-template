@@ -1,7 +1,7 @@
 import type { RawEditorOptions, } from "tinymce"
 
 export interface Props {
-  modelValue: string
+  modelValue?: string
   plugins?: string
   toolbar?: string
   menubar?: string

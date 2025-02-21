@@ -62,6 +62,15 @@ declare global {
     /** 每页显示的记录数 */
     size: number
   }
+
+  interface ListResponseData<T,> extends BasicPage {
+    /** 数据列表 */
+    records: T[]
+  }
+
+  type PageResponseData<T,> = BasicResponseData & {
+    datas: ListResponseData<T>
+  }
 }
 
 export {}

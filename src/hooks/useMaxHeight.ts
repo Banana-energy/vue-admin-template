@@ -1,6 +1,6 @@
 import type { ComponentPublicInstance, } from "vue"
 
-type ElementRef = Ref<HTMLElement | ComponentPublicInstance>
+type ElementRef = Ref<HTMLElement | ComponentPublicInstance | undefined>
 interface UseMaxHeightOptions {
   targetRef: ElementRef
   otherRefs?: ElementRef[] | ElementRef
@@ -16,7 +16,7 @@ export function useMaxHeight({
 }: UseMaxHeightOptions,) {
   const maxHeight = ref(minHeight,)
 
-  const getElementRect = (el: HTMLElement | ComponentPublicInstance,): DOMRect => {
+  const getElementRect = (el?: HTMLElement | ComponentPublicInstance,): DOMRect => {
     const domRect = {
       height: 0,
       width: 0,

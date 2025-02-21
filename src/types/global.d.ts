@@ -16,6 +16,8 @@ declare global {
     }
   }
 
+  declare type DateRange = [string, string,]
+
   declare interface BaseFileDTO {
     /**
      * 文件名

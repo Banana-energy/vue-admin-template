@@ -25,7 +25,7 @@ const slots = useSlots() as DynamicSlots
 const { options, loading, formatOptions, fetchOptions, } = useOptions(props,)
 
 const bindProps = computed(() => {
-  const omitKeys: (keyof Props)[] = Object.keys(defaultProps,)
+  const omitKeys = Object.keys(defaultProps,)
   const omitProps = omit(props, omitKeys,)
   const optionsComponents = ["ElCascader",]
   return {
@@ -36,7 +36,7 @@ const bindProps = computed(() => {
     },
     ...attrs,
     ...omitProps,
-    options: optionsComponents.includes(props.component.name,) ? unref(formatOptions,) : undefined,
+    options: optionsComponents.includes(props.component.name || "",) ? unref(formatOptions,) : undefined,
     loading: unref(loading,),
   }
 },)
