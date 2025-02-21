@@ -116,8 +116,6 @@ const options = computed<RawEditorOptions>(() => {
     ...props.options,
   }
 },)
-
-console.log(options.value,)
 </script>
 
 <template>

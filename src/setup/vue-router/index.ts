@@ -1,7 +1,6 @@
 import type { App, } from "vue"
 import type { RouteRecordRaw, } from "vue-router"
 import { TOKEN_NAME, useToken, } from "@/hooks/useToken.ts"
-import { useDictStore, } from "@/store/Dict"
 import { useRouteStore, } from "@/store/Route"
 import { useUserStore, } from "@/store/UserInfo"
 import { Layout, } from "@/utils/routerHelper.ts"
@@ -85,8 +84,6 @@ const { setToken, } = useToken()
 router.beforeEach(async(to, from, next,) => {
   const userStore = useUserStore()
 
-  const dictStore = useDictStore()
-
   const routeStore = useRouteStore()
   start()
   loadStart()
@@ -111,10 +108,6 @@ router.beforeEach(async(to, from, next,) => {
       next()
       return
     }
-  }
-
-  if (!dictStore.fetched) {
-    // todo 获取字典数据
   }
 
   if (routeStore.fetched && typeof name === "string") {

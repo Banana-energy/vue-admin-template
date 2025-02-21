@@ -1,7 +1,7 @@
 <script lang="ts" setup>
-import type { DictAPI, } from "@/apis/dict"
+import type { DictAPI, DictKey, } from "@/apis/dict"
 import type { ApiConfig, ApiSelectProps, ModelValue, } from "@/components/ApiSelect"
-import { getDictList, } from "@/apis/dict"
+import { useDict, } from "@/hooks/useDict.ts"
 import { omit, } from "lodash-es"
 
 defineOptions({
@@ -20,13 +20,15 @@ const emits = defineEmits<{
   (event: "update:modelValue", value: ModelValue): void
 }>()
 type Props = ApiSelectProps & {
-  dictCode: DictAPI.DictKey
+  dictCode: DictKey
 }
 
 const attrs = useAttrs()
 
+const { fetchDictList, } = useDict()
+
 const apiConfig: ApiConfig = {
-  api: getDictList,
+  api: fetchDictList,
   config: {
     label: "dictCnName",
     value: "dictValue",
@@ -46,8 +48,8 @@ const bindProps = computed<ApiSelectProps>(() => {
   }
 },)
 
-function afterFetch(data: DictAPI.Response,) {
-  const currentData = data.datas.find(item => item.dictItem === props.dictCode,)
+function afterFetch(data?: DictAPI.Response,) {
+  const currentData = data?.datas.find(item => item.dictItem === props.dictCode,)
   return currentData?.dictValueList || []
 }
 </script>
