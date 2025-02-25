@@ -21,7 +21,6 @@
             top: 50%;
             left: 50%;
             display: flex;
-            -webkit-transform: translate3d(-50%, -50%, 0);
             transform: translate3d(-50%, -50%, 0);
             justify-content: center;
             align-items: center;
@@ -75,48 +74,40 @@
 
         @-webkit-keyframes loader-outer {
             0% {
-                -webkit-transform: rotate(0deg);
                 transform: rotate(0deg);
             }
 
             100% {
-                -webkit-transform: rotate(360deg);
                 transform: rotate(360deg);
             }
         }
 
         @keyframes loader-outer {
             0% {
-                -webkit-transform: rotate(0deg);
                 transform: rotate(0deg);
             }
 
             100% {
-                -webkit-transform: rotate(360deg);
                 transform: rotate(360deg);
             }
         }
 
         @-webkit-keyframes loader-inner {
             0% {
-                -webkit-transform: rotate(0deg);
                 transform: rotate(0deg);
             }
 
             100% {
-                -webkit-transform: rotate(-360deg);
                 transform: rotate(-360deg);
             }
         }
 
         @keyframes loader-inner {
             0% {
-                -webkit-transform: rotate(0deg);
                 transform: rotate(0deg);
             }
 
             100% {
-                -webkit-transform: rotate(-360deg);
                 transform: rotate(-360deg);
             }
         }
@@ -124,7 +115,6 @@
 </head>
 <body>
 <div id="app">
-
     <div class="app-loading">
         <div class="app-loading-wrap">
             <div class="app-loading-title">

@@ -5,6 +5,8 @@ import type { CascaderValue, } from "element-plus"
 import type { VxeTableInstance, } from "vxe-table"
 import { allUserApiConfig, } from "@/apis/userInfo"
 import { ElCascader, } from "@/components/ElCascader"
+import { useDict, } from "@/hooks/useDict.ts"
+import { useMaxHeight, } from "@/hooks/useMaxHeight.ts"
 import { getModelListByPage, } from "@/views/workbench/apis"
 import { useRequest, } from "vue-hooks-plus"
 
@@ -51,6 +53,8 @@ const preliminaryInvestigationInfo: DescriptionItem[] = [
 function handleChange(val: CascaderValue,) {
   console.log(val,)
 }
+const { dictState, } = useDict()
+console.log(dictState,)
 </script>
 
 <template>
@@ -74,6 +78,10 @@ function handleChange(val: CascaderValue,) {
         <DictSelect
           v-model="formData.code"
           dict-code="COMMON_YES_NO"
+        />
+        <DictSelect
+          v-model="formData.code"
+          dict-code="PRODUCT_ARCH_TYPE"
         />
       </ElFormItem>
       <ElFormItem class="!bg-primary" label="测试">
