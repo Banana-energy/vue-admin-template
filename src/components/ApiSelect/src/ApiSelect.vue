@@ -19,7 +19,7 @@ interface DynamicSlots {
 
 const modelValue = defineModel<ModelValue>({ required: true, },)
 
-const attrs = useAttrs()
+const attrs: Record<string, unknown> = useAttrs()
 const slots = useSlots() as DynamicSlots
 
 const { options, loading, formatOptions, fetchOptions, } = useOptions(props,)

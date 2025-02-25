@@ -1,4 +1,5 @@
 import type { ComponentSize, } from "element-plus"
+import { IMPORT_META_ENV, } from "@/constants"
 import { setCssVar, } from "@/utils"
 import { colorIsDark, hexToRGB, lighten, mix, } from "@/utils/color.ts"
 import { ElMessage, } from "element-plus"
@@ -35,7 +36,7 @@ export const useAppStore = defineStore("app", {
     return {
       sizeMap: ["default", "large", "small",],
       mobile: false, // 是否是移动端
-      title: import.meta.env.VITE_APP_TITLE, // 标题
+      title: IMPORT_META_ENV.VITE_APP_TITLE, // 标题
       breadcrumb: true, // 面包屑
       breadcrumbIcon: true, // 面包屑图标
       collapse: false, // 折叠菜单

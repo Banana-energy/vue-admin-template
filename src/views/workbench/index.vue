@@ -5,7 +5,6 @@ import type { CascaderValue, } from "element-plus"
 import type { VxeTableInstance, } from "vxe-table"
 import { allUserApiConfig, } from "@/apis/userInfo"
 import { ElCascader, } from "@/components/ElCascader"
-import { useMaxHeight, } from "@/hooks/useMaxHeight.ts"
 import { getModelListByPage, } from "@/views/workbench/apis"
 import { useRequest, } from "vue-hooks-plus"
 
@@ -20,11 +19,11 @@ const pager = reactive<BasicPage>({
   total: 0,
 },)
 
-const { data, loading, } = useRequest(() => getModelListByPage({
+const { data, loading, run, cancel, } = useRequest(() => getModelListByPage({
   ...formData,
   ...pager,
 },), {
-  loadingDelay: 500,
+  loadingDelay: 300,
 },)
 
 const tableData = computed(() => data.value?.datas?.records,)
@@ -61,6 +60,7 @@ function handleChange(val: CascaderValue,) {
       :loading="loading"
       :model="formData"
       query-form
+      @search="run"
     >
       <ElFormItem label="测试">
         <ApiSelect
@@ -88,9 +88,27 @@ function handleChange(val: CascaderValue,) {
           @change="handleChange"
         />
       </ElFormItem>
-      <ElFormItem :span="12" label="测试">
-        <ElDatePicker v-model="formData.date" type="daterange" />
-      </ElFormItem>
+      <!--      <ElFormItem :span="12" label="测试"> -->
+      <!--        <ElCascader -->
+      <!--          v-model="formData.styleWms" -->
+      <!--          :options="preliminaryInvestigationInfo" -->
+      <!--          :props="{ value: 'field', label: 'field', emitPath: false }" -->
+      <!--          filterable -->
+      <!--          @change="handleChange" -->
+      <!--        /> -->
+      <!--      </ElFormItem> -->
+      <!--      <ElFormItem label="测试"> -->
+      <!--        <ElCascader -->
+      <!--          v-model="formData.styleWms" -->
+      <!--          :options="preliminaryInvestigationInfo" -->
+      <!--          :props="{ value: 'field', label: 'field', emitPath: false }" -->
+      <!--          filterable -->
+      <!--          @change="handleChange" -->
+      <!--        /> -->
+      <!--      </ElFormItem> -->
+      <!--      <ElFormItem label="测试"> -->
+      <!--        <ElDatePicker v-model="formData.date" type="daterange" /> -->
+      <!--      </ElFormItem> -->
     </LayoutForm>
     <VxeTable ref="tableRef" :data="tableData" :max-height="maxHeight">
       <VxeColumn type="seq" width="70" row-resize />
@@ -131,6 +149,7 @@ function handleChange(val: CascaderValue,) {
         </template>
       </VxeColumn>
     </VxeTable>
+    <Pagination :pager="pager" />
     <Descriptions :border="false" :descriptions="preliminaryInvestigationInfo" title="测试" />
     <RichTextEditor v-model="formData.code" :disabled="disabled" use-oss />
   </div>

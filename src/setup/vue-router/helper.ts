@@ -1,5 +1,6 @@
 import type { NotificationHandle, } from "element-plus"
 import type { Socket, } from "socket.io-client"
+import { IMPORT_META_ENV, } from "@/constants"
 import { ElNotification, } from "element-plus"
 import { io, } from "socket.io-client"
 
@@ -39,7 +40,7 @@ export async function checkVersionFn() {
   if (version !== __APP_VERSION__) {
     notify()
   }
-  socket = io(import.meta.env.VITE_VERSION_URL, {
+  socket = io(IMPORT_META_ENV.VITE_VERSION_URL, {
     transports: ["websocket",],
   },)
   socket.on("updated", (e,) => {

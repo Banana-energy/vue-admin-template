@@ -16,7 +16,7 @@ function defaultFilterMethod(node: CascaderNode, keyword: string,) {
   return node.text.toLowerCase().includes(keyword.toLowerCase(),)
 }
 
-const attrs = useAttrs()
+const attrs: Record<string, unknown> = useAttrs()
 
 const bindProps = computed(() => {
   const { filterMethod, ...rest } = props

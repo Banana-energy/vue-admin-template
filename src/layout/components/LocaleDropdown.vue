@@ -1,5 +1,7 @@
-<script setup lang="ts">
+<script lang="ts" setup>
+import type { LocaleEnum, } from "@/hooks/useLocale.ts"
 import { useDesign, } from "@/hooks/useDesign"
+import { localeOptions, useLocale, } from "@/hooks/useLocale.ts"
 
 defineProps<{
   color: string
@@ -9,33 +11,15 @@ const { getPrefixCls, } = useDesign()
 
 const prefixCls = getPrefixCls("locale-dropdown",)
 
-// const localeStore = useLocaleStore()
+const { setLocale, localeState, } = useLocale()
 
-// const langMap = computed(() => localeStore.getLocaleMap)
-
-const langMap = ref([
-  {
-    lang: "zh-CN",
-    name: "中文",
-  },
-  {
-    lang: "en",
-    name: "English",
-  },
-],)
-
-// const currentLang = computed(() => localeStore.getCurrentLocale)
-
-function setLang(lang: string,) {
-  // if (lang === unref(currentLang).lang)
-  //   return
+function setLang(lang: LocaleEnum,) {
+  if (lang === unref(localeState,)) {
+    return
+  }
+  setLocale(lang,)
   // 需要重新加载页面让整个语言多初始化
   window.location.reload()
-  // localeStore.setCurrentLocale({
-  //   lang,
-  // })
-  // const { changeLocale } = useLocale()
-  // changeLocale(lang)
 }
 </script>
 
@@ -50,8 +34,8 @@ function setLang(lang: string,) {
     />
     <template #dropdown>
       <ElDropdownMenu>
-        <ElDropdownItem v-for="item in langMap" :key="item.lang" :command="item.lang">
-          {{ item.name }}
+        <ElDropdownItem v-for="item in localeOptions" :key="item.value" :command="item.value">
+          {{ item.label }}
         </ElDropdownItem>
       </ElDropdownMenu>
     </template>

@@ -9,9 +9,9 @@
     "pro": "vite --mode pro",
     "ts:check": "vue-tsc --noEmit",
     "lint:eslint": "eslint --config eslint.config.ts --fix ./src",
-    "build:pro": "vue-tsc -b && vite build --mode pro",
-    "build:uat": "vue-tsc -b && vite build --mode uat",
-    "build:dev": "vue-tsc -b && vite build --mode dev"
+    "build:pro": "vue-tsc --noEmit && vite build --mode pro",
+    "build:uat": "vue-tsc --noEmit && vite build --mode uat",
+    "build:dev": "vue-tsc --noEmit && vite build --mode dev"
   },
   "keywords": [
     "vue-admin"
@@ -20,6 +20,7 @@
   "license": "ISC",
   "devDependencies": {
     "@antfu/eslint-config": "^4.3.0",
+    "@higgins/vite-plugin-i18n-transformer": "^1.0.21",
     "@iconify/vue": "^4.3.0",
     "@types/lodash-es": "^4.17.12",
     "@types/nprogress": "^0.2.3",

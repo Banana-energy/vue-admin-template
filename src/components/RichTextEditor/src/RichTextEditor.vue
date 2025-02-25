@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script lang="ts" setup>
 import type { Editor, RawEditorOptions, } from "tinymce"
 import type { Emits, Props, } from "./types.ts"
 import { uploadFilesWithoutExpire, } from "@/apis/upload"
@@ -12,7 +12,7 @@ defineOptions({
 
 const props = withDefaults(defineProps<Props>(), defaultProps,)
 const emits = defineEmits<Emits>()
-const attrs = useAttrs()
+const attrs: Record<string, unknown> = useAttrs()
 
 const value = computed({
   get() {
@@ -133,6 +133,6 @@ console.log(options.value,)
   />
 </template>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 
 </style>

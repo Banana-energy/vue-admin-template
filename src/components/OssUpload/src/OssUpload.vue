@@ -13,7 +13,7 @@ const props = withDefaults(defineProps<Props>(), defaultProps,)
 const emits = defineEmits<{
   (event: "update:modelValue", value: BaseFileDTO[]): void
 }>()
-const attrs = useAttrs()
+const attrs: Record<string, unknown> = useAttrs()
 
 const bindProps = computed<Props>(() => {
   const omitKeys: (keyof Props)[] = ["httpRequest", "modelValue",]
@@ -29,7 +29,7 @@ const bindProps = computed<Props>(() => {
   <BaseUpload
     :model-value="modelValue"
     v-bind="bindProps"
-    @update:model-value="val => emits('update:modelValue', val)"
+    @update:model-value="(val: BaseFileDTO[]) => emits('update:modelValue', val)"
   >
     <template #trigger>
       <slot name="trigger" />

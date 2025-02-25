@@ -18,7 +18,7 @@ const emits = defineEmits<{
   (e: "update:modelValue", val: BaseFileDTO[]): void
 }>()
 
-const attrs = useAttrs()
+const attrs: Record<string, unknown> = useAttrs()
 
 const uploadRef = ref<UploadInstance>()
 const fileList = ref<UploadUserFile[]>([],)

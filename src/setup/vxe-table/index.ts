@@ -21,7 +21,7 @@ export function setupVxeTable(app: App<Element>,) {
     table: {
       align: "left",
       border: true,
-      autoResize: true,
+      autoResize: false,
       minHeight: 0,
       showOverflow: true,
       showHeaderOverflow: true,

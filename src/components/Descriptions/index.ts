@@ -1,6 +1,5 @@
-import type { DescriptionItem, } from "./src/types.ts"
 import Descriptions from "./src/Descriptions.vue"
 
-export type { DescriptionItem, }
+export { type DescriptionItem, type Props, } from "./src/types.ts"
 
 export { Descriptions, }

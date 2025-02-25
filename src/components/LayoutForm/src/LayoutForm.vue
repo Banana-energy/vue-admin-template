@@ -1,10 +1,9 @@
 <script lang="ts" setup>
-import type { DescriptionItem, } from "@/components/Descriptions"
+import type { Props as DescriptionsProps, } from "@/components/Descriptions"
 import type { FormInstance, FormProps, } from "element-plus"
 import type { Slots, } from "vue"
 import to from "await-to-js"
-import { ElCollapseTransition, } from "element-plus"
-import { omit, } from "lodash-es"
+import { omit, pick, } from "lodash-es"
 
 defineOptions({
   name: "LayoutForm",
@@ -19,13 +18,9 @@ const emits = defineEmits<{
   (e: "reset"): void
 }>()
 
-const attrs = useAttrs()
+const attrs: Record<string, unknown> = useAttrs()
 
-interface Props extends Partial<FormProps> {
-  /**
-   * 详情配置
-   */
-  descriptions?: DescriptionItem[]
+type Props = Partial<FormProps> & DescriptionsProps & {
   /**
    * 是否是查询表单
    */
@@ -44,9 +39,9 @@ const formRef = ref<FormInstance>()
 
 const { default: defaultSlot, } = useSlots() as Slots
 
-const bindProps = computed(() => {
+const formProps = computed(() => {
   const { labelPosition, labelWidth, } = props
-  const omitKeys: (keyof Props)[] = ["descriptions",]
+  const omitKeys: (keyof DescriptionsProps)[] = ["descriptions", "title", "message", "collapse", "border", "labelSuffix", "descriptions", "data",]
   const omitProps = omit(props, omitKeys,)
   return {
     ...attrs,
@@ -56,40 +51,39 @@ const bindProps = computed(() => {
   }
 },)
 
-const collapse = ref(true,)
-
-const renderSlotConfig = computed(() => {
-  const slotContent: {
-    default: VNode[]
-    expand: VNode[]
-    totalSpan: number
-  } = { default: [], expand: [], totalSpan: 0, }
-  if (defaultSlot) {
-    const EXPAND_SPAN = 24
-    const isQueryForm = props.queryForm
-    defaultSlot().forEach((vnode: VNode,) => {
-      if (!vnode.props) {
-        // 注释节点
-        return
-      }
-      const { span = props.span, } = vnode.props
-      slotContent.totalSpan += span
-      if (isQueryForm && slotContent.totalSpan > EXPAND_SPAN) {
-        slotContent.expand.push(vnode,)
-      } else {
-        slotContent.default.push(vnode,)
-      }
-    },)
-  }
-  return slotContent
+const descriptionsProps = computed(() => {
+  const pickKeys: (keyof DescriptionsProps)[] = ["descriptions", "title", "message", "collapse", "border", "labelSuffix", "descriptions", "data",]
+  return pick(props, pickKeys,)
 },)
 
+const collapse = ref(true,)
+const totalSpan = computed(() => {
+  const slots = (defaultSlot?.() || []).filter(vnode => vnode.props,)
+  return slots.reduce((sum, vnode,) => {
+    return sum + (vnode.props?.span || props.span)
+  }, props.span,)
+},)
+const isCollapseNeeded = computed(() => totalSpan.value > 24,)
+
 const btnOffset = computed(() => {
-  const { totalSpan, } = unref(renderSlotConfig,)
-  const { span, } = props
-  return totalSpan < 24
-    ? (24 - totalSpan) - span
-    : (24 / span - 1) * span
+  if (totalSpan.value - props.span === 24 && collapse.value) {
+    return 0
+  }
+  const rowCount = Math.ceil(totalSpan.value / 24,)
+
+  return rowCount * 24 - totalSpan.value
+},)
+
+const visibleFields = computed(() => {
+  const slots = (defaultSlot?.() || []).filter(vnode => vnode.props,)
+  if (!isCollapseNeeded.value || !collapse.value)
+    return slots
+  let sum = 0
+  return slots.filter((vnode,) => {
+    const span = vnode.props?.span || props.span
+    sum += span
+    return sum + props.span <= 24
+  },)
 },)
 
 async function validate() {
@@ -110,56 +104,58 @@ defineExpose({
 </script>
 
 <template>
-  <ElForm v-if="!props.disabled" ref="formRef" v-bind="bindProps">
+  <ElForm v-if="!props.disabled" ref="formRef" v-bind="formProps">
     <ElRow :gutter="20">
-      <template v-for="(vnode, index) in renderSlotConfig.default" :key="index">
-        <ElCol :span="vnode.props?.span || props.span">
-          <component :is="vnode" />
+      <TransitionGroup name="fade">
+        <ElCol v-for="(vnode, index) in visibleFields" :key="index" :span="vnode.props?.span || props.span">
+          <slot :name="`field-${index}`">
+            <component :is="vnode" />
+          </slot>
         </ElCol>
-      </template>
-      <ElCollapseTransition v-if="renderSlotConfig.expand.length">
-        <ElCol v-show="!collapse" :span="24">
-          <ElRow :gutter="20">
-            <template v-for="(vnode, index) in renderSlotConfig.expand" :key="index">
-              <ElCol :span="vnode.props?.span || props.span">
-                <component :is="vnode" />
-              </ElCol>
-            </template>
-          </ElRow>
-        </ElCol>
-      </ElCollapseTransition>
-      <template v-if="queryForm">
-        <ElCol :offset="btnOffset" :span="props.span">
-          <ElFormItem>
-            <ElButton :loading="loading" @click="emits('reset')">
-              <Icon class="mr-0.5" icon="ep:refresh-right" />
-              重置
-            </ElButton>
-            <ElButton :loading="loading" type="primary" @click="emits('search')">
-              <Icon class="mr-0.5" icon="ep:search" />
-              搜索
-            </ElButton>
-            <ElButton
-              v-if="renderSlotConfig.expand.length"
-              type="primary"
-              link
-              @click="collapse = !collapse"
-            >
-              {{ collapse ? '展开' : '收起' }}
-              <Icon
-                :class="collapse ? '' : 'rotate-180'"
-                class="transform transition duration-300"
-                icon="ant-design:down-outlined"
-              />
-            </ElButton>
-          </ElFormItem>
-        </ElCol>
-      </template>
+      </TransitionGroup>
+      <ElCol :offset="btnOffset" :span="props.span">
+        <ElFormItem label=" ">
+          <ElButton :loading="loading" @click="emits('reset')">
+            <Icon class="mr-0.5" icon="ep:refresh-right" />
+            重置
+          </ElButton>
+          <ElButton :loading="loading" type="primary" @click="emits('search')">
+            <Icon class="mr-0.5" icon="ep:search" />
+            搜索
+          </ElButton>
+          <ElButton
+            v-if="isCollapseNeeded"
+            type="primary"
+            link
+            @click="collapse = !collapse"
+          >
+            {{ collapse ? "展开" : "收起" }}
+            <Icon
+              :class="collapse ? '' : 'rotate-180'"
+              class="transform transition duration-300"
+              icon="ep:arrow-down"
+            />
+          </ElButton>
+        </ElFormItem>
+      </ElCol>
     </ElRow>
   </ElForm>
-  <Descriptions v-if="props.disabled" :descriptions="descriptions" />
+  <Descriptions v-else v-bind="descriptionsProps" />
 </template>
 
 <style scoped>
+.fade-move,
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.2s ease-in-out;
+}
 
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+
+.fade-leave-active {
+  position: absolute;
+}
 </style>

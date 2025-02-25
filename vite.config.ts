@@ -1,6 +1,7 @@
 import { existsSync, readdirSync, statSync, } from "node:fs"
 import { parse, resolve, } from "node:path"
 import * as process from "node:process"
+import I18nTransformer from "@higgins/vite-plugin-i18n-transformer"
 import VuePlugin from "@vitejs/plugin-vue"
 import VueJsxPlugin from "@vitejs/plugin-vue-jsx"
 import UnoCSS from "unocss/vite"
@@ -83,6 +84,25 @@ export default defineConfig(({ mode, },) => {
       VuePlugin(),
       VueJsxPlugin(),
       UnoCSS(),
+      I18nTransformer({
+        include: ["**.js", "**.jsx", "**.ts", "**.tsx", "**.vue",],
+        exclude: ["node_modules/**", "src/hooks/useLocale.ts",],
+        i18nCallee: "useI18n().t",
+        dependency: {
+          name: "useI18n",
+          path: "@/hooks/useI18n",
+          objectPattern: true,
+        },
+        output: {
+          filename: "zh-CN.json",
+          langList: ["en-US.json",],
+          path: resolve("public/assets/locales",),
+        },
+        upload: {
+          app: env.VITE_I18N_APP,
+          uploadUrl: env.VITE_I18N_URL + env.VITE_I18N_UPLOAD_URL,
+        },
+      },),
       Components({
         dirs: resolve("src/components",),
         resolvers: [
@@ -98,7 +118,7 @@ export default defineConfig(({ mode, },) => {
             importStyle: "sass",
           },),
         ],
-        imports: ["vue", "vue-router", "vue-i18n", "@vueuse/head", "@vueuse/core",],
+        imports: ["vue", "vue-router", "@vueuse/head", "@vueuse/core",],
         dirs: ["src/hooks", "src/constants",],
         dts: "src/types/auto-import.d.ts",
         eslintrc: {
@@ -115,8 +135,8 @@ export default defineConfig(({ mode, },) => {
           chunkFileNames: "assets/js/[name]-[hash].js",
           entryFileNames: "assets/js/[name]-[hash].js",
           assetFileNames: (assetInfo,) => {
-            console.log(assetInfo.names,)
-            const { ext, } = parse(typeof assetInfo.name === "string" ? assetInfo.name : "",)
+            const name = assetInfo.names[0]
+            const { ext, } = parse(name,)
             const img = [
               "svgz",
               "pjp",

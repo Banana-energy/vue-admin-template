@@ -13,10 +13,10 @@ const fetch = axios.create({
   },
 },)
 
-enum ErrorMsg {
-  CLIENT_ERROR = "客户端出错，请稍后再试!",
-  SERVER_ERROR = "服务器出错，请稍后再试!",
-  DEFAULT_ERROR = "未知错误，请稍后再试!",
+const ERROR_MSG = {
+  CLIENT_ERROR: "客户端出错，请稍后再试!",
+  SERVER_ERROR: "服务器出错，请稍后再试!",
+  DEFAULT_ERROR: "未知错误，请稍后再试!",
 }
 
 enum ResponseCode {
@@ -28,7 +28,7 @@ interface UnAuthorizedResponse {
   redirectPath: string
 }
 
-function handleError(msg: string = ErrorMsg.DEFAULT_ERROR,) {
+function handleError(msg: string = ERROR_MSG.DEFAULT_ERROR,) {
   ElMessage.error(msg,)
 }
 
@@ -38,7 +38,9 @@ const { start, done, } = useNProgress()
 fetch.interceptors.request.use((config,) => {
   start()
   if (config.headers) {
+    const { localeState, } = useLocale()
     config.headers["x-referer"] = location.href
+    config.headers["x-lang"] = localeState.value
     if (getToken()) {
       config.headers.Authorization = getToken()
     }
@@ -46,23 +48,26 @@ fetch.interceptors.request.use((config,) => {
   return config
 }, (error,) => {
   done()
-  handleError(error.message || ErrorMsg.CLIENT_ERROR,)
+  handleError(error.message || ERROR_MSG.CLIENT_ERROR,)
   return Promise.reject(error,)
 },)
 
-fetch.interceptors.response.use((response: AxiosResponse<NewResponseData<UnAuthorizedResponse> & BasicResponseData>,) => {
+fetch.interceptors.response.use((response: AxiosResponse<NewResponseData<UnAuthorizedResponse> | BasicResponseData>,) => {
   done()
   const { data, config, } = response
   if (config.fetchOptions?.rawData) {
     return response
   }
-  if (ResponseCode.REDIRECTION === data.responseCode || ResponseCode.UNAUTHORIZED === data.responseCode) {
+  if ("responseCode" in data && (ResponseCode.REDIRECTION === data.responseCode || ResponseCode.UNAUTHORIZED === data.responseCode)) {
     removeToken()
     location.replace(data.data.redirectPath,)
     return response
   }
-  if (!data.isSuccess) {
-    handleError(response.data.msg || ErrorMsg.SERVER_ERROR,)
+  if ("success" in data && data.success) {
+    return response
+  }
+  if ("isSuccess" in data && !data.isSuccess) {
+    handleError(data.msg || ERROR_MSG.SERVER_ERROR,)
     return Promise.reject(response,)
   }
   return response
@@ -71,7 +76,7 @@ fetch.interceptors.response.use((response: AxiosResponse<NewResponseData<UnAutho
   if (error.code === AxiosError.ERR_CANCELED) {
     return
   }
-  handleError(error.message || ErrorMsg.SERVER_ERROR,)
+  handleError(error.message || ERROR_MSG.SERVER_ERROR,)
   return Promise.reject(error,)
 },)
 

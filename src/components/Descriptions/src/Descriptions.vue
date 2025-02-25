@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script lang="ts" setup>
 import type { AllowedComponentProps, } from "vue"
 import type { DescriptionItem, Props, } from "./types.ts"
 import { useAppStore, } from "@/store/App"
@@ -16,7 +16,7 @@ const appStore = useAppStore()
 
 const mobile = computed(() => appStore.getMobile,)
 
-const attrs = useAttrs()
+const attrs: Record<string, unknown> = useAttrs()
 
 const { getPrefixCls, } = useDesign()
 
@@ -110,7 +110,7 @@ function toggleClick() {
   </div>
 </template>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 @use "@/styles/variables.module.scss" as *;
 
 $prefix-cls: "#{$adminNamespace}-descriptions";

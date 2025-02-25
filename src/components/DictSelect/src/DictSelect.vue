@@ -23,7 +23,7 @@ type Props = ApiSelectProps & {
   dictCode: DictAPI.DictKey
 }
 
-const attrs = useAttrs()
+const attrs: Record<string, unknown> = useAttrs()
 
 const apiConfig: ApiConfig = {
   api: getDictList,

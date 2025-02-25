@@ -48,10 +48,17 @@ watch(
     immediate: true,
   },
 )
+
+const { localeState, } = useLocale()
+
+const elLocale = computed(() => {
+  return elLocales[localeState.value]
+},)
 </script>
 
 <template>
   <ElConfigProvider
+    :locale="elLocale"
     :message="{ max: 1 }"
     :namespace="variables.elNamespace"
     :size="size"
