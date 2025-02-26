@@ -126,7 +126,7 @@ const options = computed<RawEditorOptions>(() => {
     :plugins="plugins"
     :toolbar="toolbar"
     license-key="gpl"
-    tinymce-script-src="/tinymce/js/tinymce/tinymce.min.js"
+    tinymce-script-src="/tinymce/tinymce.min.js"
     v-bind="attrs"
   />
 </template>
