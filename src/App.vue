@@ -37,6 +37,8 @@ body {
   padding: 0 !important;
   margin: 0;
   overflow: hidden;
+  min-width: 1360px;
+  overflow-x: auto;
   @include size;
 
   #app {

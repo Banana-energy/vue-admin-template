@@ -2,36 +2,25 @@
 import type { DescriptionItem, } from "@/components/Descriptions"
 import type { ModelListPageAPI, } from "@/views/workbench/apis"
 import type { CascaderValue, } from "element-plus"
-import type { VxeTableInstance, } from "vxe-table"
 import { allUserApiConfig, } from "@/apis/userInfo"
 import { ElCascader, } from "@/components/ElCascader"
 import { useDict, } from "@/hooks/useDict.ts"
-import { useMaxHeight, } from "@/hooks/useMaxHeight.ts"
+import { useReportQuery, } from "@/hooks/useReportQuery.ts"
 import { getModelListByPage, } from "@/views/workbench/apis"
-import { useRequest, } from "vue-hooks-plus"
 
-const tableRef = ref<VxeTableInstance>()
 const disabled = ref(false,)
 const formData = reactive<ModelListPageAPI.Params & {
   date?: DateRange
 }>({},)
-const pager = reactive<BasicPage>({
-  current: 1,
-  size: 10,
-  total: 0,
-},)
 
-const { data, loading, run, cancel, } = useRequest(() => getModelListByPage({
-  ...formData,
-  ...pager,
-},), {
-  loadingDelay: 300,
-},)
-
-const tableData = computed(() => data.value?.datas?.records,)
-
-const { maxHeight, } = useMaxHeight({
-  targetRef: tableRef,
+const { tableData, tableRef, formRef, pager, loading, handleReset, handleSearch, maxHeight, handlePagerChange, } = useReportQuery({
+  api: getModelListByPage,
+  dateTransform: [{
+    source: "date",
+    startField: "startTime",
+    endField: "endTime",
+  },],
+  formData,
 },)
 
 const preliminaryInvestigationInfo: DescriptionItem[] = [
@@ -60,11 +49,13 @@ console.log(dictState,)
 <template>
   <div>
     <LayoutForm
+      ref="formRef"
       :descriptions="preliminaryInvestigationInfo"
       :loading="loading"
       :model="formData"
       query-form
-      @search="run"
+      @reset="handleReset"
+      @search="handleSearch"
     >
       <ElFormItem label="测试">
         <ApiSelect
@@ -118,7 +109,12 @@ console.log(dictState,)
       <!--        <ElDatePicker v-model="formData.date" type="daterange" /> -->
       <!--      </ElFormItem> -->
     </LayoutForm>
-    <VxeTable ref="tableRef" :data="tableData" :max-height="maxHeight">
+    <VxeTable
+      ref="tableRef"
+      :data="tableData"
+      :loading="loading"
+      :max-height="maxHeight"
+    >
       <VxeColumn type="seq" width="70" row-resize />
       <VxeColumn
         field="code"
@@ -157,7 +153,7 @@ console.log(dictState,)
         </template>
       </VxeColumn>
     </VxeTable>
-    <Pagination :pager="pager" />
+    <Pagination :pager="pager" @change="handlePagerChange" />
     <Descriptions :border="false" :descriptions="preliminaryInvestigationInfo" title="测试" />
     <RichTextEditor v-model="formData.code" :disabled="disabled" use-oss />
   </div>

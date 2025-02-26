@@ -48,5 +48,10 @@
   --vxe-ui-font-color: var(--regular-text-color);
   --vxe-ui-table-header-font-color: var(--primary-text-color);
   --vxe-ui-table-row-line-height: var(--cell-line-height);
-  --vxe-ui-font-family: var(--font-family)
+  --vxe-ui-font-family: var(--font-family);
+  --vxe-ui-status-success-color: var(--success-color);
+  --vxe-ui-status-info-color: var(--info-color);
+  --vxe-ui-status-warning-color: var(--warning-color);
+  --vxe-ui-status-danger-color: var(--danger-color);
+  --vxe-ui-status-error-color: var(--danger-color);
 }

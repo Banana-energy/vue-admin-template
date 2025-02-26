@@ -63,9 +63,10 @@ declare global {
     size: number
   }
 
-  interface ListResponseData<T,> extends BasicPage {
+  interface ListResponseData<T,> {
     /** 数据列表 */
     records: T[]
+    pager: BasicPage
   }
 
   type PageResponseData<T,> = BasicResponseData & {

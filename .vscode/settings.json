@@ -47,5 +47,11 @@
     "scss",
     "pcss",
     "postcss"
+  ],
+  "i18n-ally.localesPaths": [
+    "public/assets/locales",
+    "src/apis/i18n",
+    "public/tinymce/js/tinymce/langs",
+    "public/tinymce/js/tinymce/plugins/help/js/i18n"
   ]
 }

@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import type { PaginationProps, } from "element-plus"
 import type { Props, } from "./types.ts"
-import { noop, omit, } from "lodash-es"
+import { omit, } from "lodash-es"
 
 defineOptions({
   name: "Pagination",
@@ -10,40 +10,42 @@ defineOptions({
 const props = withDefaults(defineProps<Props>(), {
   layout: `->, prev, pager, next, sizes`,
   pageSizes: () => [10, 20, 30, 40, 50, 100, 500, 1000,],
-  config: () => ["current", "size", "total",],
 },)
 const emits = defineEmits<{
-  (e: "change", currentPage: number, pageSize: number,): void
+  (e: "change", pager: BasicPage,): void
 }>()
 const attrs: Record<string, unknown> = useAttrs()
 
 const bindProps = computed<Partial<PaginationProps>>(() => {
-  const { pager, config, } = props
-  const omitKeys = ["pager", "config",]
+  const { pager, } = props
+  const omitKeys = ["pager",]
   const omitProps = omit(props, omitKeys,)
-  const [current, size, total,] = config
   return {
     ...attrs,
     ...omitProps,
-    "currentPage": pager[current],
-    "pageSize": pager[size],
-    "total": pager[total],
-    onChange,
-    "onUpdate:currentPage": noop,
-    "onUpdate:pageSize": noop,
+    "currentPage": pager.current,
+    "pageSize": pager.size,
+    "total": pager.total,
+    "onUpdate:currentPage": (val: number,) => {
+      emits("change", {
+        ...pager,
+        current: val,
+      },)
+    },
+    "onUpdate:pageSize": (val: number,) => {
+      emits("change", {
+        ...pager,
+        size: val,
+      },)
+    },
   }
 },)
-
-function onChange(currentPage: number, pageSize: number,) {
-  emits("change", currentPage, pageSize,)
-}
 </script>
 
 <template>
   <ElPagination
     class="py-4 bg-white"
     v-bind="bindProps"
-    @change="onChange"
   />
 </template>
 
