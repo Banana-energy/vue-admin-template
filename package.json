@@ -11,7 +11,8 @@
     "lint:eslint": "eslint --config eslint.config.ts --fix ./src",
     "build:pro": "vue-tsc --noEmit && vite build --mode pro",
     "build:uat": "vue-tsc --noEmit && vite build --mode uat",
-    "build:dev": "vue-tsc --noEmit && vite build --mode dev"
+    "build:dev": "vue-tsc --noEmit && vite build --mode dev",
+    "prepare": "husky"
   },
   "keywords": [
     "vue-admin"
@@ -20,6 +21,8 @@
   "license": "ISC",
   "devDependencies": {
     "@antfu/eslint-config": "^4.3.0",
+    "@commitlint/cli": "^19.7.1",
+    "@commitlint/config-conventional": "^19.7.1",
     "@higgins/vite-plugin-i18n-transformer": "^1.0.21",
     "@iconify/vue": "^4.3.0",
     "@types/lodash-es": "^4.17.12",
@@ -30,6 +33,7 @@
     "@vitejs/plugin-vue-jsx": "^4.1.1",
     "@vue/tsconfig": "^0.7.0",
     "eslint": "^9.21.0",
+    "husky": "^9.1.7",
     "jiti": "^2.4.2",
     "sass": "^1.85.1",
     "typescript": "^5.7.3",
