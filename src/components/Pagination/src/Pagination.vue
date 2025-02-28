@@ -44,7 +44,7 @@ const bindProps = computed<Partial<PaginationProps>>(() => {
 
 <template>
   <ElPagination
-    class="py-4 bg-white"
+    class="px-2 py-4 bg-white"
     v-bind="bindProps"
   />
 </template>

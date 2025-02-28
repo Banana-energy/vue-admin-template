@@ -171,6 +171,7 @@ export default defineConfig(({ mode, },) => {
       include: [
         "vue",
         "vue-router",
+        "vue-i18n",
         "axios",
         "nprogress",
         "vxe-table",

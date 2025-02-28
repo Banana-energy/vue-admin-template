@@ -1,4 +1,4 @@
-import { setupI18n, setupPinia, setupRouter, setupVxeTable, } from "@/setup"
+import { setupAuth, setupI18n, setupPinia, setupRouter, setupVxeTable, } from "@/setup"
 import { ElLoading, } from "element-plus"
 import { createApp, } from "vue"
 import App from "./App.vue"
@@ -12,6 +12,7 @@ function setup() {
   setupVxeTable(app,)
   setupPinia(app,)
   setupRouter(app,)
+  setupAuth(app,)
 
   app
     .use(ElLoading,)

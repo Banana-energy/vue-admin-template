@@ -15,6 +15,12 @@ export namespace UserResAPI {
   export type Response = Data // 响应数据类型
 }
 
+export function getUserRes(id: number,) {
+  return get<UserResAPI.Response>({
+    url: `/pdm-base/common/pms/user/menu/res/${id}`,
+  },)
+}
+
 export namespace RouteInfoAPI {
   export type PmsRouteRecordRaw = RouteRecordSingleViewWithChildren & {
     appId: number

@@ -1,6 +1,6 @@
 import type { RouteInfoAPI, } from "@/apis/route"
 import type { RouteRecordRaw, } from "vue-router"
-import { fetchUserMenus, } from "@/apis/route"
+import { fetchUserMenus, getUserRes, } from "@/apis/route"
 import { constantRouterMap, } from "@/setup"
 import router from "@/setup/vue-router"
 import { flatMultiLevelRoutes, generateRoutesByServer, } from "@/utils/routerHelper.ts"
@@ -35,7 +35,12 @@ export const useRouteStore = defineStore("route", {
       this.menuTabRouters = routers
     },
     async fetchResList(id: number,) {
-      return []
+      const result = await getUserRes(id,)
+      if (result) {
+        this.resList = result.res
+        this.skipAuth = result.skipAuth
+      }
+      return result?.res || []
     },
     async fetchRouters() {
       const result = await fetchUserMenus()

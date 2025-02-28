@@ -1,3 +1,4 @@
+export * from "./auth"
 export * from "./pinia"
 export * from "./vue-i18n"
 export * from "./vue-router"
