@@ -15,7 +15,18 @@ const formData = reactive<ModelListPageAPI.Params & {
   date?: DateRange
 }>({},)
 
-const { tableData, tableRef, formRef, pager, loading, handleReset, handleSearch, maxHeight, handlePagerChange, } = useReportQuery({
+const {
+  tableData,
+  tableRef,
+  formRef,
+  pager,
+  pagerRef,
+  loading,
+  maxHeight,
+  handleReset,
+  handleSearch,
+  handlePagerChange,
+} = useReportQuery({
   api: getModelListByPage,
   dateTransform: [{
     source: "date",
@@ -275,7 +286,7 @@ onMounted(() => {
         </template>
       </VxeColumn>
     </VxeTable>
-    <Pagination :pager="pager" @change="handlePagerChange" />
+    <Pagination ref="pagerRef" :pager="pager" @change="handlePagerChange" />
     <EchartsUI ref="chartRef" />
     <Descriptions :border="false" :descriptions="preliminaryInvestigationInfo" title="测试" />
     <RichTextEditor v-model="formData.code" :disabled="disabled" use-oss />

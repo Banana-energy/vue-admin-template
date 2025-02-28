@@ -24,6 +24,7 @@ interface Return<TData, TParams,> {
   formRef: Ref<FormInstance | LayoutFormInstance | undefined>
   tableRef: Ref<VxeTableInstance | undefined>
   pager: BasicPage
+  pagerRef: Ref<PaginationInstance | undefined>
   queryParams: ComputedRef<TParams>
   tableData: Ref<TData[]>
   handleSearch: () => Promise<void>
@@ -150,6 +151,7 @@ export function useReportQuery<TData, TParams extends Params,>(options: Options<
     formRef,
     loading,
     pager,
+    pagerRef,
     maxHeight,
     queryParams,
     handleReset,

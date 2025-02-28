@@ -1,4 +1,5 @@
 import type { ComponentPublicInstance, } from "vue"
+import { debounce, } from "lodash-es"
 
 type ElementRef = Ref<HTMLElement | ComponentPublicInstance | undefined>
 interface UseMaxHeightOptions {
@@ -40,15 +41,15 @@ export function useMaxHeight({
     return domRect
   }
 
-  const getOtherRefs = () => {
+  const otherEls = computed(() => {
     if (!otherRefs) {
       return []
     }
     const refs = Array.isArray(otherRefs,) ? otherRefs : [otherRefs,]
     return refs.map(ref => ref.value,)
-  }
+  },)
 
-  const calculateMaxHeight = () => {
+  const calculateMaxHeight = debounce(() => {
     if (!targetRef.value)
       return
 
@@ -59,7 +60,7 @@ export function useMaxHeight({
     const targetOffsetTop = getElementRect(targetRef.value,).top || 0
 
     // 计算其他元素的总高度
-    const otherHeight = getOtherRefs().reduce((total, ref,) => {
+    const otherHeight = otherEls.value.reduce((total, ref,) => {
       total += getElementRect(ref,).height
       return total
     }, 0,)
@@ -69,11 +70,10 @@ export function useMaxHeight({
 
     // 当前元素的最大高度 = 剩余空间 或 最小高度（二者取较大值）
     maxHeight.value = Math.max(availableHeight, minHeight,)
-  }
+  }, 200,)
 
   // 初始化和窗口大小变化时重新计算
   onMounted(() => {
-    nextTick(() => calculateMaxHeight(),)
     window.addEventListener("resize", calculateMaxHeight,)
   },)
 
@@ -82,7 +82,7 @@ export function useMaxHeight({
     window.removeEventListener("resize", calculateMaxHeight,)
   },)
 
-  watch(() => targetRef.value, calculateMaxHeight,)
+  watch(() => [targetRef.value, otherEls.value,], calculateMaxHeight,)
 
   return {
     maxHeight,
