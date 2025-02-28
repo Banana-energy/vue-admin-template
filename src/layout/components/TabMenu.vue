@@ -227,7 +227,7 @@ $prefix-cls: "#{$adminNamespace}-tab-menu";
 .#{$prefix-cls} {
   transition: all var(--transition-time-02);
 
-  &__item {
+  #{&}__item {
     color: var(--left-menu-text-color);
     transition: all var(--transition-time-02);
 

@@ -8,9 +8,9 @@ import "animate.css"
 
 function setup() {
   const app = createApp(App,)
+  setupPinia(app,)
   setupI18n(app,)
   setupVxeTable(app,)
-  setupPinia(app,)
   setupRouter(app,)
   setupAuth(app,)
 

@@ -18,20 +18,21 @@ type DictMap = {
 }
 
 type DictState = DictList & DictMap & {
-  fetched: boolean
+  fetching: boolean
 }
 
 export const dictState = reactive<DictState>({
-  fetched: false,
+  fetching: false,
 },)
 
 export function useDict() {
   async function fetchDictList() {
-    if (dictState.fetched) {
+    if (dictState.fetching) {
       return
     }
+    dictState.fetching = true
     const result = await getDictList()
-    dictState.fetched = true
+    dictState.fetching = false
     if (result?.datas) {
       const { datas, } = result
       datas.forEach((item,) => {

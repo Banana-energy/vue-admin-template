@@ -197,7 +197,7 @@ $prefix-cls: "#{$adminNamespace}-menu";
   }
 
   // 水平菜单
-  &__horizontal {
+  #{&}__horizontal {
     height: calc(var(--top-tool-height)) !important;
 
     :deep(.#{$elNamespace}-menu--horizontal) {

@@ -1,84 +1,149 @@
 import type { EChartsOption, } from "echarts"
 import type EchartsUI from "./EchartsUI.vue"
-
 import echarts from "./echarts"
 
 type EchartsUIInstance = InstanceType<typeof EchartsUI>
-
 type EchartsThemeType = "dark" | "light" | null
 
-function useEcharts() {
+interface EchartsOptions {
+  theme?: EchartsThemeType
+  autoResize?: boolean
+  resizeDebounceWait?: number
+  renderTimeout?: number
+}
+
+const defaultOptions: EchartsOptions = {
+  theme: null,
+  autoResize: true,
+  resizeDebounceWait: 200,
+  renderTimeout: 30,
+}
+
+export function useEcharts(options: EchartsOptions = {},) {
+  const mergedOptions = { ...defaultOptions, ...options, }
+
   const chartRef = ref<EchartsUIInstance>()
   const chartInstance = shallowRef<echarts.ECharts>()
+  const loading = ref(false,)
 
   const { height, width, } = useWindowSize()
-  const resizeHandler: () => void = useDebounceFn(resize, 200,)
 
-  const initCharts = (theme?: EchartsThemeType,) => {
-    const el = chartRef?.value?.$el
-    if (!el) {
-      return
+  const initCharts = (theme: EchartsThemeType = mergedOptions.theme ?? null,) => {
+    try {
+      const el = chartRef?.value?.$el
+      if (!el) {
+        throw new Error("图表容器未找到",)
+      }
+
+      // 销毁旧实例
+      if (chartInstance.value) {
+        chartInstance.value.dispose()
+      }
+
+      chartInstance.value = echarts.init(el, theme,)
+      return chartInstance.value
+    } catch (error) {
+      console.error("初始化图表失败:", error,)
+      return undefined
     }
-    chartInstance.value = echarts.init(el, theme,)
-
-    return chartInstance.value
   }
 
-  const renderEcharts = (
+  const setLoading = (status: boolean,) => {
+    loading.value = status
+    if (chartInstance.value) {
+      status ? chartInstance.value.showLoading() : chartInstance.value.hideLoading()
+    }
+  }
+
+  const renderEcharts = async(
     options: EChartsOption,
     clear = true,
   ): Promise<echarts.ECharts | undefined> => {
-    const currentOptions = {
-      ...options,
-    }
-    return new Promise((resolve,) => {
+    try {
+      setLoading(true,)
+      const currentOptions = { ...options, }
+
       const el = chartRef?.value?.$el
-      if (el?.offsetHeight === 0) {
-        useTimeoutFn(async() => {
-          resolve(await renderEcharts(currentOptions,),)
-        }, 30,)
-        return
+      if (!el) {
+        throw new Error("图表容器未找到",)
       }
-      nextTick(() => {
-        useTimeoutFn(() => {
-          if (!chartInstance.value) {
-            const instance = initCharts()
-            if (!instance)
-              return
-          }
-          clear && chartInstance.value?.clear()
-          chartInstance.value?.setOption(currentOptions,)
-          resolve(chartInstance.value,)
-        }, 30,)
-      },)
-    },)
+
+      // 处理容器高度为0的情况
+      if (el.offsetHeight === 0) {
+        await new Promise((resolve,) => {
+          useTimeoutFn(() => resolve(true,), mergedOptions.renderTimeout ?? 30,)
+        },)
+        return renderEcharts(currentOptions,)
+      }
+
+      await nextTick()
+
+      // 确保实例存在
+      if (!chartInstance.value) {
+        const instance = initCharts()
+        if (!instance) {
+          throw new Error("图表实例创建失败",)
+        }
+      }
+
+      if (clear) {
+        chartInstance.value?.clear()
+      }
+
+      chartInstance.value?.setOption(currentOptions,)
+      return chartInstance.value
+    } catch (error) {
+      console.error("渲染图表失败:", error,)
+      return undefined
+    } finally {
+      setLoading(false,)
+    }
   }
 
-  function resize() {
-    chartInstance.value?.resize({
-      animation: {
-        duration: 300,
-        easing: "quadraticIn",
-      },
-    },)
+  const resize = useDebounceFn(
+    () => {
+      try {
+        chartInstance.value?.resize({
+          animation: {
+            duration: 300,
+            easing: "quadraticIn",
+          },
+        },)
+      } catch (error) {
+        console.error("图表重置大小失败:", error,)
+      }
+    },
+    mergedOptions.resizeDebounceWait,
+  )
+
+  // 切换主题
+  const updateTheme = (theme: EchartsThemeType,) => {
+    try {
+      const options = chartInstance.value?.getOption()
+      initCharts(theme,)
+      if (options) {
+        chartInstance.value?.setOption(options,)
+      }
+    } catch (error) {
+      console.error("切换主题失败:", error,)
+    }
   }
 
-  watch([width, height,], () => {
-    resizeHandler?.()
-  },)
-
-  useResizeObserver(chartRef, resizeHandler,)
+  if (mergedOptions.autoResize) {
+    watch([width, height,], resize,)
+    useResizeObserver(chartRef, resize,)
+  }
 
   tryOnUnmounted(() => {
-    // 销毁实例，释放资源
     chartInstance.value?.dispose()
   },)
+
   return {
     chartRef,
+    chartInstance,
     renderEcharts,
     resize,
-    chartInstance,
+    updateTheme,
+    setLoading,
   }
 }
-
-export { useEcharts, }

@@ -65,7 +65,7 @@ const layout = computed(() => appStore.getLayout,)
 $prefix-cls: "#{$adminNamespace}-layout-radio-picker";
 
 .#{$prefix-cls} {
-  &__classic {
+  #{&}__classic {
     border: 2px solid #e5e7eb;
     border-radius: 4px;
 
@@ -93,7 +93,7 @@ $prefix-cls: "#{$adminNamespace}-layout-radio-picker";
     }
   }
 
-  &__top-left {
+  #{&}__top-left {
     border: 2px solid #e5e7eb;
     border-radius: 4px;
 
@@ -121,7 +121,7 @@ $prefix-cls: "#{$adminNamespace}-layout-radio-picker";
     }
   }
 
-  &__top {
+  #{&}__top {
     border: 2px solid #e5e7eb;
     border-radius: 4px;
 
@@ -138,7 +138,7 @@ $prefix-cls: "#{$adminNamespace}-layout-radio-picker";
     }
   }
 
-  &__cut-menu {
+  #{&}__cut-menu {
     border: 2px solid #e5e7eb;
     border-radius: 4px;
 

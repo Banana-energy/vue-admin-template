@@ -130,6 +130,7 @@ export default defineConfig(({ mode, },) => {
     ],
     build: {
       sourcemap: true,
+      chunkSizeWarningLimit: 5 * 1024,
       rollupOptions: {
         output: {
           chunkFileNames: "assets/js/[name]-[hash].js",
@@ -163,6 +164,21 @@ export default defineConfig(({ mode, },) => {
               return `assets/fonts/[name]-[hash].[ext]`
             }
             return "assets/[ext]/[name]-[hash].[ext]"
+          },
+          manualChunks(id,) {
+            const projectRoot = resolve(".",).replace(/\\/g, "/",)
+            if (id.includes("node_modules",)) {
+              // 其他所有第三方依赖打包到 vendor
+              return "vendor"
+            }
+            if (id.startsWith(projectRoot,) && !id.includes("node_modules",)) {
+              if (id.includes("/src/components/",)
+                || id.includes("/src/layout/",)
+                || id.includes("/src/store/",)) {
+                return "common"
+              }
+            }
+            return null
           },
         },
       },

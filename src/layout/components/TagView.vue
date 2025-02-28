@@ -485,7 +485,7 @@ $prefix-cls: "#{$adminNamespace}-tags-view";
     height: 100%;
   }
 
-  &__tool {
+  #{&}__tool {
     position: relative;
 
     &::before {
@@ -512,7 +512,7 @@ $prefix-cls: "#{$adminNamespace}-tags-view";
     }
   }
 
-  &__item {
+  #{&}__item {
     position: relative;
     top: 3px;
     height: calc(100% - 6px);
@@ -537,13 +537,13 @@ $prefix-cls: "#{$adminNamespace}-tags-view";
     }
   }
 
-  &__item:not(.is-active) {
+  #{&}__item:not(.is-active) {
     &:hover {
       color: var(--el-color-primary);
     }
   }
 
-  &__item.is-active {
+  #{&}__item.is-active {
     color: var(--el-color-white);
     background-color: var(--el-color-primary);
     border: 1px solid var(--el-color-primary);
@@ -557,7 +557,7 @@ $prefix-cls: "#{$adminNamespace}-tags-view";
 
 .dark {
   .#{$prefix-cls} {
-    &__tool {
+    #{&}__tool {
       &--first {
         &::after {
           display: none;
@@ -565,17 +565,17 @@ $prefix-cls: "#{$adminNamespace}-tags-view";
       }
     }
 
-    &__item {
+    #{&}__item {
       border: 1px solid var(--el-border-color);
     }
 
-    &__item:not(.is-active) {
+    #{&}__item:not(.is-active) {
       &:hover {
         color: var(--el-color-primary);
       }
     }
 
-    &__item.is-active {
+    #{&}__item.is-active {
       color: var(--el-color-white);
       background-color: var(--el-color-primary);
       border: 1px solid var(--el-color-primary);

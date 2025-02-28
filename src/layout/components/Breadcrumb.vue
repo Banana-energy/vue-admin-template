@@ -16,14 +16,14 @@ const { getPrefixCls, } = useDesign()
 
 const prefixCls = getPrefixCls("breadcrumb",)
 
-const appStore = useAppStore()
-
 // 面包屑图标
-const breadcrumbIcon = computed(() => appStore.getBreadcrumbIcon,)
 
 export default defineComponent({
   name: "Breadcrumb",
   setup() {
+    const appStore = useAppStore()
+    const breadcrumbIcon = computed(() => appStore.getBreadcrumbIcon,)
+
     const { currentRoute, } = useRouter()
 
     const levelList = ref<CustomRouteRecordRaw[]>([],)
@@ -95,7 +95,7 @@ export default defineComponent({
 $prefix-cls: "#{$adminNamespace}-tool-header";
 
 .#{$prefix-cls} {
-  :deep(&__item) {
+  :deep(#{&}__item) {
     display: flex;
     .#{$prefix-cls}__inner {
       display: flex;
@@ -108,7 +108,7 @@ $prefix-cls: "#{$adminNamespace}-tool-header";
     }
   }
 
-  :deep(&__item):not(:last-child) {
+  :deep(#{&}__item):not(:last-child) {
     .#{$prefix-cls}__inner {
       color: var(--top-header-text-color);
 
@@ -118,7 +118,7 @@ $prefix-cls: "#{$adminNamespace}-tool-header";
     }
   }
 
-  :deep(&__item):last-child {
+  :deep(#{&}__item):last-child {
     .#{$prefix-cls}__inner {
       color: var(--el-text-color-placeholder);
 

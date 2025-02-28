@@ -12,29 +12,28 @@ const { getPrefixCls, variables, } = useDesign()
 
 const prefixCls = getPrefixCls("tool-header",)
 
-const appStore = useAppStore()
-
-// 面包屑
-const breadcrumb = computed(() => appStore.getBreadcrumb,)
-
-// 折叠图标
-const hamburger = computed(() => appStore.getHamburger,)
-
-// 全屏图标
-const screenfull = computed(() => appStore.getScreenfull,)
-
-// 尺寸图标
-const size = computed(() => appStore.getSize,)
-
-// 布局
-const layout = computed(() => appStore.getLayout,)
-
-// 多语言图标
-const locale = computed(() => appStore.getLocale,)
-
 export default defineComponent({
   name: "ToolHeader",
   setup() {
+    const appStore = useAppStore()
+
+    // 面包屑
+    const breadcrumb = computed(() => appStore.getBreadcrumb,)
+
+    // 折叠图标
+    const hamburger = computed(() => appStore.getHamburger,)
+
+    // 全屏图标
+    const screenfull = computed(() => appStore.getScreenfull,)
+
+    // 尺寸图标
+    const size = computed(() => appStore.getSize,)
+
+    // 布局
+    const layout = computed(() => appStore.getLayout,)
+
+    // 多语言图标
+    const locale = computed(() => appStore.getLocale,)
     return () => (
       <div
         id={`${variables.namespace}-tool-header`}
