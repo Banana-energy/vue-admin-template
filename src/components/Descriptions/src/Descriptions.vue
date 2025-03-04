@@ -56,7 +56,7 @@ function toggleClick() {
       @click="toggleClick"
     >
       <div :class="[`${prefixCls}-header__title`]" class="relative font-bold">
-        <div class="flex items-center">
+        <div class="flex items-center font-size-xl">
           {{ props.title }}
           <ElTooltip v-if="props.message" :content="props.message" placement="right">
             <Icon class="ml-1" icon="ep:warning" />
@@ -84,7 +84,7 @@ function toggleClick() {
           >
             <template #label>
               <slot :label="item.label" :name="`${item.field}-label`" :row="data">
-                <div class="whitespace-nowrap">
+                <div class="whitespace-nowrap font-size-base">
                   {{ item.label + props.labelSuffix }}
                 </div>
               </slot>
@@ -92,7 +92,7 @@ function toggleClick() {
 
             <template #default>
               <slot :name="item.field" :row="data">
-                <div class="max-w-[500px] min-w-[200px]">
+                <div class="max-w-[500px] min-w-[200px] font-size-base">
                   <ElScrollbar>
                     {{
                       Array.isArray(data[item.field])

@@ -158,4 +158,9 @@ defineExpose({
 .fade-leave-active {
   position: absolute;
 }
+
+:deep(.el-form-item--label-top .el-form-item__label) {
+  font-size: var(--font-size-base);
+  line-height: var(--line-height-base);
+}
 </style>

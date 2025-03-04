@@ -73,13 +73,6 @@ export default defineConfig(({ mode, },) => {
         },
       },
     },
-    css: {
-      preprocessorOptions: {
-        scss: {
-          additionalData: `@use "@/styles/business.scss" as *;`,
-        },
-      },
-    },
     plugins: [
       VuePlugin(),
       VueJsxPlugin(),

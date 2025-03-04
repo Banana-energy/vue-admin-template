@@ -8,9 +8,11 @@ import EchartsUI from "@/components/EchartsUI/src/EchartsUI.vue"
 import { ElCascader, } from "@/components/ElCascader"
 import { useDict, } from "@/hooks/useDict.ts"
 import { useReportQuery, } from "@/hooks/useReportQuery.ts"
+import { useVxeArea, } from "@/hooks/useVxeArea.ts"
+import { virtualScrollProps, } from "@/setup/vxe-table"
 import { getModelListByPage, } from "@/views/workbench/apis"
 
-const disabled = ref(false,)
+const disabled = ref(true,)
 const formData = reactive<ModelListPageAPI.Params & {
   date?: DateRange
 }>({},)
@@ -177,6 +179,8 @@ onMounted(() => {
     ],
   },)
 },)
+
+const { onTableScroll, } = useVxeArea(tableRef,)
 </script>
 
 <template>
@@ -243,12 +247,20 @@ onMounted(() => {
       <!--      </ElFormItem> -->
     </LayoutForm>
     <VxeTable
+      v-if="disabled"
       ref="tableRef"
       :data="tableData"
       :loading="loading"
       :max-height="maxHeight"
+      v-bind="virtualScrollProps"
+      @scroll="onTableScroll"
     >
-      <VxeColumn type="seq" width="70" row-resize />
+      <VxeColumn
+        fixed="left"
+        type="seq"
+        width="500"
+        row-resize
+      />
       <VxeColumn
         field="code"
         title="型体编码"

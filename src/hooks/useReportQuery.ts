@@ -22,7 +22,7 @@ interface Options<TData, TParams,> {
 interface Return<TData, TParams,> {
   loading: Ref<boolean>
   formRef: Ref<FormInstance | LayoutFormInstance | undefined>
-  tableRef: Ref<VxeTableInstance | undefined>
+  tableRef: Ref<VxeTableInstance<TData> | undefined>
   pager: BasicPage
   pagerRef: Ref<PaginationInstance | undefined>
   queryParams: ComputedRef<TParams>
@@ -38,7 +38,7 @@ interface Params extends Partial<PageParams> {
 }
 
 export function useReportQuery<TData, TParams extends Params,>(options: Options<TData, TParams>,): Return<TData, TParams> {
-  const tableRef = ref<VxeTableInstance>()
+  const tableRef = ref<VxeTableInstance<TData>>()
   const tableData = ref<TData[]>([],) as Ref<TData[]>
   const formRef = ref<FormInstance | LayoutFormInstance>()
   const pager = reactive<BasicPage>({

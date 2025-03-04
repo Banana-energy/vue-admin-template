@@ -1,0 +1,1032 @@
+import type { Awaitable, } from "@vueuse/core"
+import type { DebouncedFunc, } from "lodash-es"
+import type { WatchHandle, } from "vue"
+import type { VxeTableDefines, VxeTableInstance, VxeTablePropTypes, } from "vxe-table"
+import handleClickOutside from "@/utils/clickoutside.ts"
+import { ignoreAutoI18n, } from "@higgins/vite-plugin-i18n-transformer/utils"
+import dayjs from "dayjs"
+import customParseFormat from "dayjs/plugin/customParseFormat"
+import { ElPopover, } from "element-plus"
+import { debounce, get, set, } from "lodash-es"
+import { Fragment, render, } from "vue"
+
+interface ReturnType {
+  onTableScroll: DebouncedFunc<() => void>
+}
+
+interface Options<D,> {
+  bgColor?: string
+  pasteValidator?: (copiedInfo: CopyInfo<D>, selectedCells: Cell<D>[]) => Awaitable<boolean>
+}
+
+interface CopyInfo<D,> {
+  cells: Cell<D>[]
+  rowCount: number
+  colCount: number
+  values: any[]
+  text: string
+}
+
+interface Cell<D,> {
+  row: VxeTablePropTypes.Row
+  column: VxeTableDefines.ColumnInfo<D>
+}
+
+interface State<D,> {
+  copiedInfo: CopyInfo<D> | null
+  startCell: Cell<D> | null
+  endCell: Cell<D> | null
+  selectedColumn: VxeTableDefines.ColumnInfo[]
+  isDragging: boolean
+  selectedCells: Cell<D>[]
+  selectionAreaStyle: Partial<CSSStyleDeclaration>
+  fillHandleStyle: Partial<CSSStyleDeclaration>
+  mousedownTarget: MouseTargetEnum | null
+  outsideClose: (() => void) | null
+  unwatchList: WatchHandle[]
+}
+
+const MAX_STACK_SIZE = 20
+
+enum MouseTargetEnum {
+  CELL = "cell",
+  FILL_HANDLER = "fill-handle",
+}
+
+let preUserSelect: string
+dayjs.extend(customParseFormat,)
+const dateFormats = [
+  "YYYY-MM-DD",
+  "MM/DD/YYYY",
+  "DD-MM-YYYY",
+  "YYYY/MM/DD",
+  "MM-DD-YYYY",
+  "DD/MM/YYYY",
+  "YYYYMMDD",
+  "YYYY-MM-DD HH:mm",
+  "MM/DD/YYYY HH:mm",
+  "DD-MM-YYYY HH:mm",
+  "YYYY/MM/DD HH:mm",
+  "MM-DD-YYYY HH:mm",
+  "DD/MM/YYYY HH:mm",
+  "YYYY-MM-DD HH:mm:ss",
+  "MM/DD/YYYY HH:mm:ss",
+  "DD-MM-YYYY HH:mm:ss",
+  "YYYY/MM/DD HH:mm:ss",
+  "MM-DD-YYYY HH:mm:ss",
+  "DD/MM/YYYY HH:mm:ss",
+  "YYYY-MM-DDTHH:mm:ss",
+  "YYYY/MM/DDTHH:mm:ss",
+  "MM-DD-YYYYTHH:mm:ss",
+  "DD/MM/YYYYTHH:mm:ss",
+  "MMM DD, YYYY",
+  "MMM DD YYYY",
+  "DD MMM YYYY",
+  "YYYY MMM DD",
+]
+
+const instances = new Set<VxeTableInstance>()
+let currentInstance: VxeTableInstance | null
+let copiedTable: VxeTableInstance | null = null
+
+function createEmptyDOMRect(): DOMRect {
+  return {
+    top: 0,
+    left: 0,
+    width: 0,
+    height: 0,
+    bottom: 0,
+    right: 0,
+    x: 0,
+    y: 0,
+    toJSON() {
+      return this
+    },
+  }
+}
+
+const FillModePopover = defineComponent({
+  name: "FillModePopover",
+  props: {
+    target: {
+      type: Object as PropType<HTMLElement>,
+      default: () => ({}),
+    },
+    onModeSelected: {
+      type: Function as PropType<(mode: "fill" | "copy",) => void>,
+      default: () => {},
+    },
+  },
+  setup(props,) {
+    const mode = ref<"fill" | "copy">("fill",)
+    const visible = ref(true,)
+
+    function closePopover() {
+      visible.value = false
+      mode.value = "fill"
+    }
+
+    return () => h(ElPopover, {
+      showArrow: false,
+      placement: "right-start",
+      width: "84",
+      trigger: "click",
+      visible: visible.value,
+      virtualTriggering: true,
+      virtualRef: props.target,
+      popperClass: "max-width-[84px] fill-mode-popper-over",
+    }, {
+      default: () => h(ElRadioGroup, {
+        "modelValue": mode.value,
+        "onUpdate:modelValue": (val,) => {
+          mode.value = val as "fill" | "copy"
+          props.onModeSelected(val as "fill" | "copy",)
+          closePopover()
+        },
+      }, {
+        default: () => h(Fragment, [
+          h(ElRadio, { value: "fill", }, { default: () => ignoreAutoI18n("填充",), },),
+          h(ElRadio, { value: "copy", }, { default: () => ignoreAutoI18n("复制",), },),
+        ],),
+      },),
+    },)
+  },
+},)
+
+/**
+ * 表格区域选择、复制粘贴和填充功能的 Hook
+ * @param tableRef 表格实例引用
+ * @param options 配置选项
+ * @returns 返回滚动事件监听函数
+ */
+export function useVxeArea<D extends VxeTablePropTypes.Row,>(tableRef: Ref<VxeTableInstance<D> | undefined>, options?: Options<D>,): ReturnType {
+  const undoStack: D[][] = []
+  const redoStack: D[][] = []
+  const fillHandleEl = ref<HTMLDivElement | null>(null,)
+  const state: State<D> = {
+    copiedInfo: null,
+    startCell: null,
+    endCell: null,
+    isDragging: false,
+    selectedCells: [],
+    selectionAreaStyle: { top: "0px", left: "0px", width: "0px", height: "0px", display: "none", },
+    fillHandleStyle: { top: "0px", left: "0px", display: "none", },
+    selectedColumn: [],
+    mousedownTarget: null,
+    outsideClose: null,
+    unwatchList: [],
+  }
+
+  const pasteValidator = options?.pasteValidator || function() {
+    return true
+  }
+
+  /**
+   * 剪贴板相关操作
+   */
+  const clipboardActions = {
+    copy() {
+      if (tableRef.value !== currentInstance || !tableRef.value) {
+        copiedTable = null
+        state.copiedInfo = null
+        return
+      }
+
+      const selectedCells = state.selectedCells || []
+      if (!selectedCells.length)
+        return
+
+      const { rowRange, colRange, } = calculateSelectionRange(selectedCells,)
+
+      state.copiedInfo = {
+        cells: selectedCells,
+        rowCount: rowRange.max - rowRange.min + 1,
+        colCount: colRange.max - colRange.min + 1,
+        values: selectedCells.map(cell => ({
+          cell,
+          value: get(cell.row, cell.column.field,),
+        }),),
+        text: selectedCells.map((cell,) => {
+          const el = tableRef.value!.getCellElement(cell.row, cell.column,)
+          return el ? el.textContent : ""
+        },).join("\t",),
+      }
+
+      navigator.clipboard.writeText(state.copiedInfo.text,)
+      copiedTable = tableRef.value
+    },
+
+    async paste() {
+      const selectedCells = state.selectedCells || []
+      if (!selectedCells.length)
+        return
+
+      if (state.copiedInfo) {
+        const result = pasteValidator(state.copiedInfo, selectedCells,)
+
+        if (typeof result !== "boolean" && result.then) {
+          result.then((validResult,) => {
+            validResult && this.executePaste(selectedCells,)
+          },)
+          return
+        }
+
+        result && this.executePaste(selectedCells,)
+      } else {
+        // 尝试从剪贴板直接粘贴
+        this.executePaste(selectedCells,)
+      }
+    },
+
+    async executePaste(targetCells: Cell<D>[],) {
+      if (!tableRef.value)
+        return
+
+      saveSnapshot()
+
+      // 如果没有复制内容，从剪贴板获取文本
+      if (!copiedTable) {
+        try {
+          const clipboardText = await navigator.clipboard.readText()
+          this.pasteText(targetCells, clipboardText,)
+        } catch (error) {
+          console.error("Failed to read clipboard:", error,)
+        }
+        return
+      }
+
+      // 有复制内容时的粘贴逻辑
+      this.pasteCopiedCells(targetCells,)
+    },
+
+    pasteText(targetCells: Cell<D>[], text: string,) {
+      // 简单文本粘贴逻辑
+      if (!text || !targetCells.length)
+        return
+
+      targetCells.forEach((cell,) => {
+        set(cell.row, cell.column.field, text,)
+      },)
+    },
+
+    pasteCopiedCells(targetCells: Cell<D>[],) {
+      if (!tableRef.value || !copiedTable || !state.copiedInfo)
+        return
+
+      const { copiedInfo, } = state
+
+      // 计算目标区域范围
+      const { rowRange: targetRowRange, colRange: targetColRange, } = calculateSelectionRange(targetCells,)
+
+      const targetRowCount = targetRowRange.max - targetRowRange.min + 1
+      const targetColCount = targetColRange.max - targetColRange.min + 1
+
+      // 创建目标单元格映射
+      const targetCellMap = createCellMap(targetCells,)
+
+      // 创建源单元格值映射
+      const { cells, rowCount, colCount, values, } = copiedInfo
+      const copiedBaseRowIndex = copiedTable.getVTRowIndex(cells[0].row,)
+      const copiedBaseColIndex = copiedTable.getVTColumnIndex(cells[0].column,)
+
+      const copiedCellMap = new Map(
+        values.map(({ cell, value, },) => [
+          `${copiedTable!.getVTRowIndex(cell.row,)}:${copiedTable!.getVTColumnIndex(cell.column,)}`,
+          value,
+        ],),
+      )
+
+      // 执行粘贴操作
+      for (let rowOffset = 0; rowOffset < targetRowCount; rowOffset++) {
+        for (let colOffset = 0; colOffset < targetColCount; colOffset++) {
+          const rowIndex = targetRowRange.min + rowOffset
+          const colIndex = targetColRange.min + colOffset
+          const cellKey = `${rowIndex}:${colIndex}`
+
+          if (!targetCellMap.has(cellKey,))
+            continue
+
+          const targetCell = targetCellMap.get(cellKey,)
+
+          // 计算源单元格的行列偏移
+          const sourceRowOffset = rowOffset % rowCount
+          const sourceColOffset = colOffset % colCount
+          const sourceKey = `${copiedBaseRowIndex + sourceRowOffset}:${copiedBaseColIndex + sourceColOffset}`
+
+          if (copiedCellMap.has(sourceKey,)) {
+            const sourceValue = copiedCellMap.get(sourceKey,)
+            set(targetCell!.row, targetCell!.column.field, sourceValue,)
+          }
+        }
+      }
+    },
+  }
+
+  /**
+   * 计算选择区域的行列范围
+   * @param cells 选中的单元格集合
+   * @returns 行列范围对象
+   */
+  function calculateSelectionRange(cells: Cell<D>[],) {
+    if (!tableRef.value || !cells.length) {
+      return {
+        rowRange: { min: 0, max: 0, },
+        colRange: { min: 0, max: 0, },
+      }
+    }
+
+    const rowIndexes = cells.map(cell => tableRef.value!.getVTRowIndex(cell.row,),)
+    const colIndexes = cells.map(cell => tableRef.value!.getVTColumnIndex(cell.column,),)
+
+    return {
+      rowRange: {
+        min: Math.min(...rowIndexes,),
+        max: Math.max(...rowIndexes,),
+      },
+      colRange: {
+        min: Math.min(...colIndexes,),
+        max: Math.max(...colIndexes,),
+      },
+    }
+  }
+
+  /**
+   * 创建单元格映射，用于快速查找单元格
+   * @param cells 单元格集合
+   * @returns 单元格映射 Map
+   */
+  function createCellMap(cells: Cell<D>[],) {
+    if (!tableRef.value)
+      return new Map<string, Cell<D>>()
+
+    return new Map<string, Cell<D>>(
+      cells.map(cell => [
+        `${tableRef.value!.getVTRowIndex(cell.row,)}:${tableRef.value!.getVTColumnIndex(cell.column,)}`,
+        cell,
+      ],),
+    )
+  }
+
+  watch(() => tableRef.value, (newVal, oldValue,) => {
+    if (!newVal && oldValue) {
+      destroy(oldValue,)
+      return
+    }
+    createStyle()
+    initTableState()
+    attachListeners()
+  },)
+
+  /**
+   * TODO: 待优化
+   * 创建表格选择区域的样式
+   */
+  function createStyle() {
+    if (instances.size !== 0) {
+      return
+    }
+    const style = document.createElement("style",)
+    style.innerHTML = `
+     #selection-area {
+        position: absolute;
+        border: 2px solid #1890ff;
+        background-color: ${options?.bgColor || "rgba(24, 144, 255, 0.1)"};
+        pointer-events: none;
+        display: none;
+    }
+    .fill-handle {
+        display: none;
+        position: absolute;
+        cursor: crosshair;
+        width: 6px;
+        height: 6px;
+        background-color: #1890ff;
+    }
+    .area-header-cell:hover {
+        cursor: ns-resize;
+    }`
+    document.head.appendChild(style,)
+  }
+
+  function initTableState() {
+    if (!tableRef.value) {
+      return
+    }
+    instances.add(tableRef.value,)
+    setHeaderCell()
+    setCellRender()
+    setFocusOutside()
+    createSelection()
+  }
+
+  const updateCurrentCellArea = debounce(() => {
+    if (tableRef.value === currentInstance) {
+      updateCellArea()
+    }
+  }, 200,)
+
+  function attachListeners() {
+    window.addEventListener("keydown", handleKeyboardShortcuts,)
+    window.addEventListener("resize", updateCurrentCellArea,)
+    window.addEventListener("mouseup", onMouseUp,)
+  }
+
+  function detachListeners() {
+    window.removeEventListener("keydown", handleKeyboardShortcuts,)
+    window.removeEventListener("resize", updateCurrentCellArea,)
+    window.removeEventListener("mouseup", onMouseUp,)
+  }
+
+  function destroy(tableRef: VxeTableInstance,) {
+    detachListeners()
+    undoStack.length = 0
+    redoStack.length = 0
+    for (const unwatch of state.unwatchList) {
+      unwatch()
+    }
+    state.unwatchList = []
+    state.outsideClose?.()
+    instances.delete(tableRef,)
+    fillHandleEl.value?.remove()
+    fillHandleEl.value = null
+
+    Object.assign(state, {
+      copiedInfo: null,
+      startCell: null,
+      endCell: null,
+      isDragging: false,
+      selectedCells: [],
+      selectionAreaStyle: { top: "0px", left: "0px", width: "0px", height: "0px", display: "none", },
+      fillHandleStyle: { top: "0px", left: "0px", display: "none", },
+      selectedColumn: [],
+      mousedownTarget: null,
+    },)
+  }
+
+  function handleKeyboardShortcuts(e: KeyboardEvent,) {
+    if (e.key === "c" && e.ctrlKey) {
+      clipboardActions.copy()
+      return
+    }
+    if (e.key === "v" && e.ctrlKey) {
+      clipboardActions.paste()
+      return
+    }
+    if (e.key === "z" && e.ctrlKey) {
+      e.preventDefault()
+      undo()
+      return
+    }
+    if (e.key === "y" && e.ctrlKey) {
+      e.preventDefault()
+      redo()
+    }
+  }
+
+  function setFocusOutside() {
+    if (!tableRef.value) {
+      return
+    }
+    state.outsideClose = handleClickOutside(tableRef.value.$el, () => {
+      render(null, fillHandleEl.value!,)
+      currentInstance = null
+      clearSelected()
+    }, [".fill-handle", ".fill-mode-popper-over",],)
+  }
+
+  function clearSelected() {
+    if (state.isDragging)
+      return
+    state.startCell = null
+    state.endCell = null
+    state.selectedCells = []
+    updateCellArea()
+  }
+
+  function setCellRender() {
+    function updateCellRender() {
+      setTimeout(() => {
+        const refMaps = tableRef.value?.getRefMaps()
+        const tableBody = refMaps?.refTableBody.value?.$el
+        const leftBody = refMaps?.refTableLeftBody.value?.$el
+        const rightBody = refMaps?.refTableRightBody.value?.$el
+        setCellElEvent(tableBody,)
+        setCellElEvent(leftBody,)
+        setCellElEvent(rightBody,)
+      },)
+    }
+
+    const unwatch = watch(
+      () => tableRef.value?.getTableData().fullData,
+      updateCellRender,
+    )
+    state.unwatchList.push(unwatch,)
+  }
+
+  /**
+   * 为单元格添加事件处理
+   * @param tableBody 表格主体元素
+   */
+  function setCellElEvent(tableBody: HTMLElement,) {
+    if (tableBody) {
+      const tds = tableBody.querySelectorAll("td",)
+      tds.forEach((td,) => {
+        if (td.className.includes("no-area",))
+          return
+        const tr = td.parentElement
+        if (!tr) {
+          return
+        }
+        const row = tableRef.value?.getRowNode(tr,)?.item
+        const column = tableRef.value?.getColumnNode(td,)?.item
+        td.onmousemove = () => onCellMouseMove({ row, column, },)
+        td.onmousedown = onMousedown(MouseTargetEnum.CELL, { row, column, },)
+        td.onmouseup = onMouseUp
+      },)
+    }
+  }
+
+  function onMouseUp(e: MouseEvent,) {
+    if (tableRef.value !== currentInstance || !state || e.button !== 0) {
+      return
+    }
+    state.isDragging = false
+    recoverUserSelect()
+    if (e.currentTarget === window) {
+      return
+    }
+    if (state.mousedownTarget === MouseTargetEnum.FILL_HANDLER) {
+      fillCells()
+      const vnode = h(FillModePopover, {
+        target: fillHandleEl.value!,
+        onModeSelected: (mode: "fill" | "copy",) => {
+          fillCells(mode,)
+          nextTick(() => {
+            render(null, document.body,)
+          },)
+        },
+      },)
+      render(vnode, document.body,)
+    }
+  }
+
+  function fillCells(mode?: "fill" | "copy",) {
+    if (!state.startCell || !state.endCell || !tableRef.value)
+      return
+    saveSnapshot()
+    const property = get(state.startCell.row, state.startCell.column.field,)
+    const startRowIndex = tableRef.value.getVTRowIndex(state.startCell.row,)
+    const startColIndex = tableRef.value.getVTColumnIndex(state.startCell.column,)
+    state.selectedCells.forEach((cell,) => {
+      if (cell.row !== state.startCell?.row || cell.column !== state.startCell?.column) {
+        const rowIndex = tableRef.value!.getVTRowIndex(cell.row,)
+        const columnIndex = tableRef.value!.getVTColumnIndex(cell.column,)
+        const rowOffset = rowIndex - startRowIndex
+        const colOffset = columnIndex - startColIndex
+        set(cell.row, cell.column.field, getNextValue(property, rowOffset, colOffset, mode,),)
+      }
+    },)
+  }
+
+  /**
+   * 根据填充模式计算下一个值
+   * @param value 原始值
+   * @param rowOffset 行偏移
+   * @param colOffset 列偏移
+   * @param mode 填充模式
+   * @returns 计算后的新值
+   */
+  function getNextValue(value: any, rowOffset: number, colOffset: number, mode: "fill" | "copy" = "fill",) {
+    if (mode === "copy") {
+      return value
+    }
+    if (typeof value === "number") {
+      return value + rowOffset + colOffset
+    }
+    if (typeof value === "string") {
+      for (const format of dateFormats) {
+        const date = dayjs(value, format, true,)
+        if (date.isValid()) {
+          return date.add(rowOffset + colOffset, "day",).format(format,)
+        }
+      }
+      if (/-?\d+(?:\.\d+)?(?:e[-+]?\d+)?/i.test(value,)) {
+        const num = Number.parseFloat(value,)
+        return !Number.isNaN(num,) ? String(num + rowOffset + colOffset,) : value
+      }
+    }
+    return value
+  }
+
+  function saveSnapshot() {
+    if (!tableRef.value) {
+      return
+    }
+    const { fullData, } = tableRef.value.getTableData()
+    const snapshot = JSON.parse(JSON.stringify(fullData,),)
+    undoStack.push(snapshot,)
+    if (undoStack.length > MAX_STACK_SIZE) {
+      undoStack.shift()
+    }
+    redoStack.length = 0 // 清空恢复栈
+  }
+
+  // 撤销
+  function undo() {
+    if (!tableRef.value) {
+      return
+    }
+    const { fullData, } = tableRef.value.getTableData()
+    if (undoStack.length > 0) {
+      const currentData = JSON.parse(JSON.stringify(fullData,),)
+      redoStack.push(currentData,)
+      const lastSnapshot = undoStack.pop()
+      tableRef.value.reloadData(lastSnapshot || [],)
+    }
+  }
+
+  // 恢复
+  function redo() {
+    if (!tableRef.value) {
+      return
+    }
+    const { fullData, } = tableRef.value.getTableData()
+    if (redoStack.length > 0) {
+      const currentData = JSON.parse(JSON.stringify(fullData,),)
+      undoStack.push(currentData,)
+      const lastSnapshot = redoStack.pop()
+      tableRef.value.reloadData(lastSnapshot || [],)
+    }
+  }
+
+  function onCellMouseMove({ row, column, }: Partial<Cell<D>>,) {
+    if (!state.isDragging || !state.startCell || !tableRef.value || !row || !column) {
+      return
+    }
+
+    if (
+      row === state.endCell?.row
+      && column === state.endCell?.column
+    ) {
+      // 若位置没有变化，则不需要更新
+      return
+    }
+    if (state.selectedColumn.length) {
+      const { visibleData, } = tableRef.value.getTableData()
+      state.endCell = { row: visibleData.at(-1,), column, }
+      const selectedColumns = [...state.selectedColumn, column,]
+      state.selectedColumn = [...new Set(selectedColumns,),]
+    } else {
+      state.endCell = { row, column, }
+    }
+
+    updateSelectedCells() // 更新选中单元格
+    updateCellArea() // 更新显示选中区域
+  }
+
+  function setHeaderCell() {
+    function updateHeaderCells() {
+      setTimeout(() => {
+        const refMaps = tableRef.value?.getRefMaps()
+        const tableHeader = refMaps?.refTableHeader.value?.$el
+        const leftHeader = refMaps?.refTableLeftHeader.value?.$el
+        const rightHeader = refMaps?.refTableRightHeader.value?.$el
+        setHeaderCellRender(tableHeader,)
+        setHeaderCellRender(leftHeader,)
+        setHeaderCellRender(rightHeader,)
+      },)
+    }
+
+    const unwatch = watch(
+      () => tableRef.value?.getTableData().fullData,
+      updateHeaderCells,
+    )
+    state.unwatchList.push(unwatch,)
+  }
+
+  function setHeaderCellRender(el: HTMLElement,) {
+    if (!el) {
+      return
+    }
+    el.querySelectorAll("th",).forEach((th,) => {
+      if (th.className.includes("no-area",))
+        return
+      if (th.className.includes("area-header-cell",))
+        return
+      th.className += " area-header-cell"
+      th.onclick = () => onHeaderCellClick(th,)
+    },)
+  }
+
+  function onHeaderCellClick(th: HTMLTableCellElement,) {
+    if (!tableRef.value) {
+      return
+    }
+    render(null, fillHandleEl.value!,)
+    let column = tableRef.value.getColumnNode(th,)?.item
+    if (column?.children && column.children.length) {
+      // 说明是分组表头，默认选中第一个
+      column = column.children.at(0,)
+    }
+    if (column) {
+      const { visibleData, } = tableRef.value.getTableData() || { visibleData: [], }
+      state.startCell = { row: visibleData[0], column, }
+      state.endCell = { row: visibleData.at(-1,), column, }
+      state.selectedColumn = [column,]
+      updateSelectedCells()
+      updateCellArea()
+      currentInstance = tableRef.value
+    }
+  }
+
+  function updateSelectedCells() {
+    if (!state.startCell || !state.endCell || !tableRef.value) {
+      return
+    }
+    state.selectedCells = []
+    const { visibleData, } = tableRef.value.getTableData()
+    const isSelectedColumn = state.selectedColumn.length > 0
+    const { visibleColumn, } = tableRef.value.getTableColumn()
+
+    const startRowIndex = tableRef.value.getVTRowIndex(state.startCell.row,)
+    const endRowIndex = isSelectedColumn ? visibleData.length - 1 : tableRef.value.getVTRowIndex(state.endCell.row,)
+    const startColIndex = tableRef.value.getVTColumnIndex(state.startCell.column,)
+    const endColIndex = tableRef.value.getVTColumnIndex(state.endCell.column,)
+
+    const minRowIndex = Math.min(startRowIndex, endRowIndex,)
+    const maxRowIndex = Math.max(startRowIndex, endRowIndex,)
+    const minColIndex = Math.min(startColIndex, endColIndex,)
+    const maxColIndex = Math.max(startColIndex, endColIndex,)
+
+    for (let i = minRowIndex; i <= maxRowIndex; i++) {
+      for (let j = minColIndex; j <= maxColIndex; j++) {
+        state.selectedCells.push({ row: visibleData[i], column: visibleColumn[j], },)
+      }
+    }
+  }
+
+  function updateCellArea() {
+    if (!state.startCell || !state.endCell || !tableRef.value) {
+      state.selectionAreaStyle.display = "none"
+      state.fillHandleStyle.display = "none"
+      createSelection()
+      return
+    }
+
+    requestAnimationFrame(() => {
+      const { selectionStyle, handleStyle, } = calculateAreaStyles()
+
+      // 更新样式
+      Object.assign(state.selectionAreaStyle, selectionStyle,)
+      Object.assign(state.fillHandleStyle, handleStyle,)
+      createSelection()
+    },)
+  }
+
+  // 计算选择区域和填充手柄的样式
+  function calculateAreaStyles() {
+    if (!state.startCell || !state.endCell || !tableRef.value) {
+      return {
+        selectionStyle: { display: "none", },
+        handleStyle: { display: "none", },
+      }
+    }
+
+    const table = tableRef.value
+    const { row: startRow, column: startColumn, } = state.startCell
+    const { row: endRow, column: endColumn, } = state.endCell
+    const startRowIndex = table.getVTRowIndex(startRow,)
+    const endRowIndex = table.getVTRowIndex(endRow,)
+    const startColIndex = table.getVTColumnIndex(startColumn,)
+    const endColIndex = table.getVTColumnIndex(endColumn,)
+
+    // 检查是否有隐藏单元格
+    const hasSpan = checkHiddenCells()
+
+    // 获取单元格元素和位置
+    const startCell = getSelectedCell(startRow, startColumn, {
+      hasSpan,
+      rowDirection: startRowIndex <= endRowIndex,
+      colDirection: startColIndex <= endColIndex,
+    },)
+
+    const domRect = createEmptyDOMRect()
+    const startRect = startCell?.getBoundingClientRect() || domRect
+
+    const endCell = state.selectedCells.length > 1
+      ? getSelectedCell(endRow, endColumn, {
+          hasSpan,
+          rowDirection: startRowIndex > endRowIndex,
+          colDirection: startColIndex > endColIndex,
+        },)
+      : startCell
+
+    const endRect = endCell?.getBoundingClientRect() || domRect
+
+    // 获取表格位置信息
+    const refMaps = table.getRefMaps()
+    const tableBody = refMaps.refTableBody.value?.$el
+    const tableBodyRect = tableBody.getBoundingClientRect()
+    const { scrollTop, scrollLeft, } = tableBody
+
+    // 检查是否有固定列
+    const hasFixedCell = state.selectedCells.some(cell => cell.column.fixed,)
+
+    // 检查是否选择了整列
+    const isSelectedColumn = state.selectedColumn.length > 0
+
+    // 计算矩形区域的边界
+    const maxRight = Math.max(startRect.right, endRect.right,)
+
+    // 计算选择区域样式
+    const selectionStyle = {
+      top: `${Math.min(startRect.top, endRect.top,) - tableBodyRect.top + tableBody.scrollTop}px`,
+      left: `${Math.min(startRect.left, endRect.left,) - tableBodyRect.left + tableBody.scrollLeft}px`,
+      width: `${Math.abs(Math.max(endRect.right, startRect.right,) - Math.min(endRect.left, startRect.left,),)}px`,
+      height: `${Math.abs(Math.max(endRect.bottom, startRect.bottom,) - Math.min(endRect.top, startRect.top,),)}px`,
+      display: "block",
+      zIndex: hasFixedCell ? 6 : null,
+    }
+
+    // 计算填充手柄样式
+    const selectedBoundary = isSelectedColumn ? "top" : "bottom"
+    const offset = isSelectedColumn ? 0 : -6
+
+    const boundaryValue = Math[isSelectedColumn ? "min" : "max"](
+      startRect[selectedBoundary],
+      endRect[selectedBoundary],
+    )
+
+    const handleStyle = {
+      top: `${boundaryValue - tableBodyRect.top + offset + scrollTop}px`,
+      left: `${maxRight - tableBodyRect.left - 6 + scrollLeft}px`,
+      display: "block",
+      zIndex: hasFixedCell ? "6" : "",
+    }
+
+    return { selectionStyle, handleStyle, }
+  }
+
+  // 检查是否有隐藏单元格
+  function checkHiddenCells() {
+    if (!tableRef.value || !state.selectedCells.length) {
+      return false
+    }
+
+    const table = tableRef.value
+    for (const cell of state.selectedCells) {
+      const cellEl = table.getCellElement(cell.row, cell.column,)
+      if (!cellEl) {
+        return true
+      }
+    }
+
+    return false
+  }
+
+  function createSelection() {
+    if (!tableRef.value) {
+      return
+    }
+    const table = tableRef.value
+    const tableBodyEl = table.getRefMaps().refTableBody.value?.$el
+    // 创建或获取选择区域元素
+    let selectionArea = tableBodyEl.querySelector("#selection-area",)
+    if (!selectionArea) {
+      selectionArea = document.createElement("div",)
+      selectionArea.id = "selection-area"
+      tableBodyEl.appendChild(selectionArea,)
+    }
+    Object.assign(selectionArea.style, state.selectionAreaStyle,)
+
+    // 创建或获取填充手柄元素
+    let fillHandle = tableBodyEl.querySelector("#fill-handle",) as HTMLDivElement
+    if (!fillHandle) {
+      fillHandle = document.createElement("div",)
+      fillHandle.id = "fill-handle"
+      fillHandle.className = "fill-handle"
+      tableBodyEl.appendChild(fillHandle,)
+    }
+    Object.assign(fillHandle.style, state.fillHandleStyle,)
+    fillHandle.onmousedown = onMousedown(MouseTargetEnum.FILL_HANDLER, {},)
+    fillHandleEl.value = fillHandle
+  }
+
+  function onMousedown(target: MouseTargetEnum, { row, column, }: Partial<Cell<D>>,) {
+    return (e: MouseEvent,) => {
+      if (!tableRef.value || e.button !== 0) {
+        return
+      }
+      render(null, fillHandleEl.value!,)
+      currentInstance = tableRef.value
+      if (target === MouseTargetEnum.FILL_HANDLER) {
+        row = state.startCell?.row
+        column = state.startCell?.column
+      }
+      const cellEl = tableRef.value.getCellElement(row, column!,)
+      if (!cellEl) {
+        return
+      }
+      if (row && column) {
+        state.startCell = { row, column, }
+        state.endCell = { row, column, }
+      }
+      if (target === MouseTargetEnum.CELL) {
+        state.selectedColumn = []
+        updateSelectedCells()
+        updateCellArea()
+      }
+      state.mousedownTarget = target
+      setUserSelectNone()
+      state.isDragging = true
+    }
+  }
+
+  function setUserSelectNone() {
+    preUserSelect = document.body.style.userSelect
+    document.body.style.userSelect = "none"
+  }
+
+  function recoverUserSelect() {
+    document.body.style.userSelect = preUserSelect
+  }
+
+  function getSelectedCell(
+    row: VxeTablePropTypes.Row,
+    column: VxeTableDefines.ColumnInfo,
+    options: {
+      hasSpan: boolean
+      rowDirection: boolean
+      colDirection: boolean
+    },
+  ) {
+    if (!tableRef.value) {
+      return
+    }
+
+    const table = tableRef.value
+    const { hasSpan, rowDirection, colDirection, } = options
+
+    // 首先尝试直接获取单元格元素
+    let cellEl = table.getCellElement(row, column,)
+
+    // 如果找不到单元格元素且需要处理跨行跨列的情况
+    if (!cellEl && hasSpan) {
+      const { visibleColumn, } = table.getTableColumn()
+      const { visibleData, } = table.getTableData()
+      const rowIndex = table.getVTRowIndex(row,)
+      const colIndex = table.getVTColumnIndex(column,)
+
+      // 定义搜索范围
+      const maxRowIndex = visibleData.length - 1
+      const maxColIndex = visibleColumn.length - 1
+
+      // 尝试在行方向查找可见单元格
+      let rowSearchIndex = rowIndex
+      while (!cellEl && rowSearchIndex >= 0 && rowSearchIndex <= maxRowIndex) {
+        const currentRow = visibleData[rowSearchIndex]
+        cellEl = table.getCellElement(currentRow, column,)
+
+        if (cellEl) {
+          break
+        }
+
+        // 根据方向调整行索引
+        rowSearchIndex = rowDirection ? rowSearchIndex + 1 : rowSearchIndex - 1
+      }
+
+      // 如果仍未找到，尝试在列方向查找
+      if (!cellEl) {
+        rowSearchIndex = rowIndex // 重置行索引
+        let colSearchIndex = colIndex
+
+        while (!cellEl && colSearchIndex >= 0 && colSearchIndex <= maxColIndex) {
+          const currentColumn = visibleColumn[colSearchIndex]
+
+          // 在当前列中查找可见单元格
+          for (let i = 0; i <= maxRowIndex; i++) {
+            const currentRow = visibleData[i]
+            cellEl = table.getCellElement(currentRow, currentColumn,)
+
+            if (cellEl) {
+              break
+            }
+          }
+
+          // 根据方向调整列索引
+          colSearchIndex = colDirection ? colSearchIndex + 1 : colSearchIndex - 1
+        }
+      }
+    }
+
+    return cellEl
+  }
+
+  return {
+    onTableScroll: debounce(() => {
+      setHeaderCell()
+      setCellRender()
+      updateCellArea()
+    }, 200,),
+  }
+}

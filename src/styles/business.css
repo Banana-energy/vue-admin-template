@@ -1,36 +1,41 @@
 :root {
-  // 主题色
+  /* 主题色 */
   --primary-color: #409EFF;
   --success-color: #67C23A;
   --warning-color: #E6A23C;
   --danger-color: #F56C6C;
   --info-color: #909399;
 
-  // 背景色
+  /* 背景色*/
   --bg-page-color: #f1f4f8;
 
-  // 单元格左右padding
+  /* 单元格左右padding*/
   --cell-padding-x: 12px;
 
-  // 单元格文字高度
+  /* 单元格文字高度*/
   --cell-line-height: 21px;
 
-  // 文字颜色
+  /* 文字颜色*/
   --primary-text-color: #303133;
   --regular-text-color: #606266;
   --secondary-text-color: #909399;
   --placeholder-text-color: #A8ABB2;
 
-  // 字体
+  /* 字体*/
   --font-family: Inter, 'Helvetica Neue', Helvetica, 'PingFang SC',
   'Hiragino Sans GB', 'Microsoft YaHei', '微软雅黑', Arial, sans-serif;
 
-  // 字体大小
-  --font-size-h1: 24px;
-  --font-size-h2: 20px;
-  --font-size-h3: 16px;
-  --font-size-normal: 14px;
-  --font-size-small: 12px;
+  /* 字体大小*/
+  --font-size-3xl: 32px;
+  --font-size-2xl: 28px;
+  --font-size-xl: 24px;
+  --font-size-lg: 18px;
+  --font-size-base: 16px;
+  --font-size-sm: 14px;
+  --font-size-xs: 12px;
+
+  /* 行高 */
+  --line-height-base: 1.5
 }
 
 
@@ -40,9 +45,17 @@
   --el-color-warning: var(--warning-color);
   --el-color-danger: var(--danger-color);
   --el-bg-color-page: var(--bg-page-color);
+
   --el-text-color-placeholder: var(--placeholder-text-color);
+  --el-font-size-extra-large: var(--font-size-2xl);
+  --el-font-size-large: var(--font-size-xl);
+  --el-font-size-medium: var(--font-size-lg);
+  --el-font-size-base: var(--font-size-base);
+  --el-font-size-small: var(--font-size-sm);
+  --el-font-size-extra-small: var(--font-size-xs);
 
   --vxe-ui-font-primary-color: var(--el-color-primary);
+  --vxe-ui-font-size-default: var(--font-size-base);
   --vxe-ui-table-cell-padding-left: var(--cell-padding-x);
   --vxe-ui-table-cell-padding-right: var(--cell-padding-x);
   --vxe-ui-font-color: var(--regular-text-color);
