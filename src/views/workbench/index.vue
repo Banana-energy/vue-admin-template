@@ -185,6 +185,11 @@ const { onTableScroll, } = useVxeArea(tableRef,)
 
 <template>
   <div>
+    <BaseDialog v-model="disabled">
+      <template #footer>
+        <ElButton>测试</ElButton>
+      </template>
+    </BaseDialog>
     <LayoutForm
       ref="formRef"
       :descriptions="preliminaryInvestigationInfo"
@@ -262,7 +267,9 @@ const { onTableScroll, } = useVxeArea(tableRef,)
         row-resize
       />
       <VxeColumn
+        class-name="no-area"
         field="code"
+        header-class-name="no-area"
         title="型体编码"
         width="90"
       />

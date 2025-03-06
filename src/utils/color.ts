@@ -53,8 +53,9 @@ export function hexToRGB(hex: string, opacity?: number,) {
 }
 
 export function colorIsDark(color: string,) {
-  if (!isHexColor(color,))
+  if (!isHexColor(color,)) {
     return
+  }
   const [r, g, b,] = hexToRGB(color,)
     .replace(/(?:\(|\)|rgb|RGB)*/g, "",)
     .split(",",)

@@ -89,8 +89,9 @@ function getError(
 }
 
 export const httpRequest: UploadRequestHandler = (option: UploadRequestOptions,) => {
-  if (typeof XMLHttpRequest === "undefined")
-    throw new Error("XMLHttpRequest is undefined",)
+  if (typeof XMLHttpRequest === "undefined") {
+    throw new TypeError("XMLHttpRequest is undefined",)
+  }
   const xhr = new XMLHttpRequest()
 
   getOSSSign({ fileName: option.file.name, },)
@@ -156,8 +157,9 @@ export const httpRequest: UploadRequestHandler = (option: UploadRequestOptions,)
         headers.forEach((value, key,) => xhr.setRequestHeader(key, value,),)
       } else {
         for (const [key, value,] of Object.entries(headers,)) {
-          if (isNil(value,))
+          if (isNil(value,)) {
             continue
+          }
           xhr.setRequestHeader(key, String(value,),)
         }
       }

@@ -24,9 +24,11 @@ export default antfu({
       "style/space-before-function-paren": ["error", "never",],
       "style/brace-style": ["error", "1tbs",],
       "style/comma-dangle": ["error", "always",],
+      "style/space-infix-ops": ["error",],
     },
   },
   rules: {
+    "curly": ["error", "all",],
     "no-console": "off",
     // 强制在单行元素的结束标签后换行
     "vue/html-closing-bracket-newline": [

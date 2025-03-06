@@ -1,13 +1,13 @@
 import type { Awaitable, } from "@vueuse/core"
 import type { DebouncedFunc, } from "lodash-es"
 import type { WatchHandle, } from "vue"
-import type { VxeTableDefines, VxeTableInstance, VxeTablePropTypes, } from "vxe-table"
+import type { TablePrivateRef, VxeGridInstance, VxeTableDefines, VxeTableInstance, VxeTablePropTypes, } from "vxe-table"
 import handleClickOutside from "@/utils/clickoutside.ts"
 import { ignoreAutoI18n, } from "@higgins/vite-plugin-i18n-transformer/utils"
 import dayjs from "dayjs"
 import customParseFormat from "dayjs/plugin/customParseFormat"
 import { ElPopover, } from "element-plus"
-import { debounce, get, set, } from "lodash-es"
+import { debounce, get, isFunction, isNil, set, } from "lodash-es"
 import { Fragment, render, } from "vue"
 
 interface ReturnType {
@@ -16,7 +16,7 @@ interface ReturnType {
 
 interface Options<D,> {
   bgColor?: string
-  pasteValidator?: (copiedInfo: CopyInfo<D>, selectedCells: Cell<D>[]) => Awaitable<boolean>
+  pasteValidator?: (copiedInfo: CopyInfo<D>) => Awaitable<boolean>
 }
 
 interface CopyInfo<D,> {
@@ -85,9 +85,9 @@ const dateFormats = [
   "YYYY MMM DD",
 ]
 
-const instances = new Set<VxeTableInstance>()
-let currentInstance: VxeTableInstance | null
-let copiedTable: VxeTableInstance | null = null
+const instances = new Set<VxeTableInstance | VxeGridInstance>()
+let currentInstance: VxeTableInstance | VxeGridInstance | null
+let copiedTable: VxeTableInstance | VxeGridInstance | null = null
 
 function createEmptyDOMRect(): DOMRect {
   return {
@@ -114,7 +114,8 @@ const FillModePopover = defineComponent({
     },
     onModeSelected: {
       type: Function as PropType<(mode: "fill" | "copy",) => void>,
-      default: () => {},
+      default: () => {
+      },
     },
   },
   setup(props,) {
@@ -159,7 +160,7 @@ const FillModePopover = defineComponent({
  * @param options 配置选项
  * @returns 返回滚动事件监听函数
  */
-export function useVxeArea<D extends VxeTablePropTypes.Row,>(tableRef: Ref<VxeTableInstance<D> | undefined>, options?: Options<D>,): ReturnType {
+export function useVxeArea<D extends VxeTablePropTypes.Row,>(tableRef: Ref<VxeTableInstance<D> | VxeGridInstance<D> | undefined>, options?: Options<D>,): ReturnType {
   const undoStack: D[][] = []
   const redoStack: D[][] = []
   const fillHandleEl = ref<HTMLDivElement | null>(null,)
@@ -177,8 +178,108 @@ export function useVxeArea<D extends VxeTablePropTypes.Row,>(tableRef: Ref<VxeTa
     unwatchList: [],
   }
 
-  const pasteValidator = options?.pasteValidator || function() {
+  const validateNoArea = (copiedInfo: CopyInfo<D>,) => {
+    const { cells, } = copiedInfo
+    const hasNoArea = cells.some((cell,) => {
+      const cellEl = tableRef.value?.getCellElement(cell.row, cell.column,)
+      if (!cellEl) {
+        return false
+      }
+      return cellEl.classList.contains("no-area",)
+    },)
+    return !hasNoArea
+  }
+
+  const pasteValidator = (copiedInfo: CopyInfo<D>,): Awaitable<boolean> => {
+    const result = validateNoArea(copiedInfo,)
+    if (!result) {
+      return false
+    }
+    if (isFunction(options?.pasteValidator,)) {
+      return options?.pasteValidator(copiedInfo,)
+    }
     return true
+  }
+
+  const getTableRefs = (): {
+    tableBody: TablePrivateRef["refTableBody"]["value"] | undefined
+    tableLeftBody: TablePrivateRef["refTableLeftBody"]["value"] | undefined
+    tableRightBody: TablePrivateRef["refTableRightBody"]["value"] | undefined
+    tableHeader: TablePrivateRef["refTableHeader"]["value"] | undefined
+    tableLeftHeader: TablePrivateRef["refTableLeftHeader"]["value"] | undefined
+    tableRightHeader: TablePrivateRef["refTableRightHeader"]["value"] | undefined
+  } => {
+    const empty = {
+      tableBody: undefined,
+      tableLeftBody: undefined,
+      tableRightBody: undefined,
+      tableHeader: undefined,
+      tableLeftHeader: undefined,
+      tableRightHeader: undefined,
+    }
+    const getReturn = (tableRef?: TablePrivateRef,) => {
+      if (!tableRef) {
+        return empty
+      }
+      return {
+        tableBody: tableRef.refTableBody.value,
+        tableLeftBody: tableRef.refTableLeftBody.value,
+        tableRightBody: tableRef.refTableRightBody.value,
+        tableHeader: tableRef.refTableHeader.value,
+        tableLeftHeader: tableRef.refTableLeftHeader.value,
+        tableRightHeader: tableRef.refTableRightHeader.value,
+      }
+    }
+    if (!tableRef.value) {
+      return getReturn()
+    }
+    const refMaps = tableRef.value.getRefMaps()
+    if ("refTable" in refMaps) {
+      const tableRefMaps = refMaps.refTable.value?.getRefMaps()
+
+      return getReturn(tableRefMaps,)
+    }
+    return getReturn(refMaps,)
+  }
+
+  const getCopiedInfo = (): CopyInfo<D> | null => {
+    if (tableRef.value !== currentInstance || !tableRef.value) {
+      return null
+    }
+    const selectedCells = state.selectedCells || []
+    if (!selectedCells.length) {
+      return null
+    }
+
+    const { rowRange, colRange, } = calculateSelectionRange(selectedCells,)
+
+    const copiedInfo = {
+      cells: selectedCells,
+      rowCount: rowRange.max - rowRange.min + 1,
+      colCount: colRange.max - colRange.min + 1,
+      values: selectedCells.map(cell => ({
+        cell,
+        value: get(cell.row, cell.column.field,),
+      }),),
+      text: selectedCells.map((cell,) => {
+        const el = tableRef.value!.getCellElement(cell.row, cell.column,)
+        return el ? el.textContent : ""
+      },).join("\t",),
+    }
+
+    return copiedInfo
+  }
+
+  const validatePaste = async(copiedInfo: CopyInfo<D> | null,) => {
+    if (!copiedInfo) {
+      return false
+    }
+    const result = pasteValidator(copiedInfo,)
+    if (typeof result !== "boolean" && result.then) {
+      const validResult = await result.then()
+      return validResult
+    }
+    return result
   }
 
   /**
@@ -192,44 +293,20 @@ export function useVxeArea<D extends VxeTablePropTypes.Row,>(tableRef: Ref<VxeTa
         return
       }
 
-      const selectedCells = state.selectedCells || []
-      if (!selectedCells.length)
-        return
+      state.copiedInfo = getCopiedInfo()
 
-      const { rowRange, colRange, } = calculateSelectionRange(selectedCells,)
-
-      state.copiedInfo = {
-        cells: selectedCells,
-        rowCount: rowRange.max - rowRange.min + 1,
-        colCount: colRange.max - colRange.min + 1,
-        values: selectedCells.map(cell => ({
-          cell,
-          value: get(cell.row, cell.column.field,),
-        }),),
-        text: selectedCells.map((cell,) => {
-          const el = tableRef.value!.getCellElement(cell.row, cell.column,)
-          return el ? el.textContent : ""
-        },).join("\t",),
-      }
-
-      navigator.clipboard.writeText(state.copiedInfo.text,)
+      navigator.clipboard.writeText(state.copiedInfo?.text || "",)
       copiedTable = tableRef.value
     },
 
     async paste() {
       const selectedCells = state.selectedCells || []
-      if (!selectedCells.length)
+      if (!selectedCells.length) {
         return
+      }
 
       if (state.copiedInfo) {
-        const result = pasteValidator(state.copiedInfo, selectedCells,)
-
-        if (typeof result !== "boolean" && result.then) {
-          result.then((validResult,) => {
-            validResult && this.executePaste(selectedCells,)
-          },)
-          return
-        }
+        const result = await validatePaste(state.copiedInfo,)
 
         result && this.executePaste(selectedCells,)
       } else {
@@ -239,8 +316,9 @@ export function useVxeArea<D extends VxeTablePropTypes.Row,>(tableRef: Ref<VxeTa
     },
 
     async executePaste(targetCells: Cell<D>[],) {
-      if (!tableRef.value)
+      if (!tableRef.value) {
         return
+      }
 
       saveSnapshot()
 
@@ -261,8 +339,9 @@ export function useVxeArea<D extends VxeTablePropTypes.Row,>(tableRef: Ref<VxeTa
 
     pasteText(targetCells: Cell<D>[], text: string,) {
       // 简单文本粘贴逻辑
-      if (!text || !targetCells.length)
+      if (!isNil(text,) || !targetCells.length) {
         return
+      }
 
       targetCells.forEach((cell,) => {
         set(cell.row, cell.column.field, text,)
@@ -270,8 +349,9 @@ export function useVxeArea<D extends VxeTablePropTypes.Row,>(tableRef: Ref<VxeTa
     },
 
     pasteCopiedCells(targetCells: Cell<D>[],) {
-      if (!tableRef.value || !copiedTable || !state.copiedInfo)
+      if (!tableRef.value || !copiedTable || !state.copiedInfo) {
         return
+      }
 
       const { copiedInfo, } = state
 
@@ -303,8 +383,9 @@ export function useVxeArea<D extends VxeTablePropTypes.Row,>(tableRef: Ref<VxeTa
           const colIndex = targetColRange.min + colOffset
           const cellKey = `${rowIndex}:${colIndex}`
 
-          if (!targetCellMap.has(cellKey,))
+          if (!targetCellMap.has(cellKey,)) {
             continue
+          }
 
           const targetCell = targetCellMap.get(cellKey,)
 
@@ -356,8 +437,9 @@ export function useVxeArea<D extends VxeTablePropTypes.Row,>(tableRef: Ref<VxeTa
    * @returns 单元格映射 Map
    */
   function createCellMap(cells: Cell<D>[],) {
-    if (!tableRef.value)
+    if (!tableRef.value) {
       return new Map<string, Cell<D>>()
+    }
 
     return new Map<string, Cell<D>>(
       cells.map(cell => [
@@ -437,7 +519,7 @@ export function useVxeArea<D extends VxeTablePropTypes.Row,>(tableRef: Ref<VxeTa
     window.removeEventListener("mouseup", onMouseUp,)
   }
 
-  function destroy(tableRef: VxeTableInstance,) {
+  function destroy(tableRef: VxeTableInstance | VxeGridInstance,) {
     detachListeners()
     undoStack.length = 0
     redoStack.length = 0
@@ -488,15 +570,16 @@ export function useVxeArea<D extends VxeTablePropTypes.Row,>(tableRef: Ref<VxeTa
       return
     }
     state.outsideClose = handleClickOutside(tableRef.value.$el, () => {
-      render(null, fillHandleEl.value!,)
+      render(null, document.body,)
       currentInstance = null
       clearSelected()
     }, [".fill-handle", ".fill-mode-popper-over",],)
   }
 
   function clearSelected() {
-    if (state.isDragging)
+    if (state.isDragging) {
       return
+    }
     state.startCell = null
     state.endCell = null
     state.selectedCells = []
@@ -506,13 +589,11 @@ export function useVxeArea<D extends VxeTablePropTypes.Row,>(tableRef: Ref<VxeTa
   function setCellRender() {
     function updateCellRender() {
       setTimeout(() => {
-        const refMaps = tableRef.value?.getRefMaps()
-        const tableBody = refMaps?.refTableBody.value?.$el
-        const leftBody = refMaps?.refTableLeftBody.value?.$el
-        const rightBody = refMaps?.refTableRightBody.value?.$el
-        setCellElEvent(tableBody,)
-        setCellElEvent(leftBody,)
-        setCellElEvent(rightBody,)
+        const { tableBody, tableLeftBody, tableRightBody, } = getTableRefs()
+        const list = [tableBody, tableLeftBody, tableRightBody,].filter(Boolean,)
+        list.forEach((ref,) => {
+          setCellElEvent(ref!.$el,)
+        },)
       },)
     }
 
@@ -531,8 +612,9 @@ export function useVxeArea<D extends VxeTablePropTypes.Row,>(tableRef: Ref<VxeTa
     if (tableBody) {
       const tds = tableBody.querySelectorAll("td",)
       tds.forEach((td,) => {
-        if (td.className.includes("no-area",))
+        if (td.className.includes("no-area",)) {
           return
+        }
         const tr = td.parentElement
         if (!tr) {
           return
@@ -570,17 +652,27 @@ export function useVxeArea<D extends VxeTablePropTypes.Row,>(tableRef: Ref<VxeTa
     }
   }
 
-  function fillCells(mode?: "fill" | "copy",) {
-    if (!state.startCell || !state.endCell || !tableRef.value)
+  async function fillCells(mode?: "fill" | "copy",) {
+    if (!state.startCell || !state.endCell || !tableRef.value) {
       return
+    }
+
+    const copiedInfo = getCopiedInfo()
+    const result = await validatePaste(copiedInfo,)
+    if (!result) {
+      return
+    }
+
     saveSnapshot()
-    const property = get(state.startCell.row, state.startCell.column.field,)
-    const startRowIndex = tableRef.value.getVTRowIndex(state.startCell.row,)
-    const startColIndex = tableRef.value.getVTColumnIndex(state.startCell.column,)
+    const { getVTColumnIndex, getVTRowIndex, } = tableRef.value
+    const { startCell: { row, column, }, } = state
+    const property = get(row, state.startCell.column.field,)
+    const startRowIndex = getVTRowIndex(row,)
+    const startColIndex = getVTColumnIndex(column,)
     state.selectedCells.forEach((cell,) => {
-      if (cell.row !== state.startCell?.row || cell.column !== state.startCell?.column) {
-        const rowIndex = tableRef.value!.getVTRowIndex(cell.row,)
-        const columnIndex = tableRef.value!.getVTColumnIndex(cell.column,)
+      if (cell.row !== row || cell.column !== column) {
+        const rowIndex = getVTRowIndex(cell.row,)
+        const columnIndex = getVTColumnIndex(cell.column,)
         const rowOffset = rowIndex - startRowIndex
         const colOffset = columnIndex - startColIndex
         set(cell.row, cell.column.field, getNextValue(property, rowOffset, colOffset, mode,),)
@@ -687,13 +779,11 @@ export function useVxeArea<D extends VxeTablePropTypes.Row,>(tableRef: Ref<VxeTa
   function setHeaderCell() {
     function updateHeaderCells() {
       setTimeout(() => {
-        const refMaps = tableRef.value?.getRefMaps()
-        const tableHeader = refMaps?.refTableHeader.value?.$el
-        const leftHeader = refMaps?.refTableLeftHeader.value?.$el
-        const rightHeader = refMaps?.refTableRightHeader.value?.$el
-        setHeaderCellRender(tableHeader,)
-        setHeaderCellRender(leftHeader,)
-        setHeaderCellRender(rightHeader,)
+        const { tableHeader, tableLeftHeader, tableRightHeader, } = getTableRefs()
+        const list = [tableHeader, tableLeftHeader, tableRightHeader,].filter(Boolean,)
+        list.forEach((ref,) => {
+          setHeaderCellRender(ref!.$el,)
+        },)
       },)
     }
 
@@ -709,10 +799,12 @@ export function useVxeArea<D extends VxeTablePropTypes.Row,>(tableRef: Ref<VxeTa
       return
     }
     el.querySelectorAll("th",).forEach((th,) => {
-      if (th.className.includes("no-area",))
+      if (th.className.includes("no-area",)) {
         return
-      if (th.className.includes("area-header-cell",))
+      }
+      if (th.className.includes("area-header-cell",)) {
         return
+      }
       th.className += " area-header-cell"
       th.onclick = () => onHeaderCellClick(th,)
     },)
@@ -722,14 +814,15 @@ export function useVxeArea<D extends VxeTablePropTypes.Row,>(tableRef: Ref<VxeTa
     if (!tableRef.value) {
       return
     }
-    render(null, fillHandleEl.value!,)
-    let column = tableRef.value.getColumnNode(th,)?.item
+    const { getTableData, getColumnNode, } = tableRef.value
+    render(null, document.body,)
+    let column = getColumnNode(th,)?.item
     if (column?.children && column.children.length) {
       // 说明是分组表头，默认选中第一个
       column = column.children.at(0,)
     }
     if (column) {
-      const { visibleData, } = tableRef.value.getTableData() || { visibleData: [], }
+      const { visibleData, } = getTableData() || { visibleData: [], }
       state.startCell = { row: visibleData[0], column, }
       state.endCell = { row: visibleData.at(-1,), column, }
       state.selectedColumn = [column,]
@@ -744,14 +837,15 @@ export function useVxeArea<D extends VxeTablePropTypes.Row,>(tableRef: Ref<VxeTa
       return
     }
     state.selectedCells = []
-    const { visibleData, } = tableRef.value.getTableData()
+    const { getVTRowIndex, getVTColumnIndex, getTableData, getTableColumn, } = tableRef.value
+    const { visibleData, } = getTableData()
     const isSelectedColumn = state.selectedColumn.length > 0
-    const { visibleColumn, } = tableRef.value.getTableColumn()
+    const { visibleColumn, } = getTableColumn()
 
-    const startRowIndex = tableRef.value.getVTRowIndex(state.startCell.row,)
-    const endRowIndex = isSelectedColumn ? visibleData.length - 1 : tableRef.value.getVTRowIndex(state.endCell.row,)
-    const startColIndex = tableRef.value.getVTColumnIndex(state.startCell.column,)
-    const endColIndex = tableRef.value.getVTColumnIndex(state.endCell.column,)
+    const startRowIndex = getVTRowIndex(state.startCell.row,)
+    const endRowIndex = isSelectedColumn ? visibleData.length - 1 : getVTRowIndex(state.endCell.row,)
+    const startColIndex = getVTColumnIndex(state.startCell.column,)
+    const endColIndex = getVTColumnIndex(state.endCell.column,)
 
     const minRowIndex = Math.min(startRowIndex, endRowIndex,)
     const maxRowIndex = Math.max(startRowIndex, endRowIndex,)
@@ -792,13 +886,13 @@ export function useVxeArea<D extends VxeTablePropTypes.Row,>(tableRef: Ref<VxeTa
       }
     }
 
-    const table = tableRef.value
+    const { getVTRowIndex, getVTColumnIndex, } = tableRef.value
     const { row: startRow, column: startColumn, } = state.startCell
     const { row: endRow, column: endColumn, } = state.endCell
-    const startRowIndex = table.getVTRowIndex(startRow,)
-    const endRowIndex = table.getVTRowIndex(endRow,)
-    const startColIndex = table.getVTColumnIndex(startColumn,)
-    const endColIndex = table.getVTColumnIndex(endColumn,)
+    const startRowIndex = getVTRowIndex(startRow,)
+    const endRowIndex = getVTRowIndex(endRow,)
+    const startColIndex = getVTColumnIndex(startColumn,)
+    const endColIndex = getVTColumnIndex(endColumn,)
 
     // 检查是否有隐藏单元格
     const hasSpan = checkHiddenCells()
@@ -824,9 +918,8 @@ export function useVxeArea<D extends VxeTablePropTypes.Row,>(tableRef: Ref<VxeTa
     const endRect = endCell?.getBoundingClientRect() || domRect
 
     // 获取表格位置信息
-    const refMaps = table.getRefMaps()
-    const tableBody = refMaps.refTableBody.value?.$el
-    const tableBodyRect = tableBody.getBoundingClientRect()
+    const tableBody = getTableRefs().tableBody?.$el
+    const tableBodyRect = tableBody?.getBoundingClientRect() || domRect
     const { scrollTop, scrollLeft, } = tableBody
 
     // 检查是否有固定列
@@ -873,9 +966,9 @@ export function useVxeArea<D extends VxeTablePropTypes.Row,>(tableRef: Ref<VxeTa
       return false
     }
 
-    const table = tableRef.value
+    const { getCellElement, } = tableRef.value
     for (const cell of state.selectedCells) {
-      const cellEl = table.getCellElement(cell.row, cell.column,)
+      const cellEl = getCellElement(cell.row, cell.column,)
       if (!cellEl) {
         return true
       }
@@ -888,8 +981,7 @@ export function useVxeArea<D extends VxeTablePropTypes.Row,>(tableRef: Ref<VxeTa
     if (!tableRef.value) {
       return
     }
-    const table = tableRef.value
-    const tableBodyEl = table.getRefMaps().refTableBody.value?.$el
+    const tableBodyEl = getTableRefs().tableBody?.$el
     // 创建或获取选择区域元素
     let selectionArea = tableBodyEl.querySelector("#selection-area",)
     if (!selectionArea) {
@@ -917,7 +1009,7 @@ export function useVxeArea<D extends VxeTablePropTypes.Row,>(tableRef: Ref<VxeTa
       if (!tableRef.value || e.button !== 0) {
         return
       }
-      render(null, fillHandleEl.value!,)
+      render(null, document.body,)
       currentInstance = tableRef.value
       if (target === MouseTargetEnum.FILL_HANDLER) {
         row = state.startCell?.row
@@ -961,7 +1053,7 @@ export function useVxeArea<D extends VxeTablePropTypes.Row,>(tableRef: Ref<VxeTa
     },
   ) {
     if (!tableRef.value) {
-      return
+      return null
     }
 
     const table = tableRef.value
@@ -970,53 +1062,47 @@ export function useVxeArea<D extends VxeTablePropTypes.Row,>(tableRef: Ref<VxeTa
     // 首先尝试直接获取单元格元素
     let cellEl = table.getCellElement(row, column,)
 
-    // 如果找不到单元格元素且需要处理跨行跨列的情况
-    if (!cellEl && hasSpan) {
-      const { visibleColumn, } = table.getTableColumn()
-      const { visibleData, } = table.getTableData()
-      const rowIndex = table.getVTRowIndex(row,)
-      const colIndex = table.getVTColumnIndex(column,)
+    // 如果找到了单元格元素或没有隐藏单元格，直接返回
+    if (cellEl || !hasSpan) {
+      return cellEl
+    }
 
-      // 定义搜索范围
-      const maxRowIndex = visibleData.length - 1
-      const maxColIndex = visibleColumn.length - 1
+    // 如果找不到单元格元素且有隐藏单元格
+    const { visibleColumn, } = table.getTableColumn()
+    const { visibleData, } = table.getTableData()
+    const rowIndex = table.getVTRowIndex(row,)
+    const colIndex = table.getVTColumnIndex(column,)
 
-      // 尝试在行方向查找可见单元格
-      let rowSearchIndex = rowIndex
-      while (!cellEl && rowSearchIndex >= 0 && rowSearchIndex <= maxRowIndex) {
-        const currentRow = visibleData[rowSearchIndex]
-        cellEl = table.getCellElement(currentRow, column,)
+    // 定义搜索范围
+    const maxRowIndex = visibleData.length - 1
+    const maxColIndex = visibleColumn.length - 1
 
-        if (cellEl) {
-          break
-        }
+    // 策略1：先在同一列中查找可见单元格
+    let currentRowIndex = rowIndex
+    while (currentRowIndex >= 0 && currentRowIndex <= maxRowIndex) {
+      const currentRow = visibleData[currentRowIndex]
+      cellEl = table.getCellElement(currentRow, column,)
 
-        // 根据方向调整行索引
-        rowSearchIndex = rowDirection ? rowSearchIndex + 1 : rowSearchIndex - 1
+      if (cellEl) {
+        return cellEl
       }
 
-      // 如果仍未找到，尝试在列方向查找
-      if (!cellEl) {
-        rowSearchIndex = rowIndex // 重置行索引
-        let colSearchIndex = colIndex
+      // 按指定方向调整行索引
+      currentRowIndex += rowDirection ? 1 : -1
+    }
 
-        while (!cellEl && colSearchIndex >= 0 && colSearchIndex <= maxColIndex) {
-          const currentColumn = visibleColumn[colSearchIndex]
+    // 策略2：如果在同列中找不到，尝试在同行中查找
+    let currentColIndex = colIndex
+    while (currentColIndex >= 0 && currentColIndex <= maxColIndex) {
+      const currentColumn = visibleColumn[currentColIndex]
+      cellEl = table.getCellElement(row, currentColumn,)
 
-          // 在当前列中查找可见单元格
-          for (let i = 0; i <= maxRowIndex; i++) {
-            const currentRow = visibleData[i]
-            cellEl = table.getCellElement(currentRow, currentColumn,)
-
-            if (cellEl) {
-              break
-            }
-          }
-
-          // 根据方向调整列索引
-          colSearchIndex = colDirection ? colSearchIndex + 1 : colSearchIndex - 1
-        }
+      if (cellEl) {
+        return cellEl
       }
+
+      // 按指定方向调整列索引
+      currentColIndex += colDirection ? 1 : -1
     }
 
     return cellEl
@@ -1024,6 +1110,7 @@ export function useVxeArea<D extends VxeTablePropTypes.Row,>(tableRef: Ref<VxeTa
 
   return {
     onTableScroll: debounce(() => {
+      render(null, document.body,)
       setHeaderCell()
       setCellRender()
       updateCellArea()

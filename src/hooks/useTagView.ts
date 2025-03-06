@@ -32,8 +32,9 @@ export function useTagView() {
   }
 
   const closeCurrent = (view?: RouteLocationNormalizedLoaded, callback?: Fn,) => {
-    if (view?.meta?.affix)
+    if (view?.meta?.affix) {
       return
+    }
     tagsViewStore.delView(view || unref(currentRoute,),)
 
     callback?.()

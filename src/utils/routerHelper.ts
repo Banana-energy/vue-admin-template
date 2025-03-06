@@ -26,8 +26,9 @@ export function getParentLayout() {
 }
 
 export function getRawRoute(route: RouteLocationNormalized,): RouteLocationNormalized {
-  if (!route)
+  if (!route) {
     return route
+  }
   const { matched, ...opt } = route
   return {
     ...opt,
@@ -74,8 +75,9 @@ export function generateRoutesByServer(routes: RouteInfoAPI.PmsRouteRecordRaw[],
 }
 
 export function pathResolve(parentPath: string, path: string,) {
-  if (isUrl(path,))
+  if (isUrl(path,)) {
     return path
+  }
   const childPath = path.startsWith("/",) || !path ? path : `/${path}`
   return `${parentPath}${childPath}`.replace(/\/\//g, "/",).trim()
 }

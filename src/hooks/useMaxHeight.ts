@@ -50,8 +50,9 @@ export function useMaxHeight({
   },)
 
   const calculateMaxHeight = debounce(() => {
-    if (!targetRef.value)
+    if (!targetRef.value) {
       return
+    }
 
     // 获取视口高度
     const viewportHeight = window.innerHeight

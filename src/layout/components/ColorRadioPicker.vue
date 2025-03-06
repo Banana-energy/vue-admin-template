@@ -20,8 +20,9 @@ const colorVal = ref(props.modelValue,)
 watch(
   () => props.modelValue,
   (val,) => {
-    if (val === unref(colorVal,))
+    if (val === unref(colorVal,)) {
       return
+    }
     colorVal.value = val
   },
 )

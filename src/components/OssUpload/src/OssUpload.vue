@@ -31,14 +31,8 @@ const bindProps = computed<Props>(() => {
     v-bind="bindProps"
     @update:model-value="(val: BaseFileDTO[]) => emits('update:modelValue', val)"
   >
-    <template #trigger>
-      <slot name="trigger" />
-    </template>
-    <template #tip>
-      <slot name="tip" />
-    </template>
-    <template #file="{ file }">
-      <slot :file="file" name="file" />
+    <template v-for="(_, name) in $slots" #[name]="data">
+      <slot :name="name" v-bind="data" />
     </template>
   </BaseUpload>
 </template>

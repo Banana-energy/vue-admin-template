@@ -14,8 +14,9 @@ document.addEventListener("mousedown", e => (startClick = e),)
 document.addEventListener("mouseup", (e,) => {
   observedElements.forEach((el,) => {
     const { handler, exclude, } = nodeList.get(el,) || { exclude: [], }
-    if (!handler)
+    if (!handler) {
       return
+    }
 
     const excludeEls = parseElements(exclude,)
     // 如果点击发生在排除的元素上，则不触发外部点击

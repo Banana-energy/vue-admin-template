@@ -34,10 +34,12 @@ export const useTagViewStore = defineStore("tagView", {
     },
     // 新增tag
     addVisitedView(view: RouteLocationNormalizedLoaded,) {
-      if (this.visitedViews.some(v => v.path === view.path,))
+      if (this.visitedViews.some(v => v.path === view.path,)) {
         return
-      if (view.meta?.noTagsView)
+      }
+      if (view.meta?.noTagsView) {
         return
+      }
       this.visitedViews.push(
         Object.assign({}, view, {
           title: view.meta?.title || "no-name",
@@ -56,8 +58,9 @@ export const useTagViewStore = defineStore("tagView", {
         const name = item.name as string
         cacheMap.add(name,)
       }
-      if (Array.from(this.cachedViews,).sort().toString() === Array.from(cacheMap,).sort().toString())
+      if (Array.from(this.cachedViews,).sort().toString() === Array.from(cacheMap,).sort().toString()) {
         return
+      }
       this.cachedViews = cacheMap
     },
     // 删除某个

@@ -8,17 +8,20 @@ import { omit, pick, } from "lodash-es"
 defineOptions({
   name: "LayoutForm",
 },)
-
 const props = withDefaults(defineProps<Props>(), {
   span: 6,
+  scrollToError: true,
+  scrollIntoViewOptions: () => ({
+    behavior: "smooth",
+    block: "center",
+    inline: "center",
+  }),
 },)
 
 const emits = defineEmits<{
   (e: "search"): void
   (e: "reset"): void
 }>()
-
-const attrs: Record<string, unknown> = useAttrs()
 
 type Props = Partial<FormProps> & DescriptionsProps & {
   /**
@@ -34,6 +37,8 @@ type Props = Partial<FormProps> & DescriptionsProps & {
    */
   span?: number
 }
+
+const attrs: Record<string, unknown> = useAttrs()
 
 const formRef = ref<FormInstance>()
 
@@ -66,24 +71,36 @@ const totalSpan = computed(() => {
 const isCollapseNeeded = computed(() => totalSpan.value > 24,)
 
 const btnOffset = computed(() => {
-  if (totalSpan.value - props.span === 24 && collapse.value) {
+  const _totalSpan = totalSpan.value
+  if (_totalSpan - props.span === 24 && collapse.value) {
     return 0
   }
-  const rowCount = Math.ceil(totalSpan.value / 24,)
+  const rowCount = Math.ceil(_totalSpan / 24,)
 
-  return rowCount * 24 - totalSpan.value
+  return rowCount * 24 - _totalSpan
 },)
 
 const visibleFields = computed(() => {
   const slots = (defaultSlot?.() || []).filter(vnode => vnode.props,)
-  if (!isCollapseNeeded.value || !collapse.value)
+  // 如果不需要折叠或已展开，则显示所有字段
+  if (!isCollapseNeeded.value || !collapse.value) {
     return slots
+  }
+  // 计算第一行可显示的字段
+  const firstRowFields = []
   let sum = 0
-  return slots.filter((vnode,) => {
+
+  for (const vnode of slots) {
     const span = vnode.props?.span || props.span
+    // 如果加上当前字段后超出一行，则停止添加
+    if (sum + span > 24 - props.span) {
+      break
+    }
+    firstRowFields.push(vnode,)
     sum += span
-    return sum + props.span <= 24
-  },)
+  }
+
+  return firstRowFields
 },)
 
 async function validate() {
@@ -113,7 +130,7 @@ defineExpose({
           </slot>
         </ElCol>
       </TransitionGroup>
-      <ElCol :offset="btnOffset" :span="props.span">
+      <ElCol v-if="queryForm" :offset="btnOffset" :span="props.span">
         <ElFormItem label=" ">
           <ElButton :loading="loading" @click="emits('reset')">
             <Icon class="mr-0.5" icon="ep:refresh-right" />

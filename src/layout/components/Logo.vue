@@ -17,8 +17,9 @@ const layout = computed(() => appStore.getLayout,)
 const collapse = computed(() => appStore.getCollapse,)
 
 onMounted(() => {
-  if (unref(collapse,))
+  if (unref(collapse,)) {
     show.value = false
+  }
 },)
 
 watch(

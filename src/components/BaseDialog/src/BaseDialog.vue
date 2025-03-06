@@ -1,0 +1,114 @@
+<script lang="ts" setup>
+import type { DialogProps, ScrollbarInstance, } from "element-plus"
+import type { Slots, } from "vue"
+import type { Props, } from "./types.ts"
+import { omit, } from "lodash-es"
+
+defineOptions({
+  name: "BaseDialog",
+},)
+
+const props = withDefaults(defineProps<Props>(), {
+  title: "ces",
+  modelValue: false,
+  fullscreen: true,
+  width: "90vw",
+  height: "90vh",
+  loading: false,
+  closeOnClickModal: false,
+  destroyOnClose: true,
+  draggable: true,
+  showClose: true,
+  top: "5vh",
+  modal: true,
+},)
+
+const slots = useSlots() as Slots
+
+const isFullscreen = ref(false,)
+
+function toggleFull() {
+  isFullscreen.value = !unref(isFullscreen,)
+}
+
+const bindProps = computed<Partial<DialogProps>>(() => {
+  const omitKeys = ["height", "loading",]
+  const omitProps = omit(props, omitKeys,)
+  return {
+    ...omitProps,
+    fullscreen: unref(isFullscreen,),
+  }
+},)
+
+const body = ref<ScrollbarInstance>()
+
+const { maxHeight, } = useMaxHeight({
+  targetRef: body as Ref<ComponentPublicInstance>,
+  offset: innerHeight * 0.05 + 50 + (slots.footer ? 16 + 32 : 0),
+},)
+</script>
+
+<template>
+  <ElDialog v-bind="bindProps">
+    <template #header>
+      <div class="flex justify-between">
+        <slot name="title">
+          {{ title }}
+        </slot>
+        <Icon
+          v-if="fullscreen"
+          :icon="isFullscreen ? 'zmdi:fullscreen-exit' : 'zmdi:fullscreen'"
+          class="is-hover z-10 mr-[18px] mt-[2px] cursor-pointer"
+          color="var(--el-color-info)"
+          @click="toggleFull"
+        />
+      </div>
+    </template>
+    <ElScrollbar ref="body" v-loading="loading" :max-height="maxHeight">
+      <slot />
+    </ElScrollbar>
+    <template v-if="$slots.footer" #footer>
+      <div class="flex justify-end">
+        <slot name="footer" />
+      </div>
+    </template>
+  </ElDialog>
+</template>
+
+<style lang="scss">
+@use "@/styles/variables.module.scss" as *;
+
+.#{$elNamespace}-dialog__header {
+  margin-right: 0 !important;
+  font-size: 18px;
+  font-weight: bold;
+  border-bottom: 1px solid var(--tags-view-border-color);
+
+  &btn {
+    top: 5px;
+    & .el-dialog__close {
+      font-size: 18px;
+    }
+  }
+}
+
+.#{$elNamespace}-dialog__footer {
+  border-top: 1px solid var(--tags-view-border-color);
+}
+
+.is-hover {
+  &:hover {
+    color: var(--el-color-primary) !important;
+  }
+}
+
+.dark {
+  .#{$elNamespace}-dialog__header {
+    border-bottom: 1px solid var(--el-border-color);
+  }
+
+  .#{$elNamespace}-dialog__footer {
+    border-top: 1px solid var(--el-border-color);
+  }
+}
+</style>
