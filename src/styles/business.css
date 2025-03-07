@@ -6,9 +6,6 @@
   --danger-color: #F56C6C;
   --info-color: #909399;
 
-  /* 背景色*/
-  --bg-page-color: #f1f4f8;
-
   /* 单元格左右padding*/
   --cell-padding-x: 12px;
 
@@ -44,9 +41,7 @@
   --el-color-success: var(--success-color);
   --el-color-warning: var(--warning-color);
   --el-color-danger: var(--danger-color);
-  --el-bg-color-page: var(--bg-page-color);
 
-  --el-text-color-placeholder: var(--placeholder-text-color);
   --el-font-size-extra-large: var(--font-size-2xl);
   --el-font-size-large: var(--font-size-xl);
   --el-font-size-medium: var(--font-size-lg);
@@ -54,7 +49,7 @@
   --el-font-size-small: var(--font-size-sm);
   --el-font-size-extra-small: var(--font-size-xs);
 
-  --vxe-ui-font-primary-color: var(--el-color-primary);
+  --vxe-ui-font-primary-color: var(--primary-color);
   --vxe-ui-font-size-default: var(--font-size-base);
   --vxe-ui-table-cell-padding-left: var(--cell-padding-x);
   --vxe-ui-table-cell-padding-right: var(--cell-padding-x);
@@ -67,4 +62,8 @@
   --vxe-ui-status-warning-color: var(--warning-color);
   --vxe-ui-status-danger-color: var(--danger-color);
   --vxe-ui-status-error-color: var(--danger-color);
+  --vxe-ui-input-placeholder-color: var(--placeholder-text-color);
+  --vxe-ui-font-placeholder-color: var(--placeholder-text-color);
+  --vxe-ui-font-secondary-color: var(--secondary-text-color);
+  --vxe-ui-layout-background-color: var(--el-bg-color);
 }

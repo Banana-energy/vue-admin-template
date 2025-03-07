@@ -33,12 +33,11 @@ export function useMaxHeight({
       return domRect
     }
     // 如果是 Vue 组件，获取其 $el
-    const dom = (el as ComponentPublicInstance).$el || el
-    // 确保是 HTMLElement 后获取高度
-    if (dom instanceof HTMLElement) {
-      return dom.getBoundingClientRect()
+    if ("$el" in el) {
+      return getElementRect(el.$el,)
     }
-    return domRect
+    // 确保是 HTMLElement 后获取高度
+    return el.getBoundingClientRect()
   }
 
   const otherEls = computed(() => {
@@ -83,7 +82,13 @@ export function useMaxHeight({
     window.removeEventListener("resize", calculateMaxHeight,)
   },)
 
-  watch(() => [targetRef.value, otherEls.value,], calculateMaxHeight,)
+  watch([targetRef, otherEls,], calculateMaxHeight,)
+
+  const { width, height, } = useElementSize(targetRef,)
+
+  watch([width, height,], () => {
+    calculateMaxHeight()
+  },)
 
   return {
     maxHeight,

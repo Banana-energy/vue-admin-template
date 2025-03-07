@@ -9,7 +9,6 @@ import { ElCascader, } from "@/components/ElCascader"
 import { useDict, } from "@/hooks/useDict.ts"
 import { useReportQuery, } from "@/hooks/useReportQuery.ts"
 import { useVxeArea, } from "@/hooks/useVxeArea.ts"
-import { virtualScrollProps, } from "@/setup/vxe-table"
 import { getModelListByPage, } from "@/views/workbench/apis"
 
 const disabled = ref(true,)
@@ -180,7 +179,7 @@ onMounted(() => {
   },)
 },)
 
-const { onTableScroll, } = useVxeArea(tableRef,)
+const { handleAreaChange, } = useVxeArea(tableRef,)
 </script>
 
 <template>
@@ -212,10 +211,7 @@ const { onTableScroll, } = useVxeArea(tableRef,)
           v-model="formData.code"
           dict-code="COMMON_YES_NO"
         />
-        <DictSelect
-          v-model="formData.code"
-          dict-code="PRODUCT_ARCH_TYPE"
-        />
+        <ElInput v-model="formData.code" />
       </ElFormItem>
       <ElFormItem class="!bg-primary" label="测试">
         <ElSwitch v-model="disabled" />
@@ -257,8 +253,9 @@ const { onTableScroll, } = useVxeArea(tableRef,)
       :data="tableData"
       :loading="loading"
       :max-height="maxHeight"
-      v-bind="virtualScrollProps"
-      @scroll="onTableScroll"
+      @column-resizable-change="handleAreaChange"
+      @row-resizable-change="handleAreaChange"
+      @scroll="handleAreaChange"
     >
       <VxeColumn
         fixed="left"

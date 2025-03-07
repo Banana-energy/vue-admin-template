@@ -1,9 +1,8 @@
 import type { Awaitable, } from "@vueuse/core"
-import type { DebouncedFunc, } from "lodash-es"
 import type { WatchHandle, } from "vue"
 import type { TablePrivateRef, VxeGridInstance, VxeTableDefines, VxeTableInstance, VxeTablePropTypes, } from "vxe-table"
 import handleClickOutside from "@/utils/clickoutside.ts"
-import { ignoreAutoI18n, } from "@higgins/vite-plugin-i18n-transformer/utils"
+import { ignoreAutoI18n, } from "@higgins-mmt/vite-plugin-i18n-transformer/utils"
 import dayjs from "dayjs"
 import customParseFormat from "dayjs/plugin/customParseFormat"
 import { ElPopover, } from "element-plus"
@@ -11,7 +10,8 @@ import { debounce, get, isFunction, isNil, set, } from "lodash-es"
 import { Fragment, render, } from "vue"
 
 interface ReturnType {
-  onTableScroll: DebouncedFunc<() => void>
+  handleAreaChange: () => void
+  clearSelected: () => void
 }
 
 interface Options<D,> {
@@ -43,7 +43,7 @@ interface State<D,> {
   fillHandleStyle: Partial<CSSStyleDeclaration>
   mousedownTarget: MouseTargetEnum | null
   outsideClose: (() => void) | null
-  unwatchList: WatchHandle[]
+  watchHandleList: WatchHandle[]
 }
 
 const MAX_STACK_SIZE = 20
@@ -175,7 +175,7 @@ export function useVxeArea<D extends VxeTablePropTypes.Row,>(tableRef: Ref<VxeTa
     selectedColumn: [],
     mousedownTarget: null,
     outsideClose: null,
-    unwatchList: [],
+    watchHandleList: [],
   }
 
   const validateNoArea = (copiedInfo: CopyInfo<D>,) => {
@@ -454,9 +454,17 @@ export function useVxeArea<D extends VxeTablePropTypes.Row,>(tableRef: Ref<VxeTa
       destroy(oldValue,)
       return
     }
-    createStyle()
-    initTableState()
-    attachListeners()
+    setTimeout(() => {
+      const columns = newVal?.getFullColumns() || []
+      const hasExpand = columns.some(column => column.type === "expand",)
+      const hasTree = columns.some(column => column.treeNode,)
+      if (hasExpand || hasTree) {
+        return
+      }
+      createStyle()
+      initTableState()
+      attachListeners()
+    }, 200,)
   },)
 
   /**
@@ -475,6 +483,8 @@ export function useVxeArea<D extends VxeTablePropTypes.Row,>(tableRef: Ref<VxeTa
         background-color: ${options?.bgColor || "rgba(24, 144, 255, 0.1)"};
         pointer-events: none;
         display: none;
+        transition: top 0.15s ease, left 0.15s ease, width 0.15s ease, height 0.15s ease;
+        will-change: transform, top, left, width, height;
     }
     .fill-handle {
         display: none;
@@ -483,6 +493,8 @@ export function useVxeArea<D extends VxeTablePropTypes.Row,>(tableRef: Ref<VxeTa
         width: 6px;
         height: 6px;
         background-color: #1890ff;
+        transition: top 0.15s ease, left 0.15s ease;
+        will-change: transform, top, left, width, height;
     }
     .area-header-cell:hover {
         cursor: ns-resize;
@@ -523,10 +535,10 @@ export function useVxeArea<D extends VxeTablePropTypes.Row,>(tableRef: Ref<VxeTa
     detachListeners()
     undoStack.length = 0
     redoStack.length = 0
-    for (const unwatch of state.unwatchList) {
-      unwatch()
+    for (const { stop, } of state.watchHandleList) {
+      stop()
     }
-    state.unwatchList = []
+    state.watchHandleList = []
     state.outsideClose?.()
     instances.delete(tableRef,)
     fillHandleEl.value?.remove()
@@ -588,20 +600,21 @@ export function useVxeArea<D extends VxeTablePropTypes.Row,>(tableRef: Ref<VxeTa
 
   function setCellRender() {
     function updateCellRender() {
-      setTimeout(() => {
-        const { tableBody, tableLeftBody, tableRightBody, } = getTableRefs()
-        const list = [tableBody, tableLeftBody, tableRightBody,].filter(Boolean,)
-        list.forEach((ref,) => {
-          setCellElEvent(ref!.$el,)
-        },)
+      const { tableBody, tableLeftBody, tableRightBody, } = getTableRefs()
+      const list = [tableBody, tableLeftBody, tableRightBody,].filter(Boolean,)
+      list.forEach((ref,) => {
+        setCellElEvent(ref!.$el,)
       },)
     }
 
-    const unwatch = watch(
+    const watchHandle = watch(
       () => tableRef.value?.getTableData().fullData,
       updateCellRender,
+      {
+        immediate: true,
+      },
     )
-    state.unwatchList.push(unwatch,)
+    state.watchHandleList.push(watchHandle,)
   }
 
   /**
@@ -778,20 +791,21 @@ export function useVxeArea<D extends VxeTablePropTypes.Row,>(tableRef: Ref<VxeTa
 
   function setHeaderCell() {
     function updateHeaderCells() {
-      setTimeout(() => {
-        const { tableHeader, tableLeftHeader, tableRightHeader, } = getTableRefs()
-        const list = [tableHeader, tableLeftHeader, tableRightHeader,].filter(Boolean,)
-        list.forEach((ref,) => {
-          setHeaderCellRender(ref!.$el,)
-        },)
+      const { tableHeader, tableLeftHeader, tableRightHeader, } = getTableRefs()
+      const list = [tableHeader, tableLeftHeader, tableRightHeader,].filter(Boolean,)
+      list.forEach((ref,) => {
+        setHeaderCellRender(ref!.$el,)
       },)
     }
 
-    const unwatch = watch(
+    const watchHandle = watch(
       () => tableRef.value?.getTableData().fullData,
       updateHeaderCells,
+      {
+        immediate: true,
+      },
     )
-    state.unwatchList.push(unwatch,)
+    state.watchHandleList.push(watchHandle,)
   }
 
   function setHeaderCellRender(el: HTMLElement,) {
@@ -870,7 +884,6 @@ export function useVxeArea<D extends VxeTablePropTypes.Row,>(tableRef: Ref<VxeTa
     requestAnimationFrame(() => {
       const { selectionStyle, handleStyle, } = calculateAreaStyles()
 
-      // 更新样式
       Object.assign(state.selectionAreaStyle, selectionStyle,)
       Object.assign(state.fillHandleStyle, handleStyle,)
       createSelection()
@@ -1108,12 +1121,26 @@ export function useVxeArea<D extends VxeTablePropTypes.Row,>(tableRef: Ref<VxeTa
     return cellEl
   }
 
-  return {
-    onTableScroll: debounce(() => {
-      render(null, document.body,)
-      setHeaderCell()
-      setCellRender()
+  // 将滚动处理分为两部分：立即更新的部分和延迟更新的部分
+  // 延迟更新的部分
+  const debouncedUpdateAfterScroll = debounce(() => {
+    render(null, document.body,)
+    setHeaderCell()
+    setCellRender()
+  }, 200,)
+
+  function handleAreaChange() {
+    // 立即更新选区位置（最重要的视觉反馈）
+    if (tableRef.value === currentInstance) {
       updateCellArea()
-    }, 200,),
+    }
+
+    // 延迟更新其他非关键部分
+    debouncedUpdateAfterScroll()
+  }
+
+  return {
+    handleAreaChange,
+    clearSelected,
   }
 }

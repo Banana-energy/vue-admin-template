@@ -21,6 +21,7 @@ const props = withDefaults(defineProps<Props>(), {
   showClose: true,
   top: "5vh",
   modal: true,
+  closeOnPressEscape: true,
 },)
 
 const slots = useSlots() as Slots
@@ -40,11 +41,13 @@ const bindProps = computed<Partial<DialogProps>>(() => {
   }
 },)
 
-const body = ref<ScrollbarInstance>()
+const bodyRef = ref<ScrollbarInstance>()
+const footerRef = ref<HTMLDivElement>()
 
 const { maxHeight, } = useMaxHeight({
-  targetRef: body as Ref<ComponentPublicInstance>,
-  offset: innerHeight * 0.05 + 50 + (slots.footer ? 16 + 32 : 0),
+  targetRef: bodyRef as Ref<ComponentPublicInstance>,
+  otherRefs: footerRef,
+  offset: innerHeight * 0.05 + 50 + (slots.footer ? 16 : 0),
 },)
 </script>
 
@@ -64,11 +67,11 @@ const { maxHeight, } = useMaxHeight({
         />
       </div>
     </template>
-    <ElScrollbar ref="body" v-loading="loading" :max-height="maxHeight">
+    <ElScrollbar ref="bodyRef" v-loading="loading" :max-height="maxHeight">
       <slot />
     </ElScrollbar>
     <template v-if="$slots.footer" #footer>
-      <div class="flex justify-end">
+      <div ref="footerRef" class="flex justify-end">
         <slot name="footer" />
       </div>
     </template>
@@ -86,6 +89,7 @@ const { maxHeight, } = useMaxHeight({
 
   &btn {
     top: 5px;
+
     & .el-dialog__close {
       font-size: 18px;
     }

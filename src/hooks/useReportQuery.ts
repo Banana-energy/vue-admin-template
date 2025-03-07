@@ -17,6 +17,7 @@ interface Options<TData, TParams,> {
   autoRequest?: boolean
   hasPager?: boolean
   dateTransform?: DateTransform<TParams>[]
+  resetWithSearch?: boolean
 }
 
 interface Return<TData, TParams,> {
@@ -54,6 +55,7 @@ export function useReportQuery<TData, TParams extends Params,>(options: Options<
     hasPager = true,
     autoRequest = true,
     dateTransform = [],
+    resetWithSearch = false,
   } = options
 
   const { maxHeight, } = useMaxHeight({
@@ -139,10 +141,15 @@ export function useReportQuery<TData, TParams extends Params,>(options: Options<
         formRef.value.resetFields()
       }
     }
-    if (formData) {
-      Object.assign(formData, originalFormData,)
+    if (formData && originalFormData) {
+      // 重置表单数据
+      Object.keys(formData,).forEach((key,) => {
+        formData[key as keyof typeof formData] = originalFormData[key as keyof typeof originalFormData]
+      },)
     }
-    await handleSearch()
+    if (resetWithSearch) {
+      await handleSearch()
+    }
   }
 
   return {
