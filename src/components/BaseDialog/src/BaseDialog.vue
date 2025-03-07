@@ -13,7 +13,6 @@ const props = withDefaults(defineProps<Props>(), {
   modelValue: false,
   fullscreen: true,
   width: "90vw",
-  height: "90vh",
   loading: false,
   closeOnClickModal: false,
   destroyOnClose: true,
@@ -33,7 +32,7 @@ function toggleFull() {
 }
 
 const bindProps = computed<Partial<DialogProps>>(() => {
-  const omitKeys = ["height", "loading",]
+  const omitKeys = ["maxHeight", "loading",]
   const omitProps = omit(props, omitKeys,)
   return {
     ...omitProps,
@@ -67,7 +66,7 @@ const { maxHeight, } = useMaxHeight({
         />
       </div>
     </template>
-    <ElScrollbar ref="bodyRef" v-loading="loading" :max-height="maxHeight">
+    <ElScrollbar ref="bodyRef" v-loading="loading" :max-height="props.maxHeight || maxHeight">
       <slot />
     </ElScrollbar>
     <template v-if="$slots.footer" #footer>

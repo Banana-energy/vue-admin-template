@@ -454,17 +454,17 @@ export function useVxeArea<D extends VxeTablePropTypes.Row,>(tableRef: Ref<VxeTa
       destroy(oldValue,)
       return
     }
-    setTimeout(() => {
-      const columns = newVal?.getFullColumns() || []
-      const hasExpand = columns.some(column => column.type === "expand",)
-      const hasTree = columns.some(column => column.treeNode,)
-      if (hasExpand || hasTree) {
-        return
-      }
-      createStyle()
-      initTableState()
-      attachListeners()
-    }, 200,)
+    // setTimeout(() => {
+    const columns = newVal?.getFullColumns() || []
+    const hasExpand = columns.some(column => column.type === "expand",)
+    const hasTree = columns.some(column => column.treeNode,)
+    if (hasExpand || hasTree) {
+      return
+    }
+    createStyle()
+    initTableState()
+    attachListeners()
+    // }, 200,)
   },)
 
   /**
@@ -600,15 +600,17 @@ export function useVxeArea<D extends VxeTablePropTypes.Row,>(tableRef: Ref<VxeTa
 
   function setCellRender() {
     function updateCellRender() {
-      const { tableBody, tableLeftBody, tableRightBody, } = getTableRefs()
-      const list = [tableBody, tableLeftBody, tableRightBody,].filter(Boolean,)
-      list.forEach((ref,) => {
-        setCellElEvent(ref!.$el,)
+      setTimeout(() => {
+        const { tableBody, tableLeftBody, tableRightBody, } = getTableRefs()
+        const list = [tableBody, tableLeftBody, tableRightBody,].filter(Boolean,)
+        list.forEach((ref,) => {
+          setCellElEvent(ref!.$el,)
+        },)
       },)
     }
 
     const watchHandle = watch(
-      () => tableRef.value?.getTableData().fullData,
+      () => [tableRef.value?.getTableData().fullData, tableRef.value?.getColumns(),],
       updateCellRender,
       {
         immediate: true,
@@ -626,6 +628,9 @@ export function useVxeArea<D extends VxeTablePropTypes.Row,>(tableRef: Ref<VxeTa
       const tds = tableBody.querySelectorAll("td",)
       tds.forEach((td,) => {
         if (td.className.includes("no-area",)) {
+          td.onmousemove = null
+          td.onmousedown = null
+          td.onmouseup = null
           return
         }
         const tr = td.parentElement
@@ -791,15 +796,17 @@ export function useVxeArea<D extends VxeTablePropTypes.Row,>(tableRef: Ref<VxeTa
 
   function setHeaderCell() {
     function updateHeaderCells() {
-      const { tableHeader, tableLeftHeader, tableRightHeader, } = getTableRefs()
-      const list = [tableHeader, tableLeftHeader, tableRightHeader,].filter(Boolean,)
-      list.forEach((ref,) => {
-        setHeaderCellRender(ref!.$el,)
+      setTimeout(() => {
+        const { tableHeader, tableLeftHeader, tableRightHeader, } = getTableRefs()
+        const list = [tableHeader, tableLeftHeader, tableRightHeader,].filter(Boolean,)
+        list.forEach((ref,) => {
+          setHeaderCellRender(ref!.$el,)
+        },)
       },)
     }
 
     const watchHandle = watch(
-      () => tableRef.value?.getTableData().fullData,
+      () => [tableRef.value?.getTableData().fullData, tableRef.value?.getColumns(),],
       updateHeaderCells,
       {
         immediate: true,
@@ -814,6 +821,7 @@ export function useVxeArea<D extends VxeTablePropTypes.Row,>(tableRef: Ref<VxeTa
     }
     el.querySelectorAll("th",).forEach((th,) => {
       if (th.className.includes("no-area",)) {
+        th.onclick = null
         return
       }
       if (th.className.includes("area-header-cell",)) {

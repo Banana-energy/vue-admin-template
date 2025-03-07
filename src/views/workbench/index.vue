@@ -248,7 +248,6 @@ const { handleAreaChange, } = useVxeArea(tableRef,)
       <!--      </ElFormItem> -->
     </LayoutForm>
     <VxeTable
-      v-if="disabled"
       ref="tableRef"
       :data="tableData"
       :loading="loading"
@@ -258,10 +257,10 @@ const { handleAreaChange, } = useVxeArea(tableRef,)
       @scroll="handleAreaChange"
     >
       <VxeColumn
+        :visible="disabled"
         fixed="left"
         type="seq"
         width="500"
-        row-resize
       />
       <VxeColumn
         class-name="no-area"

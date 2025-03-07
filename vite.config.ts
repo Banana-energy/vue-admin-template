@@ -1,7 +1,7 @@
 import { existsSync, readdirSync, statSync, } from "node:fs"
 import { parse, resolve, } from "node:path"
 import * as process from "node:process"
-import I18nTransformer from "@higgins/vite-plugin-i18n-transformer"
+import I18nTransformer from "@higgins-mmt/vite-plugin-i18n-transformer"
 import VuePlugin from "@vitejs/plugin-vue"
 import VueJsxPlugin from "@vitejs/plugin-vue-jsx"
 import UnoCSS from "unocss/vite"

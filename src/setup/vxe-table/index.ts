@@ -17,7 +17,7 @@ export const virtualScrollProps: VxeTableProps = {
 }
 
 export function setupVxeTable(app: App<Element>,) {
-  VxeUI.setConfig({
+  VxeUITable.setConfig({
     table: {
       align: "left",
       border: true,
