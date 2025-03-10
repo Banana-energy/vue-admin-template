@@ -6,7 +6,7 @@ import { setCssVar, } from "@/utils"
 import { useWindowSize, } from "@vueuse/core"
 
 const props = withDefaults(defineProps<{
-  size: ComponentSize
+  size?: ComponentSize
 }>(), {
   size: "default",
 },)

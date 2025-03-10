@@ -1,1 +1,4 @@
-npm run lint:eslint
+#!/bin/sh
+. "$(dirname "$0")/_/husky.sh"
+
+bash .husky/lint.sh

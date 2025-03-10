@@ -1,8 +1,8 @@
-<script setup lang="ts">
+<script lang="ts" setup>
 import { useDesign, } from "@/hooks/useDesign"
 
 const props = withDefaults(defineProps<{
-  schema: string[]
+  schema?: string[]
   modelValue?: string
 }>(), {
   schema: () => [],

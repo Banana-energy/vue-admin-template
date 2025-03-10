@@ -276,8 +276,7 @@ export function useVxeArea<D extends VxeTablePropTypes.Row,>(tableRef: Ref<VxeTa
     }
     const result = pasteValidator(copiedInfo,)
     if (typeof result !== "boolean" && result.then) {
-      const validResult = await result.then()
-      return validResult
+      return await result.then()
     }
     return result
   }
@@ -454,7 +453,6 @@ export function useVxeArea<D extends VxeTablePropTypes.Row,>(tableRef: Ref<VxeTa
       destroy(oldValue,)
       return
     }
-    // setTimeout(() => {
     const columns = newVal?.getFullColumns() || []
     const hasExpand = columns.some(column => column.type === "expand",)
     const hasTree = columns.some(column => column.treeNode,)
@@ -464,7 +462,6 @@ export function useVxeArea<D extends VxeTablePropTypes.Row,>(tableRef: Ref<VxeTa
     createStyle()
     initTableState()
     attachListeners()
-    // }, 200,)
   },)
 
   /**
@@ -480,7 +477,7 @@ export function useVxeArea<D extends VxeTablePropTypes.Row,>(tableRef: Ref<VxeTa
      #selection-area {
         position: absolute;
         border: 2px solid #1890ff;
-        background-color: ${options?.bgColor || "rgba(24, 144, 255, 0.1)"};
+        background-color: ${options?.bgColor || "rgba(64, 158, 255, 0.1)"};
         pointer-events: none;
         display: none;
         transition: top 0.15s ease, left 0.15s ease, width 0.15s ease, height 0.15s ease;
