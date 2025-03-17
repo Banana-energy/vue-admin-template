@@ -50,7 +50,7 @@ export function generateRoutesByServer(routes: RouteInfoAPI.PmsRouteRecordRaw[],
     const data: CustomRouteRecordRaw = {
       id: route.id,
       path: route.path,
-      name: route.name,
+      name: route.code,
       redirect: route.redirect,
       meta: route.meta,
     }

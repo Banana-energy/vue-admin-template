@@ -14,12 +14,12 @@ interface ReturnType {
   clearSelected: () => void
 }
 
-interface Options<D,> {
+interface Options<D, > {
   bgColor?: string
-  pasteValidator?: (copiedInfo: CopyInfo<D>) => Awaitable<boolean>
+  pasteValidator?: (copiedInfo: CopyInfo<D>, selectedCells: Cell<D>[],) => Awaitable<boolean>
 }
 
-interface CopyInfo<D,> {
+interface CopyInfo<D, > {
   cells: Cell<D>[]
   rowCount: number
   colCount: number
@@ -27,18 +27,19 @@ interface CopyInfo<D,> {
   text: string
 }
 
-interface Cell<D,> {
+interface Cell<D, > {
   row: VxeTablePropTypes.Row
   column: VxeTableDefines.ColumnInfo<D>
 }
 
-interface State<D,> {
+interface State<D, > {
   copiedInfo: CopyInfo<D> | null
   startCell: Cell<D> | null
   endCell: Cell<D> | null
   selectedColumn: VxeTableDefines.ColumnInfo[]
   isDragging: boolean
   selectedCells: Cell<D>[]
+  originalFillCell: Cell<D>[]
   selectionAreaStyle: Partial<CSSStyleDeclaration>
   fillHandleStyle: Partial<CSSStyleDeclaration>
   mousedownTarget: MouseTargetEnum | null
@@ -156,11 +157,12 @@ const FillModePopover = defineComponent({
 
 /**
  * 表格区域选择、复制粘贴和填充功能的 Hook
+ * TODO: 支持按下ctrl/shift多选区域
  * @param tableRef 表格实例引用
  * @param options 配置选项
- * @returns 返回滚动事件监听函数
+ * @returns 返回更新/清空选中区域函数
  */
-export function useVxeArea<D extends VxeTablePropTypes.Row,>(tableRef: Ref<VxeTableInstance<D> | VxeGridInstance<D> | undefined>, options?: Options<D>,): ReturnType {
+export function useVxeArea<D extends VxeTablePropTypes.Row, >(tableRef: Ref<VxeTableInstance<D> | VxeGridInstance<D> | undefined>, options?: Options<D>,): ReturnType {
   const undoStack: D[][] = []
   const redoStack: D[][] = []
   const fillHandleEl = ref<HTMLDivElement | null>(null,)
@@ -170,6 +172,7 @@ export function useVxeArea<D extends VxeTablePropTypes.Row,>(tableRef: Ref<VxeTa
     endCell: null,
     isDragging: false,
     selectedCells: [],
+    originalFillCell: [],
     selectionAreaStyle: { top: "0px", left: "0px", width: "0px", height: "0px", display: "none", },
     fillHandleStyle: { top: "0px", left: "0px", display: "none", },
     selectedColumn: [],
@@ -178,6 +181,10 @@ export function useVxeArea<D extends VxeTablePropTypes.Row,>(tableRef: Ref<VxeTa
     watchHandleList: [],
   }
 
+  /**
+   * 默认的粘贴校验，有no-area的单元格不允许粘贴
+   * @param copiedInfo
+   */
   const validateNoArea = (copiedInfo: CopyInfo<D>,) => {
     const { cells, } = copiedInfo
     const hasNoArea = cells.some((cell,) => {
@@ -190,17 +197,25 @@ export function useVxeArea<D extends VxeTablePropTypes.Row,>(tableRef: Ref<VxeTa
     return !hasNoArea
   }
 
-  const pasteValidator = (copiedInfo: CopyInfo<D>,): Awaitable<boolean> => {
+  /**
+   * 粘贴校验
+   * @param copiedInfo
+   * @param selectedCells
+   */
+  const pasteValidator = (copiedInfo: CopyInfo<D>, selectedCells: Cell<D>[],): Awaitable<boolean> => {
     const result = validateNoArea(copiedInfo,)
     if (!result) {
       return false
     }
     if (isFunction(options?.pasteValidator,)) {
-      return options?.pasteValidator(copiedInfo,)
+      return options?.pasteValidator(copiedInfo, selectedCells,)
     }
     return true
   }
 
+  /**
+   * 标准化获取Vxe的子Ref实例
+   */
   const getTableRefs = (): {
     tableBody: TablePrivateRef["refTableBody"]["value"] | undefined
     tableLeftBody: TablePrivateRef["refTableLeftBody"]["value"] | undefined
@@ -242,6 +257,9 @@ export function useVxeArea<D extends VxeTablePropTypes.Row,>(tableRef: Ref<VxeTa
     return getReturn(refMaps,)
   }
 
+  /**
+   * 获取当前表格的复制信息
+   */
   const getCopiedInfo = (): CopyInfo<D> | null => {
     if (tableRef.value !== currentInstance || !tableRef.value) {
       return null
@@ -253,7 +271,7 @@ export function useVxeArea<D extends VxeTablePropTypes.Row,>(tableRef: Ref<VxeTa
 
     const { rowRange, colRange, } = calculateSelectionRange(selectedCells,)
 
-    const copiedInfo = {
+    return {
       cells: selectedCells,
       rowCount: rowRange.max - rowRange.min + 1,
       colCount: colRange.max - colRange.min + 1,
@@ -266,15 +284,13 @@ export function useVxeArea<D extends VxeTablePropTypes.Row,>(tableRef: Ref<VxeTa
         return el ? el.textContent : ""
       },).join("\t",),
     }
-
-    return copiedInfo
   }
 
-  const validatePaste = async(copiedInfo: CopyInfo<D> | null,) => {
+  const validatePaste = async(copiedInfo: CopyInfo<D> | null, selectedCells: Cell<D>[],) => {
     if (!copiedInfo) {
       return false
     }
-    const result = pasteValidator(copiedInfo,)
+    const result = pasteValidator(copiedInfo, selectedCells,)
     if (typeof result !== "boolean" && result.then) {
       return await result.then()
     }
@@ -305,7 +321,7 @@ export function useVxeArea<D extends VxeTablePropTypes.Row,>(tableRef: Ref<VxeTa
       }
 
       if (state.copiedInfo) {
-        const result = await validatePaste(state.copiedInfo,)
+        const result = await validatePaste(state.copiedInfo, selectedCells,)
 
         result && this.executePaste(selectedCells,)
       } else {
@@ -338,7 +354,7 @@ export function useVxeArea<D extends VxeTablePropTypes.Row,>(tableRef: Ref<VxeTa
 
     pasteText(targetCells: Cell<D>[], text: string,) {
       // 简单文本粘贴逻辑
-      if (!isNil(text,) || !targetCells.length) {
+      if (isNil(text,) || !targetCells.length) {
         return
       }
 
@@ -450,9 +466,11 @@ export function useVxeArea<D extends VxeTablePropTypes.Row,>(tableRef: Ref<VxeTa
 
   watch(() => tableRef.value, (newVal, oldValue,) => {
     if (!newVal && oldValue) {
+      // 表格销毁了
       destroy(oldValue,)
       return
     }
+    // 树形/展开表格不支持选择区域
     const columns = newVal?.getFullColumns() || []
     const hasExpand = columns.some(column => column.type === "expand",)
     const hasTree = columns.some(column => column.treeNode,)
@@ -465,7 +483,7 @@ export function useVxeArea<D extends VxeTablePropTypes.Row,>(tableRef: Ref<VxeTa
   },)
 
   /**
-   * TODO: 待优化
+   * TODO: 待优化 多个表格的情况不能使用id
    * 创建表格选择区域的样式
    */
   function createStyle() {
@@ -499,6 +517,9 @@ export function useVxeArea<D extends VxeTablePropTypes.Row,>(tableRef: Ref<VxeTa
     document.head.appendChild(style,)
   }
 
+  /**
+   * 初始化
+   */
   function initTableState() {
     if (!tableRef.value) {
       return
@@ -574,6 +595,9 @@ export function useVxeArea<D extends VxeTablePropTypes.Row,>(tableRef: Ref<VxeTa
     }
   }
 
+  /**
+   * 点击表格外部事件
+   */
   function setFocusOutside() {
     if (!tableRef.value) {
       return
@@ -585,6 +609,9 @@ export function useVxeArea<D extends VxeTablePropTypes.Row,>(tableRef: Ref<VxeTa
     }, [".fill-handle", ".fill-mode-popper-over",],)
   }
 
+  /**
+   * 清空选中单元格，更新选中区域
+   */
   function clearSelected() {
     if (state.isDragging) {
       return
@@ -595,6 +622,9 @@ export function useVxeArea<D extends VxeTablePropTypes.Row,>(tableRef: Ref<VxeTa
     updateCellArea()
   }
 
+  /**
+   * 监听数据变化，处理表体单元格
+   */
   function setCellRender() {
     function updateCellRender() {
       setTimeout(() => {
@@ -617,6 +647,7 @@ export function useVxeArea<D extends VxeTablePropTypes.Row,>(tableRef: Ref<VxeTa
   }
 
   /**
+   * TODO: 事件应需要调用已有值，防止用户自定义事件被覆盖
    * 为单元格添加事件处理
    * @param tableBody 表格主体元素
    */
@@ -643,7 +674,11 @@ export function useVxeArea<D extends VxeTablePropTypes.Row,>(tableRef: Ref<VxeTa
     }
   }
 
-  function onMouseUp(e: MouseEvent,) {
+  /**
+   * 注册鼠标抬起事件
+   * @param e
+   */
+  async function onMouseUp(e: MouseEvent,) {
     if (tableRef.value !== currentInstance || !state || e.button !== 0) {
       return
     }
@@ -653,7 +688,11 @@ export function useVxeArea<D extends VxeTablePropTypes.Row,>(tableRef: Ref<VxeTa
       return
     }
     if (state.mousedownTarget === MouseTargetEnum.FILL_HANDLER) {
-      fillCells()
+      // 点击fillHandler抬起，先填充单元格值，然后弹出选择模式
+      const result = await fillCells()
+      if (!result) {
+        return
+      }
       const vnode = h(FillModePopover, {
         target: fillHandleEl.value!,
         onModeSelected: (mode: "fill" | "copy",) => {
@@ -664,18 +703,33 @@ export function useVxeArea<D extends VxeTablePropTypes.Row,>(tableRef: Ref<VxeTa
         },
       },)
       render(vnode, document.body,)
+    } else {
+      // 记录原始选中单元格，用于填充时判断
+      state.originalFillCell = [...state.selectedCells,]
     }
   }
 
+  /**
+   * 填充单元格，提供填充/复制两种逻辑，尽量对齐excel
+   * @param mode
+   */
   async function fillCells(mode?: "fill" | "copy",) {
     if (!state.startCell || !state.endCell || !tableRef.value) {
-      return
+      return false
     }
 
     const copiedInfo = getCopiedInfo()
-    const result = await validatePaste(copiedInfo,)
+    if (!copiedInfo) {
+      return false
+    }
+    copiedInfo.cells = state.originalFillCell
+    copiedInfo.values = state.originalFillCell.map(cell => ({
+      cell,
+      value: get(cell.row, cell.column.field,),
+    }),)
+    const result = await validatePaste(copiedInfo, state.selectedCells,)
     if (!result) {
-      return
+      return false
     }
 
     saveSnapshot()
@@ -693,6 +747,7 @@ export function useVxeArea<D extends VxeTablePropTypes.Row,>(tableRef: Ref<VxeTa
         set(cell.row, cell.column.field, getNextValue(property, rowOffset, colOffset, mode,),)
       }
     },)
+    return true
   }
 
   /**
@@ -766,6 +821,11 @@ export function useVxeArea<D extends VxeTablePropTypes.Row,>(tableRef: Ref<VxeTa
     }
   }
 
+  /**
+   * 给单元格注册鼠标移动事件，移入时更新选中区域和选中单元格
+   * @param row
+   * @param column
+   */
   function onCellMouseMove({ row, column, }: Partial<Cell<D>>,) {
     if (!state.isDragging || !state.startCell || !tableRef.value || !row || !column) {
       return
@@ -779,6 +839,7 @@ export function useVxeArea<D extends VxeTablePropTypes.Row,>(tableRef: Ref<VxeTa
       return
     }
     if (state.selectedColumn.length) {
+      // 如果选中了整列之后拖拽，则更新选中列
       const { visibleData, } = tableRef.value.getTableData()
       state.endCell = { row: visibleData.at(-1,), column, }
       const selectedColumns = [...state.selectedColumn, column,]
@@ -791,6 +852,9 @@ export function useVxeArea<D extends VxeTablePropTypes.Row,>(tableRef: Ref<VxeTa
     updateCellArea() // 更新显示选中区域
   }
 
+  /**
+   * 监听数据变化，处理表头单元格
+   */
   function setHeaderCell() {
     function updateHeaderCells() {
       setTimeout(() => {
@@ -812,6 +876,11 @@ export function useVxeArea<D extends VxeTablePropTypes.Row,>(tableRef: Ref<VxeTa
     state.watchHandleList.push(watchHandle,)
   }
 
+  /**
+   * TODO: onclick应需要调用已有值，防止用户自定义事件被覆盖
+   * 给表头单元格添加事件
+   * @param el 通过VxeTable获取的表头元素
+   */
   function setHeaderCellRender(el: HTMLElement,) {
     if (!el) {
       return
@@ -829,11 +898,16 @@ export function useVxeArea<D extends VxeTablePropTypes.Row,>(tableRef: Ref<VxeTa
     },)
   }
 
+  /**
+   * 表头单元格点击事件
+   * @param th 表头单元格元素
+   */
   function onHeaderCellClick(th: HTMLTableCellElement,) {
     if (!tableRef.value) {
       return
     }
     const { getTableData, getColumnNode, } = tableRef.value
+    // 清除填充模式选择
     render(null, document.body,)
     let column = getColumnNode(th,)?.item
     if (column?.children && column.children.length) {
@@ -844,6 +918,7 @@ export function useVxeArea<D extends VxeTablePropTypes.Row,>(tableRef: Ref<VxeTa
       const { visibleData, } = getTableData() || { visibleData: [], }
       state.startCell = { row: visibleData[0], column, }
       state.endCell = { row: visibleData.at(-1,), column, }
+      // 选中整列
       state.selectedColumn = [column,]
       updateSelectedCells()
       updateCellArea()
@@ -851,6 +926,9 @@ export function useVxeArea<D extends VxeTablePropTypes.Row,>(tableRef: Ref<VxeTa
     }
   }
 
+  /**
+   * 更新选中单元格
+   */
   function updateSelectedCells() {
     if (!state.startCell || !state.endCell || !tableRef.value) {
       return
@@ -858,14 +936,20 @@ export function useVxeArea<D extends VxeTablePropTypes.Row,>(tableRef: Ref<VxeTa
     state.selectedCells = []
     const { getVTRowIndex, getVTColumnIndex, getTableData, getTableColumn, } = tableRef.value
     const { visibleData, } = getTableData()
+    // 是否选中了整列
     const isSelectedColumn = state.selectedColumn.length > 0
     const { visibleColumn, } = getTableColumn()
 
+    // 起始行索引
     const startRowIndex = getVTRowIndex(state.startCell.row,)
+    // 如果选中了整列，则结束行索引为表格数据长度-1
     const endRowIndex = isSelectedColumn ? visibleData.length - 1 : getVTRowIndex(state.endCell.row,)
+    // 起始列索引
     const startColIndex = getVTColumnIndex(state.startCell.column,)
+    // 结束列索引
     const endColIndex = getVTColumnIndex(state.endCell.column,)
 
+    // 计算最小和最大行索引和列索引，确定边界
     const minRowIndex = Math.min(startRowIndex, endRowIndex,)
     const maxRowIndex = Math.max(startRowIndex, endRowIndex,)
     const minColIndex = Math.min(startColIndex, endColIndex,)
@@ -878,6 +962,9 @@ export function useVxeArea<D extends VxeTablePropTypes.Row,>(tableRef: Ref<VxeTa
     }
   }
 
+  /**
+   * 更新选中区域样式
+   */
   function updateCellArea() {
     if (!state.startCell || !state.endCell || !tableRef.value) {
       state.selectionAreaStyle.display = "none"
@@ -895,7 +982,9 @@ export function useVxeArea<D extends VxeTablePropTypes.Row,>(tableRef: Ref<VxeTa
     },)
   }
 
-  // 计算选择区域和填充手柄的样式
+  /**
+   * 计算选择区域和填充手柄的样式
+   */
   function calculateAreaStyles() {
     if (!state.startCell || !state.endCell || !tableRef.value) {
       return {
@@ -978,7 +1067,11 @@ export function useVxeArea<D extends VxeTablePropTypes.Row,>(tableRef: Ref<VxeTa
     return { selectionStyle, handleStyle, }
   }
 
-  // 检查是否有隐藏单元格
+  /**
+   * 检查是否有隐藏单元格
+   * vue2版本getVM(Column/Row)Index方法在隐藏的情况下会返回-1
+   * vue3新版本表现有不同，因此只能根据获取到的单元格元素是否存在来判断
+   */
   function checkHiddenCells() {
     if (!tableRef.value || !state.selectedCells.length) {
       return false
@@ -1022,6 +1115,12 @@ export function useVxeArea<D extends VxeTablePropTypes.Row,>(tableRef: Ref<VxeTa
     fillHandleEl.value = fillHandle
   }
 
+  /**
+   * 给单元格注册鼠标按下事件
+   * @param target 鼠标按下的目标，可能为fillHandler/cell
+   * @param row 单元格对应行
+   * @param column 单元格对应列
+   */
   function onMousedown(target: MouseTargetEnum, { row, column, }: Partial<Cell<D>>,) {
     return (e: MouseEvent,) => {
       if (!tableRef.value || e.button !== 0) {
@@ -1052,15 +1151,28 @@ export function useVxeArea<D extends VxeTablePropTypes.Row,>(tableRef: Ref<VxeTa
     }
   }
 
+  /**
+   * 设置body的user-select为none，避免拖拽过程中选中文字
+   */
   function setUserSelectNone() {
     preUserSelect = document.body.style.userSelect
     document.body.style.userSelect = "none"
   }
 
+  /**
+   * 恢复body的user-select
+   */
   function recoverUserSelect() {
     document.body.style.userSelect = preUserSelect
   }
 
+  /**
+   * 根据row/column获取选中的单元格元素
+   * 在虚拟滚动下，可能获取不到单元格元素，因此需要根据方向来递增/减来查找可见的单元格
+   * @param row
+   * @param column
+   * @param options
+   */
   function getSelectedCell(
     row: VxeTablePropTypes.Row,
     column: VxeTableDefines.ColumnInfo,
@@ -1126,22 +1238,26 @@ export function useVxeArea<D extends VxeTablePropTypes.Row,>(tableRef: Ref<VxeTa
     return cellEl
   }
 
-  // 将滚动处理分为两部分：立即更新的部分和延迟更新的部分
-  // 延迟更新的部分
-  const debouncedUpdateAfterScroll = debounce(() => {
+  /**
+   * 表格数据/元素有变化时，延迟更新其他非关键部分
+   */
+  const debouncedUpdate = debounce(() => {
     render(null, document.body,)
     setHeaderCell()
     setCellRender()
   }, 200,)
 
+  /**
+   * 表格数据/元素有变化时，立即更新选区位置（最重要的视觉反馈）
+   * 一般在表格数据/元素有变化时调用，如：列宽/行高变化，表格滚动等，需手动调用
+   */
   function handleAreaChange() {
-    // 立即更新选区位置（最重要的视觉反馈）
     if (tableRef.value === currentInstance) {
       updateCellArea()
     }
 
     // 延迟更新其他非关键部分
-    debouncedUpdateAfterScroll()
+    debouncedUpdate()
   }
 
   return {

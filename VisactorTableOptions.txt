@@ -1,0 +1,932 @@
+Title: ListTable——VisActor/VTable option documents
+
+URL Source: https://visactor.io/vtable/option/ListTable
+
+Markdown Content:
+🎁 VisActor Data Visualization Competition
+------------------------------------------
+
+The VisActor Data Visualization Creative Programming Competition is officially open! Details please click [Activity link](https://juejin.cn/post/7451775061902622747).
+
+!!!###!!!title=ListTable——VisActor/VTable option documents!!!###!!!!!!###!!!description=VisActor/VTable option documents. This chapter mainly introduces VTable configuration items and their usage to quickly generate the required tables.!!!###!!!
+
+ListTable.container
+-------------------
+
+HTMLElement
+
+Container DOM, requires width.
+
+ListTable.records
+-----------------
+
+Array
+
+tabular data. Currently supported data formats, taking human information as an example:
+
+`` ``` \[ {"name": "Zhang San","age": 20,"sex": "male","phone": "123456789","address": "Haidian District, Beijing"}, {"name": "Li Si","age": 30,"sex": "female","phone": "23456789","address": "Haidian District, Beijing"}, {"name": "Wang Wu","age": 40,"sex": "male","phone": "3456789","address": "Haidian District, Beijing"} \]
+
+ListTable.columns
+-----------------
+
+\*
+
+Table column configuration, each column needs to set configuration items separately, and the configuration items differ slightly depending on the cellType. cellType can support: `'text' | 'link' | 'image' | 'video' | 'sparkline' | 'progressbar' | 'chart`， The specific configuration items for each cellType are as follows:
+
+ListTable.columns-text
+----------------------
+
+string
+
+Specify the column type as 'text', cellType can be omitted and defaults to 'text'
+
+ListTable.columns-link
+----------------------
+
+string
+
+Specify the column type as 'link', cellType can be omitted and defaults to 'text'
+
+ListTable.columns-image
+-----------------------
+
+string
+
+Specify the column type as `'image'`, the default cellType is 'text'.
+
+ListTable.columns-video
+-----------------------
+
+string
+
+Specify the column type as `'video'`, cellType can be omitted with the default as 'text'
+
+ListTable.columns-progressbar
+-----------------------------
+
+string
+
+Specify the column type as 'progressbar', cellType can be omitted and defaults to 'text'
+
+ListTable.columns-sparkline
+---------------------------
+
+string
+
+Specify the column type as 'sparkline', cellType can be omitted and defaults to 'text'
+
+ListTable.columns-chart
+-----------------------
+
+string
+
+Specify the column type as 'chart', the cellType can be omitted and defaults to 'text'
+
+ListTable.columns-checkbox
+--------------------------
+
+string
+
+Specify the column type as 'checkbox', cellType can be omitted and defaults to 'text'
+
+ListTable.columns-radio
+-----------------------
+
+string
+
+Specify the column type as 'radio', cellType can be omitted and defaults to 'text'
+
+ListTable.columns-switch
+------------------------
+
+string
+
+Specifies the cell type of this column or row as 'switch'. If cellType is not specified, it defaults to 'text'
+
+ListTable.columns-button
+------------------------
+
+string
+
+Specifies the cell type of this column or row as 'button'. If cellType is not specified, it defaults to 'text'
+
+ListTable.columns-function
+--------------------------
+
+string
+
+Specify the column or row cell type as a custom function.
+
+ListTable.transpose
+-------------------
+
+Whether to transpose, default is false
+
+Whether to display the table header.
+
+IPagination
+
+Pagination configuration.
+
+The basic table and VTable data analysis pivot table support paging, but the pivot combination chart does not support paging.
+
+The specific types of IPagination are as follows:
+
+Click to expand
+
+ListTable.multipleSort
+----------------------
+
+boolean
+
+Enables sorting by multiple columns.
+
+ListTable.sortState(SortState | SortState\[\])
+----------------------------------------------
+
+\*
+
+Sorting state. SortState is defined as follows:
+
+```
+
+SortState {
+/** Sorting criterion field \*/
+field: string;
+/** Sorting rule \*/
+order: 'desc' | 'asc' | 'normal';
+}
+
+```
+
+ListTable.widthMode('standard' | 'adaptive' | 'autoWidth') = 'standard'
+-----------------------------------------------------------------------
+
+\*
+
+Table column width calculation mode, can be 'standard' (standard mode), 'adaptive' (container width adaptive mode) or 'autoWidth' (automatic width mode), default is 'standard'.
+
+*   'standard': Use the width specified by the width property as the column width.
+*   'adaptive': Use the width of the table container to allocate column width.
+*   'autoWidth': Calculate column width automatically based on the width of the column header and body cells content, ignoring the width property settings.
+
+ListTable.heightMode('standard' | 'adaptive' | 'autoHeight') = 'standard'
+-------------------------------------------------------------------------
+
+\*
+
+The calculation mode of table row height, which can be 'standard' (standard mode), 'adaptive' (adaptive container height mode) or 'autoHeight' (automatic row height mode), the default is 'standard'.
+
+*   'standard': use `defaultRowHeight` and `defaultHeaderRowHeight` as row height.
+*   'adaptive': Use the height of the container to assign the height of each row.
+*   'autoHeight': Automatically calculate line height based on content, based on fontSize and lineHeight(font height)，include padding. The related collocation setting item `autoWrapText` automatically wraps the line, and the line height can be calculated according to the content of the multi-line text after the line wrap.
+
+ListTable.widthAdaptiveMode('only-body' | 'all') = 'only-body'
+--------------------------------------------------------------
+
+\*
+
+The width adaptation strategy in adaptive mode, the default is 'only-body'.
+
+*   'only-body': Only the columns in the body part participate in the width adaptation calculation, and the width of the header part remains unchanged.
+*   'all': All columns participate in width adaptation calculation.
+
+ListTable.heightAdaptiveMode('only-body' | 'all') = 'only-body'
+---------------------------------------------------------------
+
+\*
+
+The height adaptable strategy in adaptive mode, default is 'only-body'.
+
+*   'only-body': Only the rows in the body part participate in the height adaptation calculation, and the height of the header part remains unchanged.
+*   'all': All columns participate in the height adaptation calculation.
+
+ListTable.autoHeightInAdaptiveMode = true
+-----------------------------------------
+
+When the adaptive mode is configured, the default value is true, that is, the length of the container is equal to the height of the stretched row based on the calculation of the height of each row. If you do not need to calculate the row height, set it to false if the default row height is used
+
+ListTable.columnWidthComputeMode('normal' | 'only-header' | 'only-body') = 'normal'
+-----------------------------------------------------------------------------------
+
+\*
+
+When calculating the content width, the limited area participates in the calculation:
+
+*   'only-header': Only the header content is calculated.
+*   'only-body': Only the body cell content is calculated.
+*   'normal': Normal calculation, that is, calculating the header and body cell contents.
+
+ListTable.autoWrapText
+----------------------
+
+Whether to automatically wrap text
+
+ListTable.autoFillWidth
+-----------------------
+
+The configuration item autoFillWidth is used to control whether to automatically fill the container width. Different from the effect of `adaptive` adaptive container of width mode `widthMode`, autoFillWidth controls that only when the number of columns is small, the table can automatically fill the width of the container, but when the number of columns exceeds the container, according to the actual situation A scroll bar can appear to set the column width.
+
+ListTable.autoFillHeight
+------------------------
+
+The configuration item autoFillHeight is used to control whether to automatically fill the container height. Different from the effect of `adaptive` adaptive container of height mode `heightMode`, autoFillHeight controls that only when the number of rows is small, the table can automatically fill the height of the container, but when the number of rows exceeds the container, according to the actual situation A scroll bar can appear to set the row height.
+
+ListTable.maxCharactersNumber = 200
+-----------------------------------
+
+The maximum number of characters that can be displayed in a cell, default is 200
+
+ListTable.maxOperatableRecordCount
+----------------------------------
+
+number
+
+Maximum number of operable records, such as the maximum number of data entries that can be copied in a copy operation
+
+ListTable.limitMaxAutoWidth = 450
+---------------------------------
+
+boolean
+
+number
+
+Specify the maximum column width when calculating column width, which can be boolean or a specific value. Default is 450.
+
+ListTable.limitMinWidth = 10
+----------------------------
+
+boolean
+
+number
+
+Minimum column width limit. If set to true, the column width will be limited to a minimum of 10px when dragging to change the column width. If set to false, there will be no limit. Or set it directly to some numeric value. Default is 10px.
+
+ListTable.frozenColCount
+------------------------
+
+The number of frozen columns
+
+ListTable.frozenRowCount
+------------------------
+
+The number of frozen columns(including the header)
+
+ListTable.rightFrozenColCount
+-----------------------------
+
+Freeze Columns Right
+
+ListTable.bottomFrozenRowCount
+------------------------------
+
+number of frozen rows at the bottom
+
+ListTable.maxFrozenWidth(number | string) = '80%'
+-------------------------------------------------
+
+\*
+
+Maximum freezing width, fixed value or percentage. Default is '80%'
+
+ListTable.unfreezeAllOnExceedsMaxWidth = true
+---------------------------------------------
+
+Whether to defrost after the maximum freezing width is exceeded. The default value is true
+
+ListTable.allowFrozenColCount
+-----------------------------
+
+Allow the number of frozen columns, indicating how many columns will show the frozen operation button (effective for basic tables)
+
+ListTable.showFrozenIcon = true
+-------------------------------
+
+Whether to show the fixed column pin icon, effective for basic tables
+
+ListTable.defaultRowHeight(number|'auto') = 40
+----------------------------------------------
+
+\*
+
+Default row height.
+
+*   'auto': The default row height calculated based on the row height. Combined with defaultHeaderRowHeight, it can achieve the effect of automatic row height calculation for the header or body part.
+*   Specific value: Set a specific row height.
+
+Array
+
+number
+
+The default row height of the column header can be set row by row. If not set, the defaultRowHeight value will be used as the row height of the table header.
+
+Specific definition:
+
+```
+defaultHeaderRowHeight?: (number | 'auto') | (number | 'auto')[];
+```
+
+ListTable.defaultColWidth = 80
+------------------------------
+
+Column width default value
+
+Array
+
+number
+
+The default column width of the row header can be set column by column. If not set, the value of defaultColWidth will be used as the column width and height of the header.
+
+Specific definition:
+
+```
+/** The default column width of the row header can be set column by column. If not, defaultColWidth is used */
+defaultHeaderColWidth?: (number | 'auto') | (number | 'auto')[];
+```
+
+ListTable.keyboardOptions
+-------------------------
+
+Object
+
+Shortcut key function settings, specific configuration items:
+
+Click to expand
+
+ListTable.eventOptions
+----------------------
+
+Object
+
+Issue settings related to event triggering, specific configuration items:
+
+Click to expand
+
+ListTable.excelOptions
+----------------------
+
+Object
+
+Align excel advanced capabilities
+
+Click to expand
+
+ListTable.hover
+---------------
+
+Object
+
+Hover interaction configuration, specific configuration items as follows:
+
+Click to expand
+
+ListTable.select
+----------------
+
+Object
+
+Cell selection interaction configuration, specific configuration items as follows:
+
+Click to expand
+
+ListTable.theme
+---------------
+
+Object
+
+Table theme, which has built-in theme names DEFAULT, ARCO, BRIGHT, DARK, SIMPLIFY. The configuration can be made using built-in types or directly with string names:
+
+*   `VTable.themes.DEFAULT`
+*   `VTable.themes.ARCO;`
+*   `VTable.themes.BRIGHT`
+*   `VTable.themes.DARK`
+*   `VTable.themes.SIMPLIFY`
+
+or
+
+*   `'default'`
+*   `'arco'`
+*   `'bright'`
+*   `'dark'`
+*   `'simplify'`
+
+You can also extend built-in themes, for example, change the font based on the ARCO theme:
+
+```
+VTable.themes.ARCO.extend({
+  fontSize: '14px',
+  fontFamily: 'PingFangSC'
+})
+```
+
+Or you can directly define a custom theme:
+
+```
+{
+  defaultStyle:{
+    borderLineWidth:0,
+  },
+  headerStyle:{
+    frameStyle:{
+      borderColor:'blue',
+      borderLineWidth:[0,0,1,0]
+    }
+  },
+  rowHeaderStyle:{
+    frameStyle:{
+      borderColor:'blue',
+      borderLineWidth:[0,1,0,0]
+    }
+  },
+  cornerHeaderStyle:{
+    frameStyle:{
+      borderColor:'blue',
+      borderLineWidth:[0,1,1,0]
+    }
+  }
+}
+```
+
+Click to expand
+
+Object
+
+Configuration related to the drop-down menu. Disappearance timing: automatically disappears after clicking the area outside the menu. Specific configuration items as follows:
+
+Click to expand
+
+ListTable.title
+---------------
+
+Object
+
+表格标题配置。
+
+Click to expand
+
+ListTable.emptyTip
+------------------
+
+Object
+
+Table empty data prompt.
+
+You can directly configure `boolean` or `IEmptyTip` type objects. The default value is false, which means no prompt information is displayed.
+
+The IEmptyTip type is defined as follows:
+
+Click to expand
+
+Object
+
+Tooltip related configuration. Specific configuration items are as follows:
+
+Click to expand
+
+\*
+
+Legend configuration, currently providing three types of legends, namely discrete legend (`'discrete'`), continuous color legend (`'color'`), and continuous size legend (`'size'`).
+
+Object
+
+Continuous color legend configuration.
+
+**TODO: Add discrete legend illustration**
+
+Object
+
+Continuous size legend configuration.
+
+**TODO: Add discrete legend illustration**
+
+ListTable.axes
+--------------
+
+\*
+
+Specifically the same as the axis configuration of VChart, it can support [linear axis](https://visactor.io/vchart/option/barChart#axes-linear.type), [discrete axis](https://visactor.io/vchart/%20option/barChart#axes-band.type) and [time axis](https://visactor.io/vchart/option/barChart#axes-time.type).
+
+Supports axis configuration in four directions. By default, the upper axis is at the last row of the column header, the lower axis is at the frozen row at the bottom of the table, the left axis is at the last column of the row header, and the upper axis is at the rightmost fixed column of the header. If axes of a certain orientation are also configured in the spec of the indicator, the priority in the spec is higher.
+
+Example:
+
+```
+{
+  axes: [
+      {
+        orient: 'bottom'
+      },
+      {
+        orient: 'left',
+        title: {
+          visible: true
+        }
+      },
+      {
+        orient: 'right',
+        visible: true,
+        grid: {
+          visible: false
+        }
+      }
+    ]
+}
+```
+
+ListTable.customRender
+----------------------
+
+Function
+
+Object
+
+Custom rendering in function or object form. Type: `ICustomRenderFuc | ICustomRenderObj`.
+
+Where ICustomRenderFuc is defined as:
+
+```
+ type ICustomRenderFuc = (args: CustomRenderFunctionArg) => ICustomRenderObj;
+```
+
+The type declaration for callback function argument CustomRenderFunctionArg is:
+
+```
+interface CustomRenderFunctionArg {
+  row: number;
+  col: number;
+  table: TableAPI;
+  /**Formatted value */
+  value: string|number;
+  /**Original value */
+  dataValue: string|number;
+  rect?: RectProps;
+}
+```
+
+The definition of ICustomRenderObj is as follows:
+
+```
+export type ICustomRenderObj = {
+  /** Configured type collection */
+  elements: ICustomRenderElements;
+  /** Desired cell height */
+  expectedHeight: number;
+  /** Expected cell width */
+  expectedWidth: number;
+  /**
+   * Do you still need to render content by default? Only if the configuration is true, it will be drawn. By default, it will not be drawn.
+   */
+  renderDefault?: boolean;
+};
+```
+
+Detailed configuration instructions are as follows:
+
+Click to expand
+
+Table scrolling behavior, can be set: 'auto'|'none', the default value is 'auto'.
+
+```
+'auto': Trigger the browser's default behavior when the table scrolls to the top or bottom;
+'none': don't triggers the browser's default behavior when the table scrolls to the top or bottom;
+```
+
+ListTable.customMergeCell
+-------------------------
+
+Function
+
+Object
+
+Customize cell merging rules. When the incoming row and column numbers are within the target area, the merging rules are returned:
+
+*   text: Merge text in cells
+*   range: merged range
+*   style: style of merged cells Example:
+
+```
+  customMergeCell: (col, row, table) => {
+    if (col > 0 && col < 8 && row > 7 && row < 11) {
+      return {
+        text: 'merge text',
+        range: {
+          start: {
+            col: 1,
+            row: 8
+          },
+          end: {
+            col: 7,
+            row: 10
+          }
+        },
+        style: {
+          bgColor: '#ccc'
+        }
+      };
+    }
+  }
+
+```
+
+`customMergeCell` can also be configured as an array of merge rules. Each item in the array is a merge rule. The configuration of the rule is the same as the return value of the `customMergeCell` callback function.
+
+ListTable.customCellStyle
+-------------------------
+
+Array
+
+```
+{
+   customCellStyle: {id: string;style: ColumnStyleOption | ((styleArg: StylePropertyFunctionArg) => ColumnStyleOption)}[]
+}
+```
+
+Custom cell style
+
+*   id: the unique id of the custom style
+*   style: Custom cell style, which is the same as the `style` configuration in `column`. The final rendering effect is the fusion of the original style of the cell and the custom style.
+
+ListTable.customCellStyleArrangement
+------------------------------------
+
+Array
+
+```
+{
+  customCellStyleArrangement:
+  {
+    cellPosition: {
+      row?: number;
+      col?: number;
+      range?: {
+        start: {row: number; col: number};
+        end: {row: number; col: number}
+      }
+  };
+  customStyleId: string}[]
+}
+```
+
+Custom cell style assignment
+
+*   cellPosition: cell position information, supports configuration of single cells and cell areas
+    *   Single cell: `{ row: number, column: number }`
+    *   Cell range: `{ range: { start: { row: number, column: number }, end: { row: number, column: number} } }`
+*   customStyleId: Custom style id, the same as the id defined when registering the custom style
+
+ListTable.editor
+----------------
+
+string
+
+Object
+
+Function
+
+string
+
+Object
+
+Function
+
+**`PivotChart` does not support setting this configuration item.** Global configuration table header display title title editor
+
+```
+headerEditor?: string | IEditor | ((args: BaseCellInfo & { table: BaseTableAPI }) => string | IEditor);
+```
+
+ListTable.editCellTrigger('doubleclick' | 'click' | 'api' |'keydown') = 'doubleclick'
+-------------------------------------------------------------------------------------
+
+\*
+
+The trigger timing for entering the editing state.
+
+```
+
+/** Edit triggering time: double click event | single click event | api to manually start editing | keydown event. Default is double click 'doubleclick' */
+editCellTrigger?:'doubleclick' | 'click' | 'api' | 'keydown' | ('doubleclick' | 'click' | 'api' | 'keydown')[];
+```
+
+ListTable.rowSeriesNumber
+-------------------------
+
+IRowSeriesNumber
+
+set row serial number.
+
+Click to expand
+
+ListTable.enableLineBreak
+-------------------------
+
+Whether to enable line break, the default is false.
+
+ListTable.clearDOM = true
+-------------------------
+
+Whether to clear the container DOM.
+
+ListTable.canvasWidth(number | 'auto')
+--------------------------------------
+
+\*
+
+Sets the width of the canvas directly. If 'auto' is set, the canvas will be stretched based on the table content.
+
+If not set, the size of the table will be determined based on the container's width and height.
+
+ListTable.canvasHeight(number | 'auto')
+---------------------------------------
+
+\*
+
+Sets the height of the canvas directly. If 'auto' is set, the canvas will be stretched based on the table content.
+
+If not set, the size of the table will be determined based on the container's width and height.
+
+ListTable.maxCanvasWidth
+------------------------
+
+number
+
+The maximum width of the table canvas. Only effective when canvasWidth is set to 'auto'.
+
+ListTable.maxCanvasHeight
+-------------------------
+
+number
+
+The maximum height of the table canvas. Only effective when canvasHeight is set to 'auto'.
+
+ListTable.animationAppear
+-------------------------
+
+boolean
+
+Object
+
+Table entry animation configuration.
+
+```
+animationAppear?: boolean | {
+  type?: 'all' | 'one-by-one';
+  direction?: 'row' | 'column';
+  duration?: number;
+  delay?: number;
+};
+```
+
+You can configure true to enable the default animation, or you can configure the animation parameters:
+
+*   `type` The type of the entry animation, currently supports `all` and `one-by-one`, and the default is `one-by-one`
+*   `direction` The direction of the entry animation, currently supports `row` and `column`, and the default is `row`
+*   `duration` The duration of a single animation, in milliseconds, for `one-by-one`, it is the duration of one animation, and the default is 500
+*   `delay` The delay of the animation, in milliseconds; for `one-by-one`, it is the time difference between the two animations, for `all`, it is the delay of all animations, and the default is 0
+
+ListTable.formatCopyValue((value: string) =\> string)
+-----------------------------------------------------
+
+\*
+
+Format the value when copying.
+
+ListTable.resize
+----------------
+
+Object
+
+Resizing lineHeight/columnWidth interaction configuration, specific configuration items as follows:
+
+ListTable.columnResizeMode = 'all'
+----------------------------------
+
+Mouse hover over the cell right border can drag and adjust column width. This operation can trigger the following range:
+
+*   'all' The entire column, including header and body cells, can adjust column width
+*   'none' Disable adjustment
+*   'header' Only adjustable in header cells
+*   'body' Only adjustable in body cells
+
+ListTable.rowResizeMode = 'none'
+--------------------------------
+
+Mouse hover over the cell bottom border can drag and adjust row height. This operation can trigger the following range:
+
+*   'all' The entire row, including header and body cells, can adjust row height
+*   'none' Disable adjustment
+*   'header' Only adjustable in header cells
+*   'body' Only adjustable in body cells
+
+Click to expand
+
+ListTable.dragOrder
+-------------------
+
+Object
+
+Configuration for dragging to move positions.
+
+Click to expand
+
+ListTable.hierarchyIndent
+-------------------------
+
+number
+
+When displayed as a tree structure, the indentation value of each layer of content.
+
+ListTable.hierarchyExpandLevel
+------------------------------
+
+number
+
+When displayed as a tree structure, the number of levels is expanded by default. The default value is 1, which only displays the root node. If configured to `Infinity`, all nodes will be expanded.
+
+ListTable.hierarchyTextStartAlignment
+-------------------------------------
+
+Whether nodes at the same level are aligned by text, such as nodes without collapsed expansion icons and nodes with icons. Default is false
+
+ListTable.aggregation
+---------------------
+
+Aggregation
+
+CustomAggregation
+
+Array
+
+Function
+
+Data aggregation summary analysis configuration, global configuration, each column will have aggregation logic, it can also be configured in the column (columns) definition, the configuration in the column has a higher priority.
+
+```
+aggregation?:
+    | Aggregation
+    | CustomAggregation
+    | (Aggregation | CustomAggregation)[]
+    | ((args: {
+        col: number;
+        field: string;
+      }) => Aggregation | CustomAggregation | (Aggregation | CustomAggregation)[] | null);
+```
+
+Among them:
+
+```
+type Aggregation = {
+  aggregationType: AggregationType;
+  showOnTop?: boolean;
+  formatFun?: (value: number, col: number, row: number, table: BaseTableAPI) => string | number;
+};
+
+type CustomAggregation = {
+  aggregationType: AggregationType.CUSTOM;
+  aggregationFun: (values: any[], records: any[]) => any;
+  showOnTop?: boolean;
+  formatFun?: (value: number, col: number, row: number, table: BaseTableAPI) => string | number;
+};
+```
+
+ListTable.groupBy(string|string\[\])
+------------------------------------
+
+\*
+
+Enable the group display function to display the hierarchical structure of the group fields in the data. The value is the group field name, which can be configured as one field or an array of multiple fields.
+
+ListTable.enableTreeStickCell
+-----------------------------
+
+Enable the group title sticking function.
+
+ListTable.groupTitleFieldFormat
+-------------------------------
+
+Function
+
+Customize the group title.
+
+ListTable.groupTitleCustomLayout
+--------------------------------
+
+CustomLayout
+
+Customize the group title layout.
+
+ListTable.customComputeRowHeight
+--------------------------------
+
+Function
+
+Code VTable internally calculates the row height. Users can customize the method for calculating row height.If number is returned, it is the line height, if auto is returned, it is the automatic line height, and undefined is the default line height.
+
+```
+customComputeRowHeight?: (computeArgs: { row: number; table: ListTableAPI }) => number|'auto'|undefined;
+```
+
+ListTable.tableSizeAntiJitter
+-----------------------------
+
+If the table jitter occurs, check whether the width and height of the upper dom container are caused by decimal numbers. If it is not guaranteed to be an integer, set this configuration item to true

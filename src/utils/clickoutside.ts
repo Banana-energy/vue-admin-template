@@ -18,7 +18,7 @@ document.addEventListener("mouseup", (e,) => {
       return
     }
 
-    const excludeEls = parseElements(exclude,)
+    const excludeEls = parseElements(exclude, el,)
     // 如果点击发生在排除的元素上，则不触发外部点击
     if (excludeEls.some(exEl => exEl.contains(e.target as Node,) || exEl === e.target,)) {
       return
@@ -46,12 +46,13 @@ function createDocumentHandler(el: HTMLElement, callback: Callback,) {
 /**
  * 解析参数，将 DOM 或 选择器 转为 DOM 元素
  * @param {ElParams} target
+ * @param {Document | HTMLElement} targetElements
  */
-function parseElements(target: ElParams,): HTMLElement[] {
+function parseElements(target: ElParams, targetElements: Document | HTMLElement = document,): HTMLElement[] {
   if (Array.isArray(target,)) {
     return target.flatMap(t => parseElements(t,),)
   } else if (typeof target === "string") {
-    return Array.from(document.querySelectorAll(target,),)
+    return Array.from(targetElements.querySelectorAll(target,),)
   } else if (target instanceof HTMLElement) {
     return [target,]
   }
