@@ -184,6 +184,7 @@ const { handleAreaChange, } = useVxeArea(tableRef,)
 
 <template>
   <div>
+    {{ disabled }}
     <BaseDialog v-model="disabled">
       <template #footer>
         <ElButton>测试</ElButton>

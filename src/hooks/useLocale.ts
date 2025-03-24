@@ -10,8 +10,6 @@ export enum LocaleEnum {
   EN_US = "en-US",
 }
 
-export type Message = Partial<Record<LocaleEnum, Recordable>>
-
 export const localeOptions = [
   {
     label: "简体中文",
@@ -33,8 +31,13 @@ export const vxeLocales = {
   [LocaleEnum.EN_US]: vxeEnUS,
 }
 
-const localeState = useLocalStorage<LocaleEnum>("locale", LocaleEnum.ZH_CN,)
-const messageState: Message = {}
+export interface Messages {
+  [LocaleEnum.ZH_CN]?: Record<string, any>
+  [LocaleEnum.EN_US]?: Record<string, any>
+}
+
+export const localeState = useLocalStorage<LocaleEnum>("locale", LocaleEnum.ZH_CN,)
+export const messageState = reactive<Messages>({},)
 
 async function fetchLocaleMessage(locale: LocaleEnum,) {
   try {
