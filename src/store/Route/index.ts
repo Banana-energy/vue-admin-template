@@ -62,7 +62,7 @@ export const useRouteStore = defineStore("route", {
         },
       ],)
       this.routers = cloneDeep(constantRouterMap,).concat(routerMap,)
-      this.addRouters.forEach((route,) => {
+      this.getAddRouters.forEach((route,) => {
         router.addRoute(route as RouteRecordRaw,)
       },)
       this.fetched = true

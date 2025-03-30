@@ -1,4 +1,4 @@
-import type { I18n, } from "vue-i18n"
+import type { I18n, } from "@/setup"
 import { noop, } from "lodash-es"
 
 export function useI18n() {
