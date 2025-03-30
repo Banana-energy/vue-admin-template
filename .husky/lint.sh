@@ -11,5 +11,12 @@ if [ $? -ne 0 ]; then
   exit 1
 fi
 
-echo "✅ ESLint passed. Proceeding with commit."
+# 运行 ts check
+npm run ts:check
+if [ $? -ne 0 ]; then
+  echo "❌ TypeScript errors found. Commit aborted."
+  exit 1
+fi
+
+echo "✅ Lint passed. Proceeding with commit."
 exit 0

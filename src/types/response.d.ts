@@ -1,4 +1,8 @@
 declare global {
+  type ItemName<T,> = T & {
+    [key in `${keyof T}ItemName`]?: string
+  }
+
   /**
    * 基本的响应数据结构的接口。
    */
@@ -52,6 +56,13 @@ declare global {
     pages?: number
   }
 
+  interface NewBasicPage {
+    currPage: number
+    pageSize: number
+    totalCount: number
+    totalPage?: number
+  }
+
   /**
    * 分页请求参数的接口。
    * 用于指定分页请求的当前页和页大小。
@@ -69,8 +80,17 @@ declare global {
     pager: BasicPage
   }
 
+  type NewListResponseData<T,> = {
+    /** 数据列表 */
+    list: T[]
+  } & NewBasicPage
+
   type PageResponseData<T,> = BasicResponseData & {
     datas: ListResponseData<T>
+  }
+
+  type NewPageResponseData<T,> = NewBasicResponseData & {
+    data: NewListResponseData<T>
   }
 }
 

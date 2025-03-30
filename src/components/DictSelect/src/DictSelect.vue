@@ -1,8 +1,9 @@
 <script lang="ts" setup>
-import type { DictAPI, DictKey, } from "@/apis/dict"
+import type { DictKey, } from "@/apis/dict"
 import type { ApiConfig, ApiSelectProps, ModelValue, } from "@/components/ApiSelect"
+import type { DictState, ToCamelCase, } from "@/hooks/useDict.ts"
 import { useDict, } from "@/hooks/useDict.ts"
-import { omit, } from "lodash-es"
+import { camelCase, omit, } from "lodash-es"
 
 defineOptions({
   name: "DictSelect",
@@ -48,9 +49,10 @@ const bindProps = computed<ApiSelectProps>(() => {
   }
 },)
 
-function afterFetch(data?: DictAPI.Response,) {
-  const currentData = data?.datas.find(item => item.dictItem === props.dictCode,)
-  return currentData?.dictValueList || []
+function afterFetch(data?: DictState,) {
+  const key = camelCase(props.dictCode,) as ToCamelCase<DictKey>
+  const currentData = data?.[`${key}List`]
+  return currentData || []
 }
 </script>
 

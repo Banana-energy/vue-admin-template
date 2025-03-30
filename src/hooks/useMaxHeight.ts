@@ -6,7 +6,7 @@ interface UseMaxHeightOptions {
   targetRef: ElementRef
   otherRefs?: ElementRef[] | ElementRef
   minHeight?: number
-  offset?: number
+  offset?: number | Ref<number>
 }
 
 export function useMaxHeight({
@@ -66,10 +66,10 @@ export function useMaxHeight({
     }, 0,)
 
     // 计算剩余空间
-    const availableHeight = viewportHeight - targetOffsetTop - otherHeight - offset
+    const availableHeight = viewportHeight - targetOffsetTop - otherHeight - unref(offset,)
 
     // 当前元素的最大高度 = 剩余空间 或 最小高度（二者取较大值）
-    maxHeight.value = Math.max(availableHeight, minHeight,)
+    maxHeight.value = Math.round(Math.max(availableHeight, minHeight,),)
   }, 200,)
 
   // 初始化和窗口大小变化时重新计算
@@ -82,15 +82,16 @@ export function useMaxHeight({
     window.removeEventListener("resize", calculateMaxHeight,)
   },)
 
-  watch([targetRef, otherEls,], calculateMaxHeight,)
+  watch(() => [targetRef, otherEls, unref(offset,),], calculateMaxHeight,)
 
   const { width, height, } = useElementSize(targetRef,)
 
   watch([width, height,], () => {
-    calculateMaxHeight()
+    setTimeout(calculateMaxHeight, 0,)
   },)
 
   return {
     maxHeight,
+    calculateMaxHeight,
   }
 }

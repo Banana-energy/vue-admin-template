@@ -47,6 +47,9 @@ export function useOptions(props: Props,) {
       }
       loading.value = true
       const data = await api(formatParams,)
+      watchEffect(async() => {
+        options.value = optionsStore[cacheKey].options = await afterFetch?.(data,) || []
+      },)
       options.value = optionsStore[cacheKey].options = await afterFetch?.(data,) || []
       loading.value = optionsStore[cacheKey].loading = false
       return
