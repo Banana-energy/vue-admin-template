@@ -32,17 +32,10 @@ function hamburgerChange(show?: boolean | string | number,) {
 }
 
 // 全屏图标
-const screenfull = ref(appStore.getScreenfull,)
+const screenFull = ref(appStore.getScreenFull,)
 
-function screenfullChange(show?: boolean | string | number,) {
-  appStore.setScreenfull(!!show,)
-}
-
-// 尺寸图标
-const size = ref(appStore.getSize,)
-
-function sizeChange(show?: boolean | string | number,) {
-  appStore.setSize(!!show,)
+function screenFullChange(show?: boolean | string | number,) {
+  appStore.setScreenFull(!!show,)
 }
 
 // 多语言图标
@@ -87,13 +80,6 @@ const fixedHeader = ref(appStore.getFixedHeader,)
 
 function fixedHeaderChange(show?: boolean | string | number,) {
   appStore.setFixedHeader(!!show,)
-}
-
-// 页脚
-const footer = ref(appStore.getFooter,)
-
-function footerChange(show?: boolean | string | number,) {
-  appStore.setFooter(!!show,)
 }
 
 // 灰色模式
@@ -141,12 +127,7 @@ watch(
 
     <div class="flex items-center justify-between">
       <span class="text-14px">全屏图标</span>
-      <ElSwitch v-model="screenfull" @change="screenfullChange" />
-    </div>
-
-    <div class="flex items-center justify-between">
-      <span class="text-14px">尺寸图标</span>
-      <ElSwitch v-model="size" @change="sizeChange" />
+      <ElSwitch v-model="screenFull" @change="screenFullChange" />
     </div>
 
     <div class="flex items-center justify-between">
@@ -177,11 +158,6 @@ watch(
     <div class="flex items-center justify-between">
       <span class="text-14px">固定头部</span>
       <ElSwitch v-model="fixedHeader" @change="fixedHeaderChange" />
-    </div>
-
-    <div class="flex items-center justify-between">
-      <span class="text-14px">页脚</span>
-      <ElSwitch v-model="footer" @change="footerChange" />
     </div>
 
     <div class="flex items-center justify-between">

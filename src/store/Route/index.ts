@@ -46,7 +46,9 @@ export const useRouteStore = defineStore("route", {
       const result = await fetchUserMenus()
       if (result) {
         this.generateRoutes(result.menus,)
+        return true
       }
+      return false
     },
     generateRoutes(routers: RouteInfoAPI.PmsRouteRecordRaw[],) {
       const routerMap = generateRoutesByServer(routers,)

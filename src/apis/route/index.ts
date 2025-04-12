@@ -17,7 +17,7 @@ export namespace UserResAPI {
 
 export function getUserRes(id: number,) {
   return get<UserResAPI.Response>({
-    url: `/pdm-base/common/pms/user/menu/res/${id}`,
+    url: `/mmfc/mmfc-order-manager-rest/common/pms/user/menu/res/${id}`,
   },)
 }
 
@@ -63,7 +63,7 @@ export namespace RouteInfoAPI {
 
 export function fetchUserMenus() {
   return get<RouteInfoAPI.Response>({
-    url: "/pdm/common/pms/user/menus",
+    url: "/mmfc/mmfc-order-manager-rest/common/pms/user/menus",
     fetchOptions: {
       rawData: true,
     },

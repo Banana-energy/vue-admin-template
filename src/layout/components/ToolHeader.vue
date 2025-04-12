@@ -4,8 +4,7 @@ import { useAppStore, } from "@/store/App"
 import Breadcrumb from "./Breadcrumb.vue"
 import Collapse from "./Collapse.vue"
 import LocaleDropdown from "./LocaleDropdown.vue"
-import Screenfull from "./Screenfull.vue"
-import SizeDropdown from "./SizeDropdown.vue"
+import ScreenFull from "./ScreenFull.vue"
 import UserInfo from "./UserInfo.vue"
 
 const { getPrefixCls, variables, } = useDesign()
@@ -24,10 +23,7 @@ export default defineComponent({
     const hamburger = computed(() => appStore.getHamburger,)
 
     // 全屏图标
-    const screenfull = computed(() => appStore.getScreenfull,)
-
-    // 尺寸图标
-    const size = computed(() => appStore.getSize,)
+    const screenFull = computed(() => appStore.getScreenFull,)
 
     // 布局
     const layout = computed(() => appStore.getLayout,)
@@ -55,14 +51,9 @@ export default defineComponent({
             )
           : undefined}
         <div class="h-full flex items-center">
-          {screenfull.value
+          {screenFull.value
             ? (
-                <Screenfull class="custom-hover" color="var(--top-header-text-color)"></Screenfull>
-              )
-            : undefined}
-          {size.value
-            ? (
-                <SizeDropdown class="custom-hover" color="var(--top-header-text-color)"></SizeDropdown>
+                <ScreenFull class="custom-hover" color="var(--top-header-text-color)"></ScreenFull>
               )
             : undefined}
           {locale.value

@@ -65,9 +65,7 @@ async function copyConfig() {
       // 折叠图标
       hamburger: ${appStore.getHamburger},
       // 全屏图标
-      screenfull: ${appStore.getScreenfull},
-      // 尺寸图标
-      size: ${appStore.getSize},
+      screenFull: ${appStore.getScreenFull},
       // 多语言图标
       locale: ${appStore.getLocale},
       // 标签页
@@ -80,16 +78,12 @@ async function copyConfig() {
       uniqueOpened: ${appStore.getUniqueOpened},
       // 固定header
       fixedHeader: ${appStore.getFixedHeader},
-      // 页脚
-      footer: ${appStore.getFooter},
       // 灰色模式
       greyMode: ${appStore.getGreyMode},
       // layout布局
       layout: '${appStore.getLayout}',
       // 暗黑模式
       isDark: ${appStore.getIsDark},
-      // 组件尺寸
-      currentSize: '${appStore.getCurrentSize}',
       // 主题相关
       theme: {
         // 主题色

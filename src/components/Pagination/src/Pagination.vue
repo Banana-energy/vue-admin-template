@@ -12,30 +12,36 @@ const props = withDefaults(defineProps<Props>(), {
   pageSizes: () => [10, 20, 30, 40, 50, 100, 500, 1000,],
 },)
 const emits = defineEmits<{
-  (e: "change", pager: BasicPage,): void
+  (e: "change", pager: NewBasicPage,): void
 }>()
 const attrs: Record<string, unknown> = useAttrs()
 
 const bindProps = computed<Partial<PaginationProps>>(() => {
-  const { pager, } = props
+  const { pager, pageSizes, } = props
   const omitKeys = ["pager",]
   const omitProps = omit(props, omitKeys,)
+  const _pageSizes = pageSizes.slice()
+  if (pager.pageSize && !props.pageSizes.includes(pager.pageSize,)) {
+    _pageSizes.push(pager.pageSize,)
+    _pageSizes.sort((a, b,) => a - b,)
+  }
   return {
     ...attrs,
     ...omitProps,
-    "currentPage": pager.current,
-    "pageSize": pager.size,
-    "total": pager.total,
+    "pageSizes": _pageSizes,
+    "currentPage": pager.currPage,
+    "pageSize": pager.pageSize,
+    "total": pager.totalCount,
     "onUpdate:currentPage": (val: number,) => {
       emits("change", {
         ...pager,
-        current: val,
+        currPage: val,
       },)
     },
     "onUpdate:pageSize": (val: number,) => {
       emits("change", {
         ...pager,
-        size: val,
+        pageSize: val,
       },)
     },
   }

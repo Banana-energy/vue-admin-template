@@ -10,7 +10,9 @@ defineOptions({
 },)
 const props = withDefaults(defineProps<Props>(), {
   span: 6,
+  showMessage: true,
   scrollToError: true,
+  validateOnRuleChange: true,
   scrollIntoViewOptions: () => ({
     behavior: "smooth",
     block: "center",
@@ -61,7 +63,9 @@ const descriptionsProps = computed(() => {
   return pick(props, pickKeys,)
 },)
 
-const collapse = ref(true,)
+const collapse = ref(false,)
+
+// 包括按钮组在内的所有span
 const totalSpan = computed(() => {
   const slots = (defaultSlot?.() || []).filter(vnode => vnode.props,)
   return slots.reduce((sum, vnode,) => {
@@ -72,7 +76,7 @@ const isCollapseNeeded = computed(() => totalSpan.value > 24,)
 
 const btnOffset = computed(() => {
   const _totalSpan = totalSpan.value
-  if (_totalSpan - props.span === 24 && collapse.value) {
+  if ((_totalSpan - props.span) % 24 === 0 && collapse.value) {
     return 0
   }
   const rowCount = Math.ceil(_totalSpan / 24,)
@@ -83,7 +87,7 @@ const btnOffset = computed(() => {
 const visibleFields = computed(() => {
   const slots = (defaultSlot?.() || []).filter(vnode => vnode.props,)
   // 如果不需要折叠或已展开，则显示所有字段
-  if (!isCollapseNeeded.value || !collapse.value) {
+  if (!isCollapseNeeded.value || !collapse.value || !props.queryForm) {
     return slots
   }
   // 计算第一行可显示的字段
@@ -114,14 +118,23 @@ async function validate() {
   return false
 }
 
+function setCollapse(val: boolean,) {
+  collapse.value = val
+}
+
 defineExpose({
   formRef,
   validate,
+  setCollapse,
 },)
 </script>
 
 <template>
-  <ElForm v-if="!props.disabled" ref="formRef" v-bind="formProps">
+  <ElForm
+    v-if="!props.disabled"
+    ref="formRef"
+    v-bind="formProps"
+  >
     <ElRow :gutter="20">
       <TransitionGroup name="fade">
         <ElCol v-for="(vnode, index) in visibleFields" :key="index" :span="vnode.props?.span || props.span">
@@ -130,8 +143,12 @@ defineExpose({
           </slot>
         </ElCol>
       </TransitionGroup>
-      <ElCol v-if="queryForm" :offset="btnOffset" :span="props.span">
-        <ElFormItem label=" ">
+      <ElCol
+        v-if="queryForm"
+        :offset="btnOffset"
+        :span="props.span"
+      >
+        <ElFormItem class="query-button" label="button">
           <ElButton :loading="loading" @click="emits('reset')">
             <Icon class="mr-0.5" icon="ep:refresh-right" />
             重置
@@ -160,7 +177,13 @@ defineExpose({
   <Descriptions v-else v-bind="descriptionsProps" />
 </template>
 
-<style scoped>
+<style lang="scss" scoped>
+.query-button {
+  :deep(.el-form-item__label) {
+    visibility: hidden;
+  }
+}
+
 .fade-move,
 .fade-enter-active,
 .fade-leave-active {
@@ -174,10 +197,27 @@ defineExpose({
 
 .fade-leave-active {
   position: absolute;
+  z-index: -1;
 }
 
 :deep(.el-form-item--label-top .el-form-item__label) {
-  font-size: var(--font-size-base);
   line-height: var(--line-height-base);
+
+  .el-select__wrapper {
+    border: none;
+    box-shadow: none;
+    background: transparent;
+    height: auto;
+    padding: 0;
+    min-height: auto;
+
+    .el-select__input {
+      height: auto;
+    }
+  }
+}
+
+:deep(.el-form-item__label) {
+  font-size: var(--font-size-base);
 }
 </style>

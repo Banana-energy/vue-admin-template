@@ -67,9 +67,10 @@ export default defineConfig(({ mode, },) => {
       port: 3000,
       host: "0.0.0.0",
       proxy: {
-        "/pdm": {
-          target: env.VITE_PDM_URL,
+        "/mmfc": {
+          target: env.VITE_OMS_URL,
           changeOrigin: true,
+          rewrite: path => path.replace(/^\/mmfc/, "",),
         },
       },
     },

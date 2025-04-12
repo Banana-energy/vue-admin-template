@@ -1,6 +1,7 @@
 import type { App, } from "vue"
 import type { RouteRecordRaw, } from "vue-router"
-import { useLocale, } from "@/hooks/useLocale.ts"
+import { IMPORT_META_ENV, } from "@/constants"
+import { useI18nTitle, } from "@/hooks/useI18nTitle.ts"
 import { TOKEN_NAME, useToken, } from "@/hooks/useToken.ts"
 import { useRouteStore, } from "@/store/Route"
 import { useUserStore, } from "@/store/UserInfo"
@@ -16,20 +17,12 @@ export const constantRouterMap: CustomRouteRecordRaw[] = [
     redirect: "/home",
     name: "Root",
     meta: {
-      hidden: true,
-      noTagsView: true,
-    },
-  },
-  {
-    path: "/home",
-    component: Layout,
-    name: "home",
-    meta: {
-      breadcrumb: false,
+      title: "Home",
+      activeMenu: "/home",
     },
     children: [
       {
-        path: "",
+        path: "/home",
         component: () => import("@/views/workbench/index.vue"),
         name: "Home",
         meta: {
@@ -84,7 +77,13 @@ const { setToken, } = useToken()
 
 const { localeState, setLocale, } = useLocale()
 
-router.beforeEach(async(to, from, next,) => {
+const whiteList = [
+  "/home",
+  "/not-found",
+  "/redirect",
+]
+
+router.beforeEach(async(to, from,) => {
   const userStore = useUserStore()
   const routeStore = useRouteStore()
   start()
@@ -92,23 +91,23 @@ router.beforeEach(async(to, from, next,) => {
   await setLocale(localeState.value,)
   checkVersionFn()
   const { name, } = to
-  const token = to.query[TOKEN_NAME]
+  const query = cloneDeep(to.query,)
+  const token = query[TOKEN_NAME]
   if (token && typeof token === "string") {
     setToken(token,)
-    const query = cloneDeep(to.query,)
     Reflect.deleteProperty(query, TOKEN_NAME,)
-    next({
+    Reflect.deleteProperty(query, "wg_oauth_refresh",)
+    Reflect.deleteProperty(query, "wg_oauth",)
+    return {
       path: to.path,
       query: { ...query, },
       replace: true,
-    },)
-    return
+    }
   }
-  if (!userStore.userId) {
+  if (!userStore.uid) {
     const result = await userStore.getUserInfo()
     if (!result) {
-      next()
-      return
+      return whiteList.includes(to.path,)
     }
   }
 
@@ -120,17 +119,25 @@ router.beforeEach(async(to, from, next,) => {
     if (route?.id) {
       await routeStore.fetchResList(route.id,)
     }
-    next()
-    return
+    return true
   }
-  await routeStore.fetchRouters()
+  const result = await routeStore.fetchRouters()
+  if (!result) {
+    if (!whiteList.includes(to.path,)) {
+      return {
+        name: "NotFound",
+        replace: true,
+      }
+    }
+    return true
+  }
   const redirectPath = from.query.redirect || to.path
   const redirect = decodeURIComponent(redirectPath as string,)
-  const nextData = to.path === redirect ? { ...to, replace: true, } : { path: redirect, }
-  next(nextData,)
+  return to.path === redirect ? to.path : redirect
 },)
 
-router.afterEach(() => {
+router.afterEach((to,) => {
+  document.title = `${IMPORT_META_ENV.VITE_APP_TITLE} - ${useI18nTitle(to.meta,)}`
   done()
   loadDone()
 },)

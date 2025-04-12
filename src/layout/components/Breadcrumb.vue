@@ -2,6 +2,7 @@
 import type { RouteLocationNormalizedLoaded, } from "vue-router"
 import { Icon, } from "@/components/Icon"
 import { useDesign, } from "@/hooks/useDesign"
+import { useI18nTitle, } from "@/hooks/useI18nTitle.ts"
 import { useAppStore, } from "@/store/App"
 import { useRouteStore, } from "@/store/Route"
 import { filter, treeToList, } from "@/utils/tree"
@@ -52,13 +53,13 @@ export default defineComponent({
             {meta?.icon && breadcrumbIcon.value
               ? (
                   <>
-                    <Icon icon={meta.icon} class="mr-[5px]"></Icon>
+                    <Icon icon={meta.icon} class="mr-1"></Icon>
                     {" "}
-                    {(v?.meta?.title || "")}
+                    {useI18nTitle(v?.meta,)}
                   </>
                 )
               : (
-                  (v?.meta?.title || "")
+                  (useI18nTitle(v?.meta,))
                 )}
           </ElBreadcrumbItem>
         )
@@ -92,7 +93,7 @@ export default defineComponent({
 <style lang="scss" scoped>
 @use "@/styles/variables.module.scss" as *;
 
-$prefix-cls: "#{$adminNamespace}-tool-header";
+$prefix-cls: "#{$elNamespace}-breadcrumb";
 
 .#{$prefix-cls} {
   :deep(#{&}__item) {

@@ -1,7 +1,7 @@
 <script lang="tsx">
 import { useDesign, } from "@/hooks/useDesign"
 import { useAppStore, } from "@/store/App"
-import Backtop from "./components/Backtop.vue"
+import CustomerService from "./components/CustomerService.vue"
 import Setting from "./components/Setting.vue"
 import { useRenderLayout, } from "./components/useRenderLayout"
 
@@ -58,7 +58,7 @@ export default defineComponent({
 
         {renderLayout()}
 
-        <Backtop></Backtop>
+        <CustomerService></CustomerService>
 
         {!unref(hideSetting,) && <Setting></Setting>}
       </section>

@@ -13,10 +13,12 @@ const fetch = axios.create({
   },
 },)
 
-const ERROR_MSG = {
-  CLIENT_ERROR: "客户端出错，请稍后再试!",
-  SERVER_ERROR: "服务器出错，请稍后再试!",
-  DEFAULT_ERROR: "未知错误，请稍后再试!",
+function getErrorMsg() {
+  return {
+    CLIENT_ERROR: "客户端出错，请稍后再试!",
+    SERVER_ERROR: "服务器出错，请稍后再试!",
+    DEFAULT_ERROR: "未知错误，请稍后再试!",
+  }
 }
 
 enum ResponseCode {
@@ -28,7 +30,7 @@ interface UnAuthorizedResponse {
   redirectPath: string
 }
 
-function handleError(msg: string = ERROR_MSG.DEFAULT_ERROR,) {
+function handleError(msg: string = getErrorMsg().DEFAULT_ERROR,) {
   ElMessage.error(msg,)
 }
 
@@ -40,7 +42,7 @@ fetch.interceptors.request.use((config,) => {
   if (config.headers) {
     const { localeState, } = useLocale()
     config.headers["x-referer"] = location.href
-    config.headers["x-lang"] = localeState.value
+    config.headers["x-language"] = localeState.value
     if (getToken()) {
       config.headers.Authorization = getToken()
     }
@@ -48,7 +50,7 @@ fetch.interceptors.request.use((config,) => {
   return config
 }, (error,) => {
   done()
-  handleError(error.message || ERROR_MSG.CLIENT_ERROR,)
+  handleError(error.message || getErrorMsg().CLIENT_ERROR,)
   return Promise.reject(error,)
 },)
 
@@ -63,20 +65,27 @@ fetch.interceptors.response.use((response: AxiosResponse<NewResponseData<UnAutho
     location.replace(data.data.redirectPath,)
     return response
   }
-  if ("success" in data && data.success) {
+  if ("success" in data) {
+    if (!data.success) {
+      handleError(data.responseDesc || getErrorMsg().SERVER_ERROR,)
+      return Promise.reject(response,)
+    }
     return response
   }
-  if ("isSuccess" in data && !data.isSuccess) {
-    handleError(data.msg || ERROR_MSG.SERVER_ERROR,)
-    return Promise.reject(response,)
+  if ("isSuccess" in data) {
+    if (!data.isSuccess) {
+      handleError(data.msg || getErrorMsg().SERVER_ERROR,)
+      return Promise.reject(response,)
+    }
+    return response
   }
   return response
 }, (error,) => {
   done()
-  if (error.code === AxiosError.ERR_CANCELED) {
+  if (error.code === AxiosError.ERR_CANCELED || error.code === AxiosError.ECONNABORTED) {
     return
   }
-  handleError(error.message || ERROR_MSG.SERVER_ERROR,)
+  handleError(error.message || getErrorMsg().SERVER_ERROR,)
   return Promise.reject(error,)
 },)
 

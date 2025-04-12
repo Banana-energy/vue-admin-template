@@ -2,8 +2,8 @@
 
 echo "🔍 Running ESLint on all files..."
 
-# 运行 ESLint 校验整个项目
-npm run lint:eslint
+# 运行 ESLint 校验
+npm run lint:staged
 
 # 如果 ESLint 失败，则阻止提交
 if [ $? -ne 0 ]; then

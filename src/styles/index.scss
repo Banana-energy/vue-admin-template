@@ -26,7 +26,24 @@
   }
 }
 
-// layout-border__left
+.el-input-number.is-without-controls {
+  width: 100%;
+
+  > .el-input {
+    > .el-input__wrapper {
+      padding: 1px 11px;
+
+      > .el-input__inner {
+        text-align: left;
+      }
+    }
+  }
+}
+
+.el-button.is-link:focus-visible {
+  outline: none;
+}
+
 .layout-border__left {
   position: relative;
 
@@ -42,7 +59,6 @@
   }
 }
 
-// layout-border__right
 .layout-border__right {
   position: relative;
 
@@ -58,7 +74,6 @@
   }
 }
 
-// layout-border__top
 .layout-border__top {
   position: relative;
 
@@ -74,7 +89,6 @@
   }
 }
 
-// layout-border__bottom
 .layout-border__bottom {
   position: relative;
 

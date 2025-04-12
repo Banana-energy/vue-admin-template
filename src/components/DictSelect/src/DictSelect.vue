@@ -1,9 +1,9 @@
 <script lang="ts" setup>
 import type { DictKey, } from "@/apis/dict"
 import type { ApiConfig, ApiSelectProps, ModelValue, } from "@/components/ApiSelect"
-import type { DictState, ToCamelCase, } from "@/hooks/useDict.ts"
+import type { DictState, } from "@/hooks/useDict.ts"
 import { useDict, } from "@/hooks/useDict.ts"
-import { camelCase, omit, } from "lodash-es"
+import { omit, } from "lodash-es"
 
 defineOptions({
   name: "DictSelect",
@@ -31,8 +31,8 @@ const { fetchDictList, } = useDict()
 const apiConfig: ApiConfig = {
   api: fetchDictList,
   config: {
-    label: "dictCnName",
-    value: "dictValue",
+    label: "name",
+    value: "code",
     disabled: "disabled",
   },
 }
@@ -44,20 +44,21 @@ const bindProps = computed<ApiSelectProps>(() => {
     ...attrs,
     ...omitProps,
     apiConfig,
+    cacheKey: props.dictCode,
     cacheData: true,
     afterFetch: props.afterFetch || afterFetch,
   }
 },)
 
 function afterFetch(data?: DictState,) {
-  const key = camelCase(props.dictCode,) as ToCamelCase<DictKey>
+  const key = props.dictCode
   const currentData = data?.[`${key}List`]
   return currentData || []
 }
 </script>
 
 <template>
-  <ApiSelect :model-value="modelValue" v-bind="bindProps" @update:model-value="val => emits('update:modelValue', val)" />
+  <ApiSelect v-bind="bindProps" :model-value="modelValue" @update:model-value="val => emits('update:modelValue', val)" />
 </template>
 
 <style lang="scss" scoped>

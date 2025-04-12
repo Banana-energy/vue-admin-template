@@ -1,9 +1,13 @@
+import type { ElCascaderProps as CascaderProps, } from "@/components/ElCascader"
 import type { Awaitable, } from "@vueuse/core"
 import type { CheckboxGroupProps, ISelectProps, } from "element-plus"
+import type { ISelectV2Props, } from "element-plus/es/components/select-v2/src/defaults"
 import type { Component, } from "vue"
 
 export type ElSelectProps = Partial<Omit<ISelectProps, "modelValue">>
 export type ElCheckboxGroupProps = Partial<Omit<CheckboxGroupProps, "modelValue">>
+export type ElCascaderProps = Partial<Omit<CascaderProps, "modelValue" | "filterMethod">>
+export type ElSelectV2Props = Partial<Omit<ISelectV2Props, "modelValue" | "autocomplete">>
 
 interface FieldConfig {
   label: string
@@ -14,7 +18,7 @@ interface FieldConfig {
 
 export interface ApiConfig {
   config?: FieldConfig
-  api: (params?: unknown) => Promise<unknown>
+  api: (params?: any) => Promise<unknown>
 }
 
 export interface OptionItem {
@@ -30,11 +34,13 @@ export type Options = OptionItem[] | string[] | number[]
 export type ModelValue = any[] | string | number | boolean | Record<string, any> | undefined
 
 export type Props = {
+  cacheKey?: string
   modelValue?: ModelValue
   /**
    * 组件
    */
   component?: Component
+  childComponent?: Component
   /**
    * 接口配置
    */
@@ -63,8 +69,7 @@ export type Props = {
    * 是否缓存数据
    */
   cacheData?: boolean
-  checkboxButton?: boolean
-} & ElSelectProps & ElCheckboxGroupProps
+} & ElSelectProps & ElCheckboxGroupProps & ElSelectV2Props & ElCascaderProps
 
 export const defaultProps = {
   modelPropName: "modelValue",
@@ -72,16 +77,15 @@ export const defaultProps = {
   params: () => ({}),
   immediate: true,
   beforeFetch: (params: unknown,) => params,
-  afterFetch: (res?: ResponseData<[]>,) => {
-    if (!res) {
+  afterFetch: (res?: NewResponseData<[]>,) => {
+    if (!res?.data) {
       return []
     }
-    const { datas, } = res
-    return datas || []
+    const { data, } = res
+    return data || []
   },
   apiConfig: undefined,
   cacheData: true,
-  checkboxButton: false,
 
   // ElCascader
   persistent: true,

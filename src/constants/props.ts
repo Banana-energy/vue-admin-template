@@ -26,37 +26,47 @@ export const customConfigProps: VxeTableProps = {
   },
 }
 
-export const inputProps: Partial<InputProps> = {
-  placeholder: "请输入",
-  clearable: true,
+export function inputProps(): Partial<InputProps> {
+  return {
+    placeholder: "请输入",
+    clearable: true,
+  }
 }
 
-export const inputNumberProps: Partial<InputNumberProps> = {
-  controls: false,
-  valueOnClear: null,
-  precision: 2,
-  placeholder: "请输入",
+export function inputNumberProps(): Partial<InputNumberProps> {
+  return {
+    controls: false,
+    valueOnClear: null,
+    precision: 2,
+    placeholder: "请输入",
+  }
 }
 
-export const signalSelectProps: Partial<ISelectProps> = {
-  clearable: true,
-  placeholder: "请选择",
-  filterable: true,
+export function signalSelectProps(): Partial<ISelectProps> {
+  return {
+    clearable: true,
+    placeholder: "请选择",
+    filterable: true,
+  }
 }
 
-export const multiSelectProps: Partial<ISelectProps> = {
-  ...signalSelectProps,
-  multiple: true,
-  collapseTags: true,
-  collapseTagsTooltip: true,
+export function multiSelectProps(): Partial<ISelectProps> {
+  return {
+    ...signalSelectProps(),
+    multiple: true,
+    collapseTags: true,
+    collapseTagsTooltip: true,
+  }
 }
 
-export const textAreaProps: Partial<InputProps> = {
-  type: "textarea",
-  autosize: {
-    minRows: 3,
-    maxRows: 5,
-  },
-  showWordLimit: true,
-  placeholder: "请输入",
+export function textAreaProps(): Partial<InputProps> {
+  return {
+    type: "textarea",
+    autosize: {
+      minRows: 3,
+      maxRows: 5,
+    },
+    showWordLimit: true,
+    placeholder: "请输入",
+  }
 }

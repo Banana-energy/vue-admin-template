@@ -3,6 +3,7 @@ import type { ElScrollbar, } from "element-plus"
 import type { RouteLocationNormalizedLoaded, RouterLinkProps, } from "vue-router"
 import type { ContextMenuExpose, } from "./helper.ts"
 import { useDesign, } from "@/hooks/useDesign"
+import { useI18nTitle, } from "@/hooks/useI18nTitle.ts"
 import { useScrollTo, } from "@/hooks/useScrollTo"
 import { useTagView, } from "@/hooks/useTagView"
 import { useAppStore, } from "@/store/App"
@@ -129,7 +130,7 @@ async function moveToCurrentTag() {
   await nextTick()
   for (const v of unref(visitedViews,)) {
     if (v.fullPath === unref(currentRoute,).path) {
-      moveToTarget(v,)
+      // moveToTarget(v,)
       if (v.fullPath !== unref(currentRoute,).fullPath) {
         tagsViewStore.updateVisitedView(unref(currentRoute,),)
       }
@@ -141,70 +142,70 @@ async function moveToCurrentTag() {
 
 const tagLinksRefs = useTemplateRefsList<RouterLinkProps>()
 
-function moveToTarget(currentTag: RouteLocationNormalizedLoaded,) {
-  const wrap$ = unref(scrollbarRef,)?.wrapRef
-  let firstTag: Nullable<RouterLinkProps> = null
-  let lastTag: Nullable<RouterLinkProps> = null
-
-  const tagList = unref(tagLinksRefs,)
-  // find first tag and last tag
-  if (tagList.length > 0) {
-    firstTag = tagList[0]
-    lastTag = tagList[tagList.length - 1]
-  }
-  if ((firstTag?.to as RouteLocationNormalizedLoaded).fullPath === currentTag.fullPath) {
-    // 直接滚动到0的位置
-    const { start, } = useScrollTo({
-      el: wrap$!,
-      position: "scrollLeft",
-      to: 0,
-      duration: 500,
-    },)
-    start()
-  } else if ((lastTag?.to as RouteLocationNormalizedLoaded).fullPath === currentTag.fullPath) {
-    // 滚动到最后的位置
-    const { start, } = useScrollTo({
-      el: wrap$!,
-      position: "scrollLeft",
-      to: wrap$!.scrollWidth - wrap$!.offsetWidth,
-      duration: 500,
-    },)
-    start()
-  } else {
-    // find preTag and nextTag
-    const currentIndex: number = tagList.findIndex(
-      item => (item?.to as RouteLocationNormalizedLoaded).fullPath === currentTag.fullPath,
-    )
-    const tgsRefs = document.getElementsByClassName(`${prefixCls}__item`,)
-
-    const prevTag = tgsRefs[currentIndex - 1] as HTMLElement
-    const nextTag = tgsRefs[currentIndex + 1] as HTMLElement
-
-    // the tag's offsetLeft after of nextTag
-    const afterNextTagOffsetLeft = nextTag.offsetLeft + nextTag.offsetWidth + 4
-
-    // the tag's offsetLeft before of prevTag
-    const beforePrevTagOffsetLeft = prevTag.offsetLeft - 4
-
-    if (afterNextTagOffsetLeft > unref(scrollLeftNumber,) + wrap$!.offsetWidth) {
-      const { start, } = useScrollTo({
-        el: wrap$!,
-        position: "scrollLeft",
-        to: afterNextTagOffsetLeft - wrap$!.offsetWidth,
-        duration: 500,
-      },)
-      start()
-    } else if (beforePrevTagOffsetLeft < unref(scrollLeftNumber,)) {
-      const { start, } = useScrollTo({
-        el: wrap$!,
-        position: "scrollLeft",
-        to: beforePrevTagOffsetLeft,
-        duration: 500,
-      },)
-      start()
-    }
-  }
-}
+// function moveToTarget(currentTag: RouteLocationNormalizedLoaded,) {
+//   const wrap$ = unref(scrollbarRef,)?.wrapRef
+//   let firstTag: Nullable<RouterLinkProps> = null
+//   let lastTag: Nullable<RouterLinkProps> = null
+//
+//   const tagList = unref(tagLinksRefs,)
+//   // find first tag and last tag
+//   if (tagList.length > 0) {
+//     firstTag = tagList[0]
+//     lastTag = tagList[tagList.length - 1]
+//   }
+//   if ((firstTag?.to as RouteLocationNormalizedLoaded).fullPath === currentTag.fullPath) {
+//     // 直接滚动到0的位置
+//     const { start, } = useScrollTo({
+//       el: wrap$!,
+//       position: "scrollLeft",
+//       to: 0,
+//       duration: 500,
+//     },)
+//     start()
+//   } else if ((lastTag?.to as RouteLocationNormalizedLoaded).fullPath === currentTag.fullPath) {
+//     // 滚动到最后的位置
+//     const { start, } = useScrollTo({
+//       el: wrap$!,
+//       position: "scrollLeft",
+//       to: wrap$!.scrollWidth - wrap$!.offsetWidth,
+//       duration: 500,
+//     },)
+//     start()
+//   } else {
+//     // find preTag and nextTag
+//     const currentIndex: number = tagList.findIndex(
+//       item => (item?.to as RouteLocationNormalizedLoaded).fullPath === currentTag.fullPath,
+//     )
+//     const tgsRefs = document.getElementsByClassName(`${prefixCls}__item`,)
+//
+//     const prevTag = tgsRefs[currentIndex - 1] as HTMLElement
+//     const nextTag = tgsRefs[currentIndex + 1] as HTMLElement
+//
+//     // the tag's offsetLeft after of nextTag
+//     const afterNextTagOffsetLeft = nextTag.offsetLeft + nextTag.offsetWidth + 4
+//
+//     // the tag's offsetLeft before of prevTag
+//     const beforePrevTagOffsetLeft = prevTag.offsetLeft - 4
+//
+//     if (afterNextTagOffsetLeft > unref(scrollLeftNumber,) + wrap$!.offsetWidth) {
+//       const { start, } = useScrollTo({
+//         el: wrap$!,
+//         position: "scrollLeft",
+//         to: afterNextTagOffsetLeft - wrap$!.offsetWidth,
+//         duration: 500,
+//       },)
+//       start()
+//     } else if (beforePrevTagOffsetLeft < unref(scrollLeftNumber,)) {
+//       const { start, } = useScrollTo({
+//         el: wrap$!,
+//         position: "scrollLeft",
+//         to: beforePrevTagOffsetLeft,
+//         duration: 500,
+//       },)
+//       start()
+//     }
+//   }
+// }
 
 // 是否是当前tag
 function isActive(route: RouteLocationNormalizedLoaded,): boolean {
@@ -370,7 +371,7 @@ watch(
                     :size="12"
                     class="mr-5px"
                   />
-                  {{ (item?.meta?.title) }}
+                  {{ useI18nTitle(item?.meta) }}
                   <Icon
                     :class="`${prefixCls}__item--close`"
                     :size="12"

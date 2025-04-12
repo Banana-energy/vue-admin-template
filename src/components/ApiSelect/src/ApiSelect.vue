@@ -27,7 +27,7 @@ const { options, loading, formatOptions, fetchOptions, } = useOptions(props,)
 const bindProps = computed(() => {
   const omitKeys = Object.keys(defaultProps,)
   const omitProps = omit(props, omitKeys,)
-  const optionsComponents = ["ElCascader",]
+  const optionsComponents = ["ElCascader", "ElSelectV2",]
   return {
     [props.modelPropName]: unref(modelValue,),
     [`onUpdate:${props.modelPropName}`]: (value: ModelValue,) => {
@@ -49,32 +49,13 @@ defineExpose({
 </script>
 
 <template>
-  <component :is="props.component" v-bind="bindProps">
+  <component v-bind="bindProps" :is="props.component">
     <template v-for="item in Object.keys(slots) " #[item]="data">
-      <slot :name="item" v-bind="data || {}" />
+      <slot v-bind="data || {}" :name="item" />
     </template>
-    <template v-if="component.name === 'ElCheckboxGroup'">
-      <template v-if="props.checkboxButton">
-        <ElCheckboxButton
-          v-for="item in formatOptions"
-          :key="item.value"
-          :disabled="item.disabled"
-          :label="item.label"
-          :value="item.value"
-        />
-      </template>
-      <template v-else>
-        <ElCheckbox
-          v-for="item in formatOptions"
-          :key="item.value"
-          :disabled="item.disabled"
-          :label="item.label"
-          :value="item.value"
-        />
-      </template>
-    </template>
-    <template v-if="component.name === 'ElRadioGroup'">
-      <ElRadio
+    <template v-if="props.childComponent">
+      <component
+        :is="props.childComponent"
         v-for="item in formatOptions"
         :key="item.value"
         :disabled="item.disabled"

@@ -18,7 +18,7 @@ function loginOut() {
   <ElDropdown :class="prefixCls" class="custom-hover" trigger="click">
     <div class="flex items-center">
       <img
-        :src="userStore.avatarUrl"
+        :src="userStore.avatar"
         alt=""
         class="w-[calc(var(--logo-height)-25px)] rounded-[50%]"
       />

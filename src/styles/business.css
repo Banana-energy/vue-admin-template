@@ -6,30 +6,30 @@
   --danger-color: #F56C6C;
   --info-color: #909399;
 
-  /* 单元格左右padding*/
+  /* 单元格左右padding */
   --cell-padding-x: 12px;
 
-  /* 单元格文字高度*/
+  /* 单元格文字高度 */
   --cell-line-height: 21px;
 
-  /* 文字颜色*/
+  /* 文字颜色 */
   --primary-text-color: #303133;
   --regular-text-color: #606266;
   --secondary-text-color: #909399;
   --placeholder-text-color: #A8ABB2;
 
-  /* 字体*/
+  /* 字体 */
   --font-family: Inter, 'Helvetica Neue', Helvetica, 'PingFang SC',
   'Hiragino Sans GB', 'Microsoft YaHei', '微软雅黑', Arial, sans-serif;
 
-  /* 字体大小*/
-  --font-size-3xl: 32px;
-  --font-size-2xl: 28px;
-  --font-size-xl: 24px;
-  --font-size-lg: 18px;
-  --font-size-base: 16px;
-  --font-size-sm: 14px;
-  --font-size-xs: 12px;
+  /* 字体大小 */
+  --font-size-3xl: 24px;
+  --font-size-2xl: 20px;
+  --font-size-xl: 18px;
+  --font-size-lg: 16px;
+  --font-size-base: 14px;
+  --font-size-sm: 12px;
+  --font-size-xs: 10px;
 
   /* 行高 */
   --line-height-base: 1.5
