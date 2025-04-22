@@ -1,5 +1,7 @@
 <script lang="ts" setup>
 import type { Props, } from "@/components/BaseUpload"
+import type { UploadFile, UploadFiles, UploadProps, } from "element-plus"
+import type { OssUploadFile, } from "./helper.ts"
 import { defaultProps, } from "@/components/BaseUpload"
 import { omit, } from "lodash-es"
 import { httpRequest, } from "./helper.ts"
@@ -12,14 +14,43 @@ const props = withDefaults(defineProps<Props>(), defaultProps,)
 
 const emits = defineEmits<{
   (event: "update:modelValue", value: BaseFileDTO[]): void
+  (e: "preview", file: BaseFileDTO): void
+  (
+    e: "success",
+    res: BaseFileDTO[] | undefined,
+    uploadFile: UploadFile,
+    uploadFiles: UploadFiles
+  ): void
 }>()
 const attrs: Record<string, unknown> = useAttrs()
+
+const handleSuccess: UploadProps["onSuccess"] = (
+  res: ResponseData<OssUploadFile>,
+  uploadFile: UploadFile,
+  uploadFiles: UploadFiles,
+) => {
+  if (res.isSuccess) {
+    const list = props.modelValue ? [...props.modelValue,] : []
+    const {
+      datas: { objectName, originFileName, downLoadUrl, },
+    } = res
+    list.push({
+      uid: uploadFile.uid,
+      fileName: originFileName,
+      fileUrl: objectName,
+      signatureUrl: downLoadUrl,
+    },)
+    emits("success", list, uploadFile, uploadFiles,)
+    emits("update:modelValue", list,)
+  }
+}
 
 const bindProps = computed<Props>(() => {
   const omitKeys: (keyof Props)[] = ["httpRequest", "modelValue",]
   return {
     ...omit(props, omitKeys,),
     ...attrs,
+    onSuccess: handleSuccess,
     httpRequest,
   }
 },)

@@ -41,7 +41,7 @@ export const messageState = reactive<Messages>({},)
 
 async function fetchLocaleMessage(locale: LocaleEnum,) {
   try {
-    const response = await fetch(`/static/locales/${locale}.json?t=${Date.now()}`,)
+    const response = await fetch(`/assets/locales/${locale}.json?t=${Date.now()}`,)
     return await response.json()
   } catch (error) {
     console.error(`Failed to fetch local messages for locale ${locale}:`, error,)

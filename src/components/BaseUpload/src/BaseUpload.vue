@@ -169,7 +169,7 @@ const handlePreview: Props["onPreview"] = (uploadFile: UploadFile,) => {
 }
 
 const bindProps = computed<Props>(() => {
-  const omitKeys: (keyof Props)[] = ["onError", "onExceed", "onPreview", "onSuccess", "beforeUpload", "onRemove",]
+  const omitKeys: (keyof Props)[] = ["onError", "onExceed", "onPreview", "onSuccess", "beforeUpload", "onRemove", "fileList",]
   const omitProps = omit(props, omitKeys,)
   return {
     ...attrs,
@@ -194,11 +194,27 @@ function handlePaste(e: ClipboardEvent,) {
   if (isOutside.value) {
     return
   }
-  for (let i = 0; i < items.length; i++) {
+  const existLength = fileList.value.length
+  const length = items.length
+  if (props.limit) {
+    if (existLength >= props.limit) {
+      ElMessage.warning(`最多选择${props.limit}个文件!`,)
+      return
+    }
+    if (length + existLength > props.limit) {
+      ElMessage.warning(`最多选择${props.limit}个文件!`,)
+      return
+    }
+  }
+  for (let i = 0; i < length; i++) {
     const item = items[i]
     if (item.kind === "file") {
       const file = item.getAsFile() as UploadRawFile
       if (file) {
+        if (file.size > props.sizeLimit) {
+          ElMessage.warning(`文件大小不能超过${formatFileSize(props.sizeLimit,)}`,)
+          continue
+        }
         file.uid = genFileId()
         uploadRef.value?.handleStart(file,)
       }
@@ -221,7 +237,7 @@ defineExpose({
 
 <template>
   <div>
-    <ElUpload ref="uploadRef" v-bind="bindProps">
+    <ElUpload ref="uploadRef" v-model:file-list="fileList" v-bind="bindProps">
       <template v-if="!hideUpload" #trigger>
         <slot name="trigger">
           <Icon v-if="props.listType === 'picture-card'" :size="24" icon="ep:plus" />

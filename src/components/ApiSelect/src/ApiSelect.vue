@@ -1,5 +1,6 @@
 <script lang="ts" setup>
-import type { ModelValue, Props, } from "./types.ts"
+import type { SelectInstance, } from "element-plus"
+import type { ModelValue, OptionItem, Props, } from "./types.ts"
 import { omit, } from "lodash-es"
 import { defaultProps, } from "./types.ts"
 import { useOptions, } from "./useOptions.ts"
@@ -11,6 +12,7 @@ const props = withDefaults(defineProps<Props>(), defaultProps,)
 
 const emits = defineEmits<{
   change: [val: ModelValue,]
+  paste: [e: ClipboardEvent, options: OptionItem[], val?: string,]
 }>()
 
 interface DynamicSlots {
@@ -41,15 +43,40 @@ const bindProps = computed(() => {
   }
 },)
 
+const componentRef = ref<unknown>()
+
+function handlePaste(e: ClipboardEvent,) {
+  const { clipboardData, } = e
+  if (clipboardData) {
+    const text = clipboardData.getData("text",)
+    emits("paste", e, unref(formatOptions,), text,)
+  }
+}
+
+onMounted(() => {
+  if (props.component.name === "ElSelect") {
+    const selectInstance = componentRef.value as SelectInstance
+    selectInstance.inputRef?.addEventListener("paste", handlePaste,)
+  }
+},)
+
+onBeforeUnmount(() => {
+  if (props.component.name === "ElSelect") {
+    const selectInstance = componentRef.value as SelectInstance
+    selectInstance.inputRef?.removeEventListener("paste", handlePaste,)
+  }
+},)
+
 defineExpose({
   options,
   formatOptions,
   fetchOptions,
+  componentRef,
 },)
 </script>
 
 <template>
-  <component v-bind="bindProps" :is="props.component">
+  <component :is="props.component" ref="componentRef" v-bind="bindProps">
     <template v-for="item in Object.keys(slots) " #[item]="data">
       <slot v-bind="data || {}" :name="item" />
     </template>

@@ -17,7 +17,7 @@ const optionsStore = reactive<Record<string, {
 }>>({},)
 
 export function useOptions(props: Props,) {
-  const { apiConfig, immediate, params, beforeFetch, afterFetch, cacheData, } = props
+  const { apiConfig, immediate, beforeFetch, afterFetch, cacheData, } = props
   const options = ref<unknown[]>([],)
   const loading = ref(false,)
 
@@ -31,9 +31,9 @@ export function useOptions(props: Props,) {
       console.warn("请传入正确的api",)
       return
     }
-    const formatParams = await beforeFetch?.(params,)
+    const formatParams = await beforeFetch?.(props.params,)
     if (cacheData) {
-      const cacheKey = await generateUniqueId(apiConfig, params,)
+      const cacheKey = props.cacheKey || await generateUniqueId(apiConfig, props.params,)
       if (optionsStore[cacheKey]) {
         watch(() => optionsStore[cacheKey].options, (value,) => {
           options.value = value
@@ -56,6 +56,10 @@ export function useOptions(props: Props,) {
     }
     loading.value = true
     const result = await api(formatParams,)
+    watchEffect(async() => {
+      options.value = await afterFetch?.(result,) || []
+    },)
+    loading.value = false
     options.value = await afterFetch?.(result,) || []
   }
 

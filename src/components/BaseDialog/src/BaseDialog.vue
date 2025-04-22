@@ -1,6 +1,5 @@
 <script lang="ts" setup>
 import type { DialogProps, ScrollbarInstance, } from "element-plus"
-import type { Slots, } from "vue"
 import type { Props, } from "./types.ts"
 import { omit, } from "lodash-es"
 
@@ -9,21 +8,19 @@ defineOptions({
 },)
 
 const props = withDefaults(defineProps<Props>(), {
-  title: "ces",
   modelValue: false,
   fullscreen: true,
   width: "90vw",
   loading: false,
   closeOnClickModal: false,
   destroyOnClose: true,
+  lockScroll: true,
   draggable: true,
   showClose: true,
   top: "5vh",
   modal: true,
   closeOnPressEscape: true,
 },)
-
-const slots = useSlots() as Slots
 
 const isFullscreen = ref(false,)
 
@@ -43,10 +40,22 @@ const bindProps = computed<Partial<DialogProps>>(() => {
 const bodyRef = ref<ScrollbarInstance>()
 const footerRef = ref<HTMLDivElement>()
 
+const offset = computed(() => {
+  if (isFullscreen.value) {
+    return 50
+  }
+  return innerHeight * 0.05 + 50
+},)
+
 const { maxHeight, } = useMaxHeight({
   targetRef: bodyRef as Ref<ComponentPublicInstance>,
   otherRefs: footerRef,
-  offset: innerHeight * 0.05 + 50 + (slots.footer ? 16 : 0),
+  offset,
+},)
+
+defineExpose({
+  maxHeight,
+  isFullscreen,
 },)
 </script>
 
@@ -70,6 +79,7 @@ const { maxHeight, } = useMaxHeight({
       <slot />
     </ElScrollbar>
     <template v-if="$slots.footer" #footer>
+      <slot name="footer-content" />
       <div ref="footerRef" class="flex justify-end">
         <slot name="footer" />
       </div>

@@ -102,6 +102,7 @@ export default defineConfig(({ mode, },) => {
         resolvers: [
           ElementPlusResolver({
             importStyle: "sass",
+            exclude: /(ElText)/,
           },),
         ],
         dts: resolve("src/types/components.d.ts",),

@@ -51,8 +51,7 @@
 
   --vxe-ui-font-primary-color: var(--primary-color);
   --vxe-ui-font-size-default: var(--font-size-base);
-  --vxe-ui-table-cell-padding-left: var(--cell-padding-x);
-  --vxe-ui-table-cell-padding-right: var(--cell-padding-x);
+  --vxe-ui-table-cell-padding-default: var(--cell-padding-x);
   --vxe-ui-font-color: var(--regular-text-color);
   --vxe-ui-table-header-font-color: var(--primary-text-color);
   --vxe-ui-table-row-line-height: var(--cell-line-height);

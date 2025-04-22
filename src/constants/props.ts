@@ -37,6 +37,8 @@ export function inputNumberProps(): Partial<InputNumberProps> {
   return {
     controls: false,
     valueOnClear: null,
+    min: -99999999999.99,
+    max: 999999999999.99,
     precision: 2,
     placeholder: "请输入",
   }

@@ -1,3 +1,5 @@
+import { isNil, isObject, } from "lodash-es"
+
 export function setCssVar(key: string, value: string, el = document.documentElement,) {
   el.style.setProperty(key, value,)
 }
@@ -29,4 +31,24 @@ export function transformOptionsToMap<T extends Record<string, string | number |
     }
     return acc
   }, {},)
+}
+
+type ValidArgs = (string | number | undefined)[] | [...(string | number | undefined)[], { separator: string },]
+export function formatString(...args: ValidArgs) {
+  const last = args.pop()
+  let separator = "/"
+  if (isObject(last,)) {
+    separator = last.separator
+  } else if (!isNil(last,)) {
+    args.push(last,)
+  }
+  return args.filter(e => !isNil(e,),).join(separator,)
+}
+
+export function clearReactiveObject(obj: unknown,) {
+  if (isObject(obj,)) {
+    for (const key of Object.keys(obj,)) {
+      Reflect.deleteProperty(obj, key,)
+    }
+  }
 }

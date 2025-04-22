@@ -76,7 +76,7 @@ const isCollapseNeeded = computed(() => totalSpan.value > 24,)
 
 const btnOffset = computed(() => {
   const _totalSpan = totalSpan.value
-  if ((_totalSpan - props.span) % 24 === 0 && collapse.value) {
+  if ((_totalSpan - props.span) % 24 === 0 || collapse.value) {
     return 0
   }
   const rowCount = Math.ceil(_totalSpan / 24,)

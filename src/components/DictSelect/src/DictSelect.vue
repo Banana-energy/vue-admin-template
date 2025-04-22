@@ -2,6 +2,7 @@
 import type { DictKey, } from "@/apis/dict"
 import type { ApiConfig, ApiSelectProps, ModelValue, } from "@/components/ApiSelect"
 import type { DictState, } from "@/hooks/useDict.ts"
+import { ApiSelect, } from "@/components/ApiSelect"
 import { useDict, } from "@/hooks/useDict.ts"
 import { omit, } from "lodash-es"
 
@@ -55,10 +56,25 @@ function afterFetch(data?: DictState,) {
   const currentData = data?.[`${key}List`]
   return currentData || []
 }
+
+const apiSelectRef = ref<InstanceType<typeof ApiSelect>>()
+
+const componentRef = computed(() => {
+  return apiSelectRef.value?.componentRef
+},)
+
+defineExpose({
+  componentRef,
+},)
 </script>
 
 <template>
-  <ApiSelect v-bind="bindProps" :model-value="modelValue" @update:model-value="val => emits('update:modelValue', val)" />
+  <ApiSelect
+    ref="apiSelectRef"
+    v-bind="bindProps"
+    :model-value="modelValue"
+    @update:model-value="val => emits('update:modelValue', val)"
+  />
 </template>
 
 <style lang="scss" scoped>

@@ -8,7 +8,7 @@ defineOptions({
 },)
 
 const props = withDefaults(defineProps<Props>(), {
-  layout: `->, prev, pager, next, sizes`,
+  layout: `total, slot, ->, prev, pager, next, sizes`,
   pageSizes: () => [10, 20, 30, 40, 50, 100, 500, 1000,],
 },)
 const emits = defineEmits<{

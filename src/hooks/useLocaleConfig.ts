@@ -10,5 +10,5 @@ export function useLocaleConfig<T extends readonly unknown[],>(configList: T,): 
   const index = localeConfigList.findIndex(item => item === localeState.value,)
 
   // 返回对应的配置
-  return configList[index]
+  return configList[index] || {}
 }

@@ -24,8 +24,8 @@ export interface ApiConfig {
 export interface OptionItem {
   children?: OptionItem[]
   disabled?: boolean
-  label?: string
-  value?: string
+  label?: string | number
+  value?: string | number
   [name: string]: any
 }
 

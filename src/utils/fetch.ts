@@ -5,6 +5,7 @@ import { ElMessage, } from "element-plus"
 import qs from "qs"
 
 const fetch = axios.create({
+  adapter: "fetch",
   timeout: 10000,
   paramsSerializer(params,) {
     return qs.stringify(params, {

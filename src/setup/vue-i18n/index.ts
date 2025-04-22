@@ -7,6 +7,7 @@ const { localeState, } = useLocale()
 export type I18n = typeof i18n
 
 export const i18n = createI18n({
+  legacy: false,
   messages: {
     [LocaleEnum.ZH_CN]: {},
     [LocaleEnum.EN_US]: {},
