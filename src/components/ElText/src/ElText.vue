@@ -1,5 +1,5 @@
-<script setup lang="ts">
-import type { TooltipInstance, } from "element-plus"
+<script lang="ts" setup>
+import type { ElTooltipProps, TooltipInstance, } from "element-plus"
 import type { Props, } from "./types.ts"
 import { useFormSize, useNamespace, } from "element-plus"
 import { isUndefined, } from "lodash-es"
@@ -14,6 +14,25 @@ const props = withDefaults(defineProps<Props>(), {
   type: "",
   size: "",
   truncated: false,
+},)
+
+const defaultTooltipProps: Partial<ElTooltipProps> = {
+  showArrow: true,
+  enterable: true,
+  teleported: true,
+  showAfter: 300,
+  hideAfter: 100,
+  offset: 12,
+  placement: "bottom",
+  effect: "dark",
+  trigger: "hover",
+}
+
+const bindTooltipProps = computed<Partial<ElTooltipProps>>(() => {
+  return {
+    ...defaultTooltipProps,
+    ...props.tooltipProps,
+  }
 },)
 
 const textRef = ref<HTMLElement>()
@@ -35,7 +54,8 @@ const content = ref("",)
 const tooltipRef = ref<TooltipInstance>()
 const tooltipVisible = ref(false,)
 
-function bindTitle() {
+async function bindTitle() {
+  await nextTick()
   let shouldAddTitle = false
   content.value = textRef.value?.textContent || ""
   if (props.truncated) {
@@ -76,6 +96,7 @@ onUpdated(bindTitle,)
     }"
     :virtual-ref="textRef"
     popper-class="singleton-tooltip"
+    v-bind="{ ...bindTooltipProps }"
     virtual-triggering
   >
     <template #content>
@@ -85,14 +106,14 @@ onUpdated(bindTitle,)
   <component
     :is="tag"
     ref="textRef"
-    v-bind="{ ...attrs }"
     :class="textKls"
     :style="{ '-webkit-line-clamp': lineClamp }"
+    v-bind="{ ...attrs }"
   >
     <slot />
   </component>
 </template>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 
 </style>

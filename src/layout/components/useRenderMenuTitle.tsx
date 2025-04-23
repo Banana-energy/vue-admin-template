@@ -1,4 +1,5 @@
 import type { RouteMeta, } from "vue-router"
+import { ElText, } from "@/components/ElText"
 import { Icon, } from "@/components/Icon"
 import { useI18nTitle, } from "@/hooks/useI18nTitle.ts"
 
@@ -9,15 +10,15 @@ export function useRenderMenuTitle() {
       ? (
           <>
             <Icon icon={meta?.icon}></Icon>
-            <span class="v-menu__title overflow-ellipsis overflow-hidden whitespace-nowrap">
-              {useI18nTitle(meta,)}
-            </span>
+            <ElText truncated class="v-menu__title !text-inherit" tooltipProps={{ placement: "right", }}>
+              {(useI18nTitle(meta,))}
+            </ElText>
           </>
         )
       : (
-          <span class="v-menu__title overflow-ellipsis overflow-hidden whitespace-nowrap">
-            {useI18nTitle(meta,)}
-          </span>
+          <ElText truncated class="v-menu__title !text-inherit" tooltipProps={{ placement: "right", }}>
+            {(useI18nTitle(meta,))}
+          </ElText>
         )
   }
 

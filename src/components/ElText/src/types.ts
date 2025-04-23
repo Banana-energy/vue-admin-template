@@ -1,4 +1,4 @@
-import type { ComponentSize, } from "element-plus"
+import type { ComponentSize, ElTooltipProps, } from "element-plus"
 
 export interface Props {
   type?: "primary" | "success" | "warning" | "danger" | "info" | ""
@@ -6,4 +6,5 @@ export interface Props {
   truncated?: boolean
   lineClamp?: string | number
   tag?: string
+  tooltipProps?: Partial<ElTooltipProps>
 }
