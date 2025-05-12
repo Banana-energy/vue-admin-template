@@ -70,7 +70,7 @@ watch(
               layout === 'topLeft' || layout === 'top' || layout === 'cutMenu',
           },
         ]"
-        class="ml-10px text-16px font-700"
+        class="ml-2.5 text-4 font-700"
       >
         {{ title }}
       </div>

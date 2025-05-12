@@ -49,12 +49,12 @@ function btnClick() {
 
 <template>
   <div class="flex justify-center">
-    <div class="text-center">
+    <div class="flex flex-col items-center">
       <img :src="errorMap[type].url" alt="" width="350" />
-      <div class="text-[14px] text-[var(--el-color-info)]">
+      <ElText class="text-base" type="info">
         {{ errorMap[type].message }}
-      </div>
-      <div class="mt-[20px]">
+      </ElText>
+      <div class="mt-5">
         <ElButton type="primary" @click="btnClick">
           {{ errorMap[type].buttonText }}
         </ElButton>

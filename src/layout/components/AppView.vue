@@ -14,9 +14,11 @@ const getCaches = computed((): string[] => {
   >
     <RouterView>
       <template #default="{ Component, route }">
-        <KeepAlive :include="getCaches">
-          <component :is="Component" :key="route.fullPath" />
-        </KeepAlive>
+        <Transition enter-active-class="animate__animated animate__fadeIn" mode="out-in" appear>
+          <KeepAlive :include="getCaches">
+            <Component :is="Component" :key="route.fullPath" />
+          </KeepAlive>
+        </Transition>
       </template>
     </RouterView>
   </section>

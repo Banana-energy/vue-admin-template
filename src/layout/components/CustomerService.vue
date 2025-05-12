@@ -1,7 +1,6 @@
 <script lang="ts" setup>
 import { useDesign, } from "@/hooks/useDesign"
 import { useLocaleConfig, } from "@/hooks/useLocaleConfig"
-import { ignoreAutoI18n, } from "@higgins-mmt/vite-plugin-i18n-transformer/utils"
 
 const { getPrefixCls, } = useDesign()
 
@@ -16,23 +15,31 @@ const { textLength, } = useLocaleConfig([
     textLength: 50,
   },
   {
-    textLength: 180,
+    textLength: 140,
   },
 ],)
 
-let now: number
+const position = computed(() => {
+  return {
+    left: width.value - 12 - textLength,
+    top: height.value - 100 - 50,
+  }
+},)
+
 watch(
-  () => [width.value, height.value,],
-  () => {
+  () => position.value,
+  (value,) => {
     if (el.value) {
-      el.value.style.left = `${width.value - 12 - textLength}px`
-      el.value.style.top = `${height.value - 100 - 50}px`
+      const { left, top, } = value
+      el.value.style.left = `${left}px`
+      el.value.style.top = `${top}px`
     }
   },
 )
 
+let now: number
 const { style, } = useDraggable(el, {
-  initialValue: { x: width.value - 12 - textLength, y: height.value - 100 - 50, },
+  initialValue: { x: position.value.left, y: position.value.top, },
   preventDefault: true,
   onStart: () => {
     now = Date.now()
@@ -50,7 +57,7 @@ const { style, } = useDraggable(el, {
   <div ref="el" :class="prefixCls" :style="style">
     <Icon :size="30" color="var(--primary-color)" icon="ri:customer-service-2-fill" />
     <div class="text">
-      {{ ignoreAutoI18n('在线客服') }}
+      在线客服
     </div>
   </div>
 </template>

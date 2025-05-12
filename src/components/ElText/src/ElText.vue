@@ -70,6 +70,14 @@ async function bindTitle() {
     if (height && scrollHeight && scrollHeight > height) {
       shouldAddTitle = true
     }
+    if (textRef.value) {
+      const lineHeight = Number.parseFloat(getComputedStyle(textRef.value,).lineHeight,)
+      const maxLine = Number.parseFloat(props.lineClamp.toString(),)
+      const maxHeight = maxLine * lineHeight
+      if (textRef.value.scrollHeight > maxHeight) {
+        shouldAddTitle = true
+      }
+    }
   }
   tooltipVisible.value = shouldAddTitle
 }

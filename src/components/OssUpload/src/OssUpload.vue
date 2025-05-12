@@ -1,7 +1,7 @@
 <script lang="ts" setup>
+import type { OssResponse, } from "@/apis/upload"
 import type { Props, } from "@/components/BaseUpload"
 import type { UploadFile, UploadFiles, UploadProps, } from "element-plus"
-import type { OssUploadFile, } from "./helper.ts"
 import { defaultProps, } from "@/components/BaseUpload"
 import { omit, } from "lodash-es"
 import { httpRequest, } from "./helper.ts"
@@ -25,14 +25,14 @@ const emits = defineEmits<{
 const attrs: Record<string, unknown> = useAttrs()
 
 const handleSuccess: UploadProps["onSuccess"] = (
-  res: ResponseData<OssUploadFile>,
+  res: NewResponseData<OssResponse>,
   uploadFile: UploadFile,
   uploadFiles: UploadFiles,
 ) => {
-  if (res.isSuccess) {
+  if (res.success) {
     const list = props.modelValue ? [...props.modelValue,] : []
     const {
-      datas: { objectName, originFileName, downLoadUrl, },
+      data: { objectName, originFileName, downLoadUrl, },
     } = res
     list.push({
       uid: uploadFile.uid,

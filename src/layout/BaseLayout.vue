@@ -9,7 +9,7 @@ const { getPrefixCls, } = useDesign()
 
 const prefixCls = getPrefixCls("layout",)
 
-const hideSetting = computed(() => import.meta.env.VITE_HIDE_GLOBAL_SETTING === "true",)
+const hideSetting = computed(() => true,)
 
 export default defineComponent({
   name: "BaseLayout",
@@ -45,7 +45,7 @@ export default defineComponent({
     }
 
     return () => (
-      <section class={[prefixCls, `${prefixCls}__${layout.value}`, "w-[100%] h-[100%] relative",]}>
+      <section class={[prefixCls, `${prefixCls}__${layout.value}`, "w-full h-full relative",]}>
         {mobile.value && !collapse.value
           ? (
               <div
@@ -58,9 +58,9 @@ export default defineComponent({
 
         {renderLayout()}
 
-        <CustomerService></CustomerService>
+        <CustomerService />
 
-        {!unref(hideSetting,) && <Setting></Setting>}
+        {!unref(hideSetting,) && <Setting />}
       </section>
     )
   },

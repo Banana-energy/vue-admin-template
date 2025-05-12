@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script lang="ts" setup>
 import { useDesign, } from "@/hooks/useDesign"
 import { useUserStore, } from "@/store/UserInfo"
 import { ElDropdownItem, ElDropdownMenu, } from "element-plus"
@@ -22,7 +22,7 @@ function loginOut() {
         alt=""
         class="w-[calc(var(--logo-height)-25px)] rounded-[50%]"
       />
-      <span class="pl-[5px] text-[14px] text-[var(--top-header-text-color)] <lg:hidden">
+      <span class="pl-1.25 text-3.5 text-[var(--top-header-text-color)] <lg:hidden">
         {{ userStore.name }}
       </span>
     </div>
@@ -38,7 +38,7 @@ function loginOut() {
   </ElDropdown>
 </template>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 .fade-bottom-enter-active,
 .fade-bottom-leave-active {
   transition:

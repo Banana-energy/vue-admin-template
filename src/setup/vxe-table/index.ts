@@ -1,9 +1,10 @@
 import type { App, } from "vue"
 import type { VxeTableProps, } from "vxe-table"
 import VxeUI from "vxe-pc-ui"
-import VxeUITable from "vxe-table"
+import VxeTable, { VxeUI as VxeUITable, } from "vxe-table"
 import "vxe-pc-ui/lib/style.css"
 import "vxe-table/lib/style.css"
+import "./ImageRender.tsx"
 
 export const virtualScrollProps: VxeTableProps = {
   virtualXConfig: {
@@ -18,6 +19,10 @@ export const virtualScrollProps: VxeTableProps = {
 
 export function setupVxeTable(app: App<Element>,) {
   VxeUITable.setConfig({
+    i18n: (key, args,) => {
+      const { t, } = useI18n()
+      return t(key, args,)
+    },
     zIndex: 4000,
     table: {
       align: "left",
@@ -37,11 +42,12 @@ export function setupVxeTable(app: App<Element>,) {
       },
     },
     column: {
+      minWidth: 100,
       showOverflow: true,
       showHeaderOverflow: true,
     },
   },)
   app
     .use(VxeUI,)
-    .use(VxeUITable,)
+    .use(VxeTable,)
 }

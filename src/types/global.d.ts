@@ -45,6 +45,7 @@ declare global {
 
   declare interface CustomRouteRecordRaw extends RouteRecordSingleViewWithChildren {
     id?: number
+    hidden?: boolean
     children?: CustomRouteRecordRaw[]
   }
 

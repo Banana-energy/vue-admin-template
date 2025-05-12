@@ -13,7 +13,7 @@ const layout = computed(() => appStore.getLayout,)
 </script>
 
 <template>
-  <div :class="prefixCls" class="flex flex-wrap space-x-14px">
+  <div :class="prefixCls" class="flex flex-wrap space-x-3.5">
     <div
       :class="[
         `${prefixCls}__classic`,
@@ -21,7 +21,7 @@ const layout = computed(() => appStore.getLayout,)
           'is-active': layout === 'classic',
         },
       ]"
-      class="relative h-48px w-56px cursor-pointer bg-gray-300"
+      class="relative h-12 w-14 cursor-pointer bg-gray-300"
       @click="appStore.setLayout('classic')"
     />
     <div
@@ -31,7 +31,7 @@ const layout = computed(() => appStore.getLayout,)
           'is-active': layout === 'topLeft',
         },
       ]"
-      class="relative h-48px w-56px cursor-pointer bg-gray-300"
+      class="relative h-12 w-14 cursor-pointer bg-gray-300"
       @click="appStore.setLayout('topLeft')"
     />
     <div
@@ -41,7 +41,7 @@ const layout = computed(() => appStore.getLayout,)
           'is-active': layout === 'top',
         },
       ]"
-      class="relative h-48px w-56px cursor-pointer bg-gray-300"
+      class="relative h-12 w-14 cursor-pointer bg-gray-300"
       @click="appStore.setLayout('top')"
     />
     <div
@@ -51,10 +51,10 @@ const layout = computed(() => appStore.getLayout,)
           'is-active': layout === 'cutMenu',
         },
       ]"
-      class="relative h-48px w-56px cursor-pointer bg-gray-300"
+      class="relative h-12 w-14 cursor-pointer bg-gray-300"
       @click="appStore.setLayout('cutMenu')"
     >
-      <div class="absolute left-[10%] top-0 h-full w-[33%] bg-gray-200" />
+      <div class="absolute left-1/10 top-0 h-full w-1/3 bg-gray-200" />
     </div>
   </div>
 </template>

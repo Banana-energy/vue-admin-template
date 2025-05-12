@@ -1,10 +1,13 @@
 <script lang="ts" setup>
+
 </script>
 
 <template>
-  <div>
-    Hello
-  </div>
+  <img
+    alt=""
+    class="w-full"
+    src="@/assets/home.png"
+  />
 </template>
 
 <style lang="scss" scoped>

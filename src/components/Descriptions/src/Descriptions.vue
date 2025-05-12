@@ -3,7 +3,7 @@ import type { AllowedComponentProps, } from "vue"
 import type { DescriptionItem, Props, } from "./types.ts"
 import { useAppStore, } from "@/store/App"
 import { ElCollapseTransition, } from "element-plus"
-import { omit, } from "lodash-es"
+import { get, omit, } from "lodash-es"
 import { defaultProps, } from "./types.ts"
 
 defineOptions({
@@ -31,6 +31,17 @@ function getBindItemProps(item: DescriptionItem,) {
   const omitKeys: (keyof DescriptionItem)[] = ["field",]
   return omit(item, omitKeys,)
 }
+
+const formatDescriptions = computed(() => {
+  return props.descriptions.map((item,) => {
+    const { field, } = item
+    const value = get(props.data, field,)
+    return {
+      ...item,
+      value,
+    }
+  },)
+},)
 
 // 折叠
 const show = ref(true,)
@@ -70,12 +81,12 @@ function toggleClick() {
       <div v-show="show" :class="[`${prefixCls}-content`]" class="p-3">
         <ElDescriptions
           :border="props.border"
-          :column="2"
+          :column="props.column"
           :direction="mobile ? 'vertical' : 'horizontal'"
           v-bind="bindProps"
         >
           <ElDescriptionsItem
-            v-for="item in props.descriptions"
+            v-for="item in formatDescriptions"
             :key="item.field"
             :span="item.span || 1"
             class-name="color-[var(--regular-text-color)]"
@@ -83,24 +94,22 @@ function toggleClick() {
             v-bind="getBindItemProps(item)"
           >
             <template #label>
-              <slot :label="item.label" :name="`${item.field}-label`" :row="data">
-                <div class="whitespace-nowrap font-size-base">
+              <slot :label="item.label" :name="`${item.field}Label`" :row="data">
+                <span class="whitespace-nowrap font-size-base">
                   {{ item.label + props.labelSuffix }}
-                </div>
+                </span>
               </slot>
             </template>
 
             <template #default>
               <slot :name="item.field" :row="data">
-                <div class="max-w-[500px] min-w-[200px] font-size-base">
-                  <ElScrollbar>
-                    {{
-                      Array.isArray(data[item.field])
-                        ? data[item.field].join(',')
-                        : data[item.field]
-                    }}
-                  </ElScrollbar>
-                </div>
+                <span class="font-size-base">
+                  {{
+                    Array.isArray(item.value)
+                      ? item.value.join(',')
+                      : item.value
+                  }}
+                </span>
               </slot>
             </template>
           </ElDescriptionsItem>

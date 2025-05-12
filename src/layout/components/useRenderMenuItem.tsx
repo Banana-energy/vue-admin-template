@@ -3,6 +3,7 @@ import { isUrl, pathResolve, } from "@/utils/routerHelper"
 import { ElMenuItem, ElSubMenu, } from "element-plus"
 import { unref, } from "vue"
 import { hasOneShowingChild, } from "./helper"
+import LinkItem from "./LinkItem.vue"
 import { useRenderMenuTitle, } from "./useRenderMenuTitle"
 import "element-plus/theme-chalk/src/menu-item.scss"
 import "element-plus/theme-chalk/src/sub-menu.scss"
@@ -27,13 +28,15 @@ export function useRenderMenuItem(menuMode: "vertical" | "horizontal",) {
           && !meta?.alwaysShow
         ) {
           return (
-            <ElMenuItem
-              index={onlyOneChild ? pathResolve(fullPath, onlyOneChild.path,) : fullPath}
-            >
-              {{
-                default: () => renderMenuTitle(onlyOneChild ? onlyOneChild?.meta : meta,),
-              }}
-            </ElMenuItem>
+            <LinkItem to={onlyOneChild ? pathResolve(fullPath, onlyOneChild.path,) : fullPath}>
+              <ElMenuItem
+                index={onlyOneChild ? pathResolve(fullPath, onlyOneChild.path,) : fullPath}
+              >
+                {{
+                  default: () => renderMenuTitle(onlyOneChild ? onlyOneChild?.meta : meta,),
+                }}
+              </ElMenuItem>
+            </LinkItem>
           )
         } else {
           return (

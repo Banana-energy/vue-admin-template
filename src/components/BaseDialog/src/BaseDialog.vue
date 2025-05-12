@@ -2,6 +2,7 @@
 import type { DialogProps, ScrollbarInstance, } from "element-plus"
 import type { Props, } from "./types.ts"
 import { omit, } from "lodash-es"
+import { dialogContentMaxHeight, } from "./types.ts"
 
 defineOptions({
   name: "BaseDialog",
@@ -53,6 +54,8 @@ const { maxHeight, } = useMaxHeight({
   offset,
 },)
 
+provide(dialogContentMaxHeight, maxHeight,)
+
 defineExpose({
   maxHeight,
   isFullscreen,
@@ -69,13 +72,18 @@ defineExpose({
         <Icon
           v-if="fullscreen"
           :icon="isFullscreen ? 'zmdi:fullscreen-exit' : 'zmdi:fullscreen'"
-          class="is-hover z-10 mr-[18px] mt-[2px] cursor-pointer"
+          class="is-hover z-10 mr-4.5 mt-0.5 cursor-pointer"
           color="var(--el-color-info)"
           @click="toggleFull"
         />
       </div>
     </template>
-    <ElScrollbar ref="bodyRef" v-loading="loading" :max-height="props.maxHeight || maxHeight">
+    <ElScrollbar
+      ref="bodyRef"
+      v-loading="loading"
+      :max-height="props.maxHeight || maxHeight"
+      class="pr-3"
+    >
       <slot />
     </ElScrollbar>
     <template v-if="$slots.footer" #footer>

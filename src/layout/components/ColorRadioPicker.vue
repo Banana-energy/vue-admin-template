@@ -38,7 +38,7 @@ watch(
 </script>
 
 <template>
-  <div :class="prefixCls" class="flex flex-wrap space-x-14px">
+  <div :class="prefixCls" class="flex flex-wrap space-x-3.5">
     <span
       v-for="(item, i) in schema"
       :key="`radio-${i}`"
@@ -46,7 +46,7 @@ watch(
       :style="{
         background: item,
       }"
-      class="mb-5px h-20px w-20px cursor-pointer border-2px border-gray-300 rounded-2px border-solid text-center leading-20px"
+      class="mb-1.25 h-5 w-5 cursor-pointer border-2px border-gray-300 rounded-2px border-solid text-center leading-20px"
       @click="colorVal = item"
     >
       <Icon

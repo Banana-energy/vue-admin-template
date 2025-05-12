@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import type { OssUploadFile, } from "@/components/OssUpload/src/helper.ts"
+import type { OssResponse, } from "@/apis/upload"
 import type { UploadFile, UploadFiles, UploadInstance, UploadRawFile, UploadUserFile, } from "element-plus"
 import type { Props, } from "./types.ts"
 import { MessageBox, } from "@/utils/messageBox.ts"
@@ -113,17 +113,17 @@ const handleError: Props["onError"] = (error: Error, uploadFile: UploadFile, upl
   ElMessage.error(error.message,)
 }
 
-const handleSuccess: Props["onSuccess"] = (response: ResponseData<OssUploadFile>, uploadFile: UploadFile, uploadFiles: UploadFiles,) => {
+const handleSuccess: Props["onSuccess"] = (response: NewResponseData<OssResponse>, uploadFile: UploadFile, uploadFiles: UploadFiles,) => {
   const { onSuccess, modelValue, } = props
   innerFlag = true
   if (onSuccess && isFunction(onSuccess,)) {
     onSuccess(response, uploadFile, uploadFiles,)
     return
   }
-  const data: OssUploadFile = response.datas
+  const data: OssResponse = response.data
   if (!data) {
     fileList.value = fileList.value.filter(item => item.uid !== uploadFile.uid,)
-    handleError(new Error(response.msg || "上传失败",), uploadFile, uploadFiles,)
+    handleError(new Error(response.responseDesc || "上传失败",), uploadFile, uploadFiles,)
     return
   }
   const list = modelValue ? [...modelValue,] : []

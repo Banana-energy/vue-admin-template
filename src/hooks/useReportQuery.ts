@@ -6,13 +6,16 @@ import type { VxeTableInstance, VxeToolbarInstance, } from "vxe-table"
 import { cloneDeep, isEqual, isFunction, omit, } from "lodash-es"
 import { useRequest, } from "vue-hooks-plus"
 
-interface DateTransform<TParams,> {
+interface RangeTransform<TParams,> {
   source: Exclude<string, keyof TParams>
   startField: keyof TParams
   endField: keyof TParams
 }
 
 type Response<T,> = ResponseData<T[]> | PageResponseData<T> | NewPageResponseData<T> | NewResponseData<T[]>
+interface Params extends Partial<PageParams> {
+  [key: string]: any
+}
 
 interface Options<TData, TParams extends Params, TFormData extends Omit<TParams, keyof PageParams>, > {
   api: (params: TParams) => Promise<Response<TData> | undefined>
@@ -23,7 +26,7 @@ interface Options<TData, TParams extends Params, TFormData extends Omit<TParams,
   formatParams?: (formData?: TFormData) => TFormData
   offsetHeight?: number | Ref<number>
   defaultPageSize?: number
-  dateTransform?: DateTransform<TParams>[]
+  rangeTransform?: RangeTransform<TParams>[]
   afterFetch?: (data: Response<TData>,) => void
   resetWithSearch?: boolean
 }
@@ -33,20 +36,16 @@ interface Return<TData, TParams, TFormData,> {
   formRef: Ref<FormInstance | LayoutFormInstance | undefined>
   tableRef: Ref<VxeTableInstance<TData> | undefined>
   toolbarRef: Ref<VxeToolbarInstance | undefined>
-  pager: Reactive<NewBasicPage>
+  pager: Reactive<BasicPage>
   pagerRef: Ref<PaginationInstance | undefined>
   queryParams: ComputedRef<TParams>
   lastQueryData: Ref<TFormData | undefined>
   tableData: Ref<TData[]>
   handleSearch: () => Promise<void>
   handleReset: () => Promise<void>
-  handlePagerChange: (val: NewBasicPage,) => void
+  handlePagerChange: (val: BasicPage,) => void
   maxHeight: Ref<number>
   cancel: () => void
-}
-
-interface Params extends Partial<PageParams> {
-  [key: string]: any
 }
 
 export function useReportQuery<TData, TParams extends Params, TFormData extends Omit<TParams, keyof PageParams>,>(options: Options<TData, TParams, TFormData>,): Return<TData, TParams, TFormData> {
@@ -58,7 +57,7 @@ export function useReportQuery<TData, TParams extends Params, TFormData extends 
     // APP padding  20 + ElCard padding 16 + border 1
     offsetHeight = 20 + 16 + 1,
     customToolbar = false,
-    dateTransform = [],
+    rangeTransform = [],
     resetWithSearch = false,
     defaultPageSize = 20,
     formatParams,
@@ -69,10 +68,10 @@ export function useReportQuery<TData, TParams extends Params, TFormData extends 
   const toolbarRef = ref<VxeToolbarInstance>()
   const tableData = ref<TData[]>([],) as Ref<TData[]>
   const formRef = ref<FormInstance | LayoutFormInstance>()
-  const pager = reactive<NewBasicPage>({
-    currPage: 1,
-    pageSize: defaultPageSize,
-    totalCount: 0,
+  const pager = reactive<BasicPage>({
+    current: 1,
+    size: defaultPageSize,
+    total: 0,
   },)
   const pagerRef = ref<PaginationInstance>()
 
@@ -92,25 +91,25 @@ export function useReportQuery<TData, TParams extends Params, TFormData extends 
     const clonedParams = cloneDeep(params,)
 
     // 处理日期范围转换
-    dateTransform.forEach(({ source, startField, endField, },) => {
+    rangeTransform.forEach(({ source, startField, endField, },) => {
       if (source in clonedParams) {
-        const dateRange = clonedParams[source as keyof TFormData]
-        if (Array.isArray(dateRange,)) {
-          // 确保 dateRange 是可迭代的数组类型
-          const startDate = dateRange[0]
-          const endDate = dateRange[1]
-          clonedParams[startField as keyof TFormData] = startDate
-          clonedParams[endField as keyof TFormData] = endDate
+        const range = clonedParams[source as keyof TFormData]
+        if (Array.isArray(range,)) {
+          // 确保 range 是可迭代的数组类型
+          const start = range[0]
+          const end = range[1]
+          clonedParams[startField as keyof TFormData] = start
+          clonedParams[endField as keyof TFormData] = end
         }
       }
     },)
 
-    return omit(clonedParams, dateTransform.map(({ source, },) => source,),) as TFormData
+    return omit(clonedParams, rangeTransform.map(({ source, },) => source,),) as TFormData
   }
   const queryParams = computed<TParams>(() => {
     const formatData = isFunction(formatParams,) ? formatParams(formData,) : formData
     const transformData = transformParams(formatData,)
-    const { currPage: current, pageSize: size, } = pager
+    const { current, size, } = pager
     const params = hasPager
       ? { ...transformData, current, size, }
       : { ...transformData, }
@@ -131,13 +130,15 @@ export function useReportQuery<TData, TParams extends Params, TFormData extends 
         if ("data" in result && result.data) {
           if ("list" in result.data) {
             tableData.value = result.data.list || []
-            pager.totalCount = result.data.totalCount
+            pager.total = result.data.totalCount
+            return
           }
+          tableData.value = result.data
         }
         if ("datas" in result && result?.datas) {
           if ("records" in result.datas) {
             tableData.value = result.datas.records || []
-            pager.totalCount = result.datas.pager.total
+            pager.total = result.datas.pager.total
             return
           }
           tableData.value = result.datas
@@ -155,13 +156,14 @@ export function useReportQuery<TData, TParams extends Params, TFormData extends 
     const valid = await formRef.value?.validate()
     if (valid || !formRef.value) {
       if (!isEqual(lastQueryData.value, formData,)) {
-        pager.currPage = 1
+        pager.current = 1
       }
+      cancel()
       run(queryParams.value,)
     }
   }
 
-  function handlePagerChange(val: NewBasicPage,) {
+  function handlePagerChange(val: BasicPage,) {
     Object.assign(pager, val,)
     handleSearch()
   }

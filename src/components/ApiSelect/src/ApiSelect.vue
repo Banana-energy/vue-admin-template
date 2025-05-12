@@ -78,7 +78,7 @@ defineExpose({
 <template>
   <component :is="props.component" ref="componentRef" v-bind="bindProps">
     <template v-for="item in Object.keys(slots) " #[item]="data">
-      <slot v-bind="data || {}" :name="item" />
+      <slot :name="item" v-bind="data || {}" />
     </template>
     <template v-if="props.childComponent">
       <component
@@ -90,7 +90,7 @@ defineExpose({
         :value="item.value"
       />
     </template>
-    <template v-if="component.name === 'ElSelect'">
+    <template v-if="props.component.name === 'ElSelect'">
       <ElOption
         v-for="item in formatOptions"
         :key="item.value"

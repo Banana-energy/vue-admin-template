@@ -144,7 +144,7 @@ export default defineComponent({
         v-click-outside={clickOut}
         class={[
           prefixCls,
-          "relative bg-[var(--left-menu-bg-color)] top-1px layout-border__right",
+          "relative bg-[var(--left-menu-bg-color)] top-0.25 layout-border__right",
           {
             "w-[var(--tab-menu-max-width)]": !unref(collapse,),
             "w-[var(--tab-menu-min-width)]": unref(collapse,),
@@ -167,7 +167,7 @@ export default defineComponent({
                   <div
                     class={[
                       `${prefixCls}__item`,
-                      "text-center text-12px relative py-12px cursor-pointer",
+                      "text-center text-3 relative py-3 cursor-pointer",
                       {
                         "is-active": isActive(v.path,),
                       },
@@ -182,7 +182,7 @@ export default defineComponent({
                     {!unref(showTitle,)
                       ? undefined
                       : (
-                          <p class="mt-5px break-words px-2px">{(item.meta?.title || "")}</p>
+                          <p class="mt-1.25 break-words px-0.5">{(item.meta?.title || "")}</p>
                         )}
                   </div>
                 )

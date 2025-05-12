@@ -5,6 +5,7 @@ import Breadcrumb from "./Breadcrumb.vue"
 import Collapse from "./Collapse.vue"
 import LocaleDropdown from "./LocaleDropdown.vue"
 import ScreenFull from "./ScreenFull.vue"
+import SearchBar from "./SearchBar.vue"
 import UserInfo from "./UserInfo.vue"
 
 const { getPrefixCls, variables, } = useDesign()
@@ -51,6 +52,7 @@ export default defineComponent({
             )
           : undefined}
         <div class="h-full flex items-center">
+          <SearchBar></SearchBar>
           {screenFull.value
             ? (
                 <ScreenFull class="custom-hover" color="var(--top-header-text-color)"></ScreenFull>

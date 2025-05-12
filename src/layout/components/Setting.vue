@@ -65,7 +65,7 @@ async function copyConfig() {
       // 折叠图标
       hamburger: ${appStore.getHamburger},
       // 全屏图标
-      screenFull: ${appStore.getScreenFull},
+      screenfull: ${appStore.getScreenFull},
       // 多语言图标
       locale: ${appStore.getLocale},
       // 标签页
@@ -145,7 +145,7 @@ function themeChange() {
 <template>
   <div
     :class="prefixCls"
-    class="fixed right-0 top-[45%] z-10 h-40px w-40px flex cursor-pointer items-center justify-center bg-[var(--el-color-primary)]"
+    class="fixed right-0 top-[45%] z-10 h-10 w-10 flex cursor-pointer items-center justify-center bg-[var(--el-color-primary)]"
     @click="drawer = true"
   >
     <Icon color="#fff" icon="vi-ant-design:setting-outlined" />
@@ -158,7 +158,7 @@ function themeChange() {
     size="350px"
   >
     <template #header>
-      <span class="text-16px font-700">项目配置</span>
+      <span class="text-4 font-700">项目配置</span>
     </template>
 
     <div class="text-center">
@@ -230,7 +230,7 @@ function themeChange() {
     <BaseButton class="w-full" type="primary" @click="copyConfig">
       拷贝
     </BaseButton>
-    <BaseButton class="mt-5px w-full !ml-0" type="danger" @click="clear">
+    <BaseButton class="mt-1.25 w-full !ml-0" type="danger" @click="clear">
       清除缓存并且重置
     </BaseButton>
   </ElDrawer>

@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script lang="ts" setup>
 import type { ElScrollbar, } from "element-plus"
 import type { RouteLocationNormalizedLoaded, RouterLinkProps, } from "vue-router"
 import type { ContextMenuExpose, } from "./helper.ts"
@@ -141,7 +141,7 @@ async function moveToCurrentTag() {
 }
 
 const tagLinksRefs = useTemplateRefsList<RouterLinkProps>()
-
+//
 // function moveToTarget(currentTag: RouteLocationNormalizedLoaded,) {
 //   const wrap$ = unref(scrollbarRef,)?.wrapRef
 //   let firstTag: Nullable<RouterLinkProps> = null
@@ -267,7 +267,7 @@ watch(
   <div
     :id="prefixCls"
     :class="prefixCls"
-    class="relative w-full flex bg-[#fff] dark:bg-[var(--el-bg-color)]"
+    class="relative w-full flex bg-white dark:bg-[var(--el-bg-color)]"
   >
     <span
       :class="`${prefixCls}__tool ${prefixCls}__tool--first`"
@@ -362,16 +362,16 @@ watch(
                 custom
               >
                 <div
-                  class="h-full flex items-center justify-center whitespace-nowrap pl-15px"
+                  class="h-full flex items-center justify-center whitespace-nowrap pl-3.75"
                   @click="navigate"
                 >
                   <Icon
                     v-if="canShowIcon(item)"
                     :icon="item?.matched?.[1]?.meta?.icon || item?.meta?.icon"
                     :size="12"
-                    class="mr-5px"
+                    class="mr-1.25"
                   />
-                  {{ useI18nTitle(item?.meta) }}
+                  {{ useI18nTitle(item.meta) }}
                   <Icon
                     :class="`${prefixCls}__item--close`"
                     :size="12"

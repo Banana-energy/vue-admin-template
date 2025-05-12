@@ -6,6 +6,7 @@ import { useI18nTitle, } from "@/hooks/useI18nTitle.ts"
 export function useRenderMenuTitle() {
   const renderMenuTitle = (meta?: RouteMeta,) => {
     const { icon, } = meta ?? {}
+
     return icon
       ? (
           <>

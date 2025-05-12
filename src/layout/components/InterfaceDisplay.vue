@@ -111,62 +111,62 @@ watch(
 <template>
   <div :class="prefixCls">
     <div class="flex items-center justify-between">
-      <span class="text-14px">面包屑</span>
+      <span class="text-3.5">面包屑</span>
       <ElSwitch v-model="breadcrumb" @change="breadcrumbChange" />
     </div>
 
     <div class="flex items-center justify-between">
-      <span class="text-14px">面包屑图标</span>
+      <span class="text-3.5">面包屑图标</span>
       <ElSwitch v-model="breadcrumbIcon" @change="breadcrumbIconChange" />
     </div>
 
     <div class="flex items-center justify-between">
-      <span class="text-14px">折叠图标</span>
+      <span class="text-3.5">折叠图标</span>
       <ElSwitch v-model="hamburger" @change="hamburgerChange" />
     </div>
 
     <div class="flex items-center justify-between">
-      <span class="text-14px">全屏图标</span>
+      <span class="text-3.5">全屏图标</span>
       <ElSwitch v-model="screenFull" @change="screenFullChange" />
     </div>
 
     <div class="flex items-center justify-between">
-      <span class="text-14px">多语言图标</span>
+      <span class="text-3.5">多语言图标</span>
       <ElSwitch v-model="locale" @change="localeChange" />
     </div>
 
     <div class="flex items-center justify-between">
-      <span class="text-14px">标签页</span>
+      <span class="text-3.5">标签页</span>
       <ElSwitch v-model="tagsView" @change="tagsViewChange" />
     </div>
 
     <div class="flex items-center justify-between">
-      <span class="text-14px">标签页图标</span>
+      <span class="text-3.5">标签页图标</span>
       <ElSwitch v-model="tagsViewIcon" @change="tagsViewIconChange" />
     </div>
 
     <div class="flex items-center justify-between">
-      <span class="text-14px">Logo</span>
+      <span class="text-3.5">Logo</span>
       <ElSwitch v-model="logo" @change="logoChange" />
     </div>
 
     <div class="flex items-center justify-between">
-      <span class="text-14px">菜单手风琴</span>
+      <span class="text-3.5">菜单手风琴</span>
       <ElSwitch v-model="uniqueOpened" @change="uniqueOpenedChange" />
     </div>
 
     <div class="flex items-center justify-between">
-      <span class="text-14px">固定头部</span>
+      <span class="text-3.5">固定头部</span>
       <ElSwitch v-model="fixedHeader" @change="fixedHeaderChange" />
     </div>
 
     <div class="flex items-center justify-between">
-      <span class="text-14px">灰色模式</span>
+      <span class="text-3.5">灰色模式</span>
       <ElSwitch v-model="greyMode" @change="greyModeChange" />
     </div>
 
     <div class="flex items-center justify-between">
-      <span class="text-14px">固定菜单</span>
+      <span class="text-3.5">固定菜单</span>
       <ElSwitch v-model="fixedMenu" @change="fixedMenuChange" />
     </div>
   </div>

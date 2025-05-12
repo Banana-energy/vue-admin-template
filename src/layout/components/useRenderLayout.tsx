@@ -67,7 +67,7 @@ export function useRenderLayout() {
         <div
           class={[
             `${prefixCls}-content`,
-            "absolute top-0 h-[100%]",
+            "absolute top-0 h-full",
             {
               "w-[calc(100%-var(--left-menu-min-width))] left-[var(--left-menu-min-width)]":
                 collapse.value && !mobile.value && !mobile.value,
@@ -138,7 +138,7 @@ export function useRenderLayout() {
           <div
             class={[
               `${prefixCls}-content`,
-              "h-[100%]",
+              "h-full",
               {
                 "w-[calc(100%-var(--left-menu-min-width))] left-[var(--left-menu-min-width)]":
                 collapse.value,
@@ -197,7 +197,7 @@ export function useRenderLayout() {
           ]}
         >
           {logo.value ? <Logo class="custom-hover"></Logo> : undefined}
-          <Menu class="h-[var(--top-tool-height)] flex-1 px-10px"></Menu>
+          <Menu class="h-[var(--top-tool-height)] flex-1 px-2.5"></Menu>
           <ToolHeader></ToolHeader>
         </div>
         <div
@@ -247,7 +247,7 @@ export function useRenderLayout() {
     return (
       <>
         <div class="layout-border__bottom relative flex items-center bg-[var(--top-header-bg-color)]">
-          {logo.value ? <Logo class="custom-hover !pr-15px"></Logo> : undefined}
+          {logo.value ? <Logo class="custom-hover !pr-3.75"></Logo> : undefined}
 
           <ToolHeader class="flex-1"></ToolHeader>
         </div>
@@ -256,7 +256,7 @@ export function useRenderLayout() {
           <div
             class={[
               `${prefixCls}-content`,
-              "h-[100%]",
+              "h-full",
               {
                 "w-[calc(100%-var(--tab-menu-min-width))] left-[var(--tab-menu-min-width)]":
                   collapse.value && !fixedMenu.value,

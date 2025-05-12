@@ -53,6 +53,29 @@ export namespace GetOSSSignAPI {
   export type Response = ResponseData<Data>
 }
 
+export interface OssResponse {
+  /**
+   * 文件类型
+   */
+  contentType: string
+  /**
+   * 文件下载地址
+   */
+  downLoadUrl: string
+  /**
+   * 相对文件路径
+   */
+  objectName: string
+  /**
+   * 文件名
+   */
+  originFileName: string
+  /**
+   * 文件大小
+   */
+  size: number
+}
+
 /**
  * OSS上传无过期时间文件
  * @param files

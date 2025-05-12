@@ -57,7 +57,11 @@ function readElementPlusComponents(): string[] {
 
 export default defineConfig(({ mode, },) => {
   const env = loadEnv(mode, process.cwd(), "",)
+  const now = new Date().getTime()
   return {
+    define: {
+      __APP_VERSION__: now,
+    },
     resolve: {
       alias: {
         "@": resolve("src",),
@@ -101,8 +105,8 @@ export default defineConfig(({ mode, },) => {
         dirs: resolve("src/components",),
         resolvers: [
           ElementPlusResolver({
+            exclude: /(ElText|ElTag)/,
             importStyle: "sass",
-            exclude: /(ElText)/,
           },),
         ],
         dts: resolve("src/types/components.d.ts",),
@@ -169,7 +173,8 @@ export default defineConfig(({ mode, },) => {
             if (id.startsWith(projectRoot,) && !id.includes("node_modules",)) {
               if (id.includes("/src/components/",)
                 || id.includes("/src/layout/",)
-                || id.includes("/src/store/",)) {
+                || id.includes("/src/store/",)
+                || id.includes("/src/constants/",)) {
                 return "common"
               }
             }

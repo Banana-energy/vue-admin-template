@@ -9,7 +9,7 @@ defineProps<{
 
 const { getPrefixCls, } = useDesign()
 
-const prefixCls = getPrefixCls("screenFull",)
+const prefixCls = getPrefixCls("screenfull",)
 
 const { toggle, isFullscreen, } = useFullscreen()
 </script>
